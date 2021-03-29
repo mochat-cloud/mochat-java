@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mochat.mochat.dao.mapper.workroom.WorkRoomMapper">
+    <resultMap type="com.mochat.mochat.dao.entity.WorkRoomEntity" id="resultMap">
+        <id column="id" property="Id" />
+        <result property="corpId" column="corp_id"/>
+        <result property="wxChatId" column="wx_chat_id"/>
+        <result property="name" column="name"/>
+        <result property="ownerId" column="owner_id"/>
+        <result property="notice" column="notice"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="roomMax" column="room_max"/>
+        <result property="roomGroupId" column="room_group_id"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <update id="updateWorkRoomsByRoomGroupId" parameterType="com.mochat.mochat.dao.entity.WorkRoomEntity">
+        update mc_work_room
+        <set>
+            <if test="roomGroupId != null">room_group_id=#{roomGroupId}</if>
+        </set>
+        where id=#{workRoomGroupId}
+    </update>
+
+    <select id="getWorkRoomList" parameterType="com.mochat.mochat.model.workroom.WorkRoomIndexModel" resultType="com.mochat.mochat.dao.entity.WorkRoomEntity">
+        select id,corp_id,wx_chat_id,name,owner_id,notice,status,create_time,room_max,room_group_id,created_at,updated_at from mc_work_room where room_group_id = #{roomGroupId}
+        <if test="workRoomName != null and workRoomName != ''">
+            and name like concat('%',#{workRoomName},'%')
+        </if>
+        <if test="workRoomOwnerId != null and workRoomOwnerId != ''">
+            and owner_id in (#{workRoomOwnerId})
+        </if>
+        <if test="workRoomStatus != null and workRoomStatus != ''">
+            and status = #{workRoomStatus}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and create_time <![CDATA[ >= ]]> #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and create_time <![CDATA[ <= ]]> #{endTime}
+        </if>
+        order By create_time desc
+    </select>
+</mapper>

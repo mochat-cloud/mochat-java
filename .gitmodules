@@ -1,0 +1,6 @@
+[submodule "sidebar"]
+	path = sidebar
+	url = https://github.com/mochat-cloud/sidebar.git
+[submodule "dashboard"]
+	path = dashboard
+	url = https://github.com/mochat-cloud/dashboard.git

@@ -1,0 +1,13 @@
+task pack(type: Copy) {
+    dependsOn "assemble"
+    from "./build/libs/"
+    into "./../mc-java/temp"
+}
+
+task mcClear() {
+    dependsOn "clean"
+}
+
+task mc() {
+    dependsOn "assemble"
+}

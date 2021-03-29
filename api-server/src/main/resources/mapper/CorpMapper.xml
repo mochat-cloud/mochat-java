@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.mochat.mochat.dao.mapper.corp.CorpMapper">
+
+    <resultMap id="BaseResultMap" type="com.mochat.mochat.dao.entity.CorpEntity">
+        <id column="id" property="corpId" />
+        <result column="name" property="corpName" />
+        <result column="wx_corpid" property="wxCorpId" />
+        <result column="employee_secret" property="employeeSecret" />
+        <result column="event_callback" property="eventCallback" />
+        <result column="contact_secret" property="contactSecret" />
+        <result column="token" property="token" />
+        <result column="encoding_aes_key" property="encodingAesKey" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="deleted_at" property="deletedAt" />
+    </resultMap>
+
+    <select id="getUserByPhone" resultMap="BaseResultMap" parameterType="String">
+        select phone,password from mc_user where phone = #{phone}
+    </select>
+
+</mapper>

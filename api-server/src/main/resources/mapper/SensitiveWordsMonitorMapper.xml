@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mochat.mochat.dao.mapper.sensitiveword.SensitiveWordsMonitorMapper">
+    <select id="getSensitiveWordMonitorList" parameterType="com.mochat.mochat.model.sensitiveword.ReqSensitiveWordsMonitorIndex" resultType="com.mochat.mochat.dao.entity.sensitive.SensitiveWordsMonitorEntity">
+        select id,sensitive_word_name,source,name,triggerName,receiverName,triggerTime from mc_sensitive_word_monitor where 1=1
+        <if test="corpId != null and corpId != ''">
+            and corp_id = (#{corpId})
+        </if>
+        <if test="sensitiveWordId != null and sensitiveWordId != ''">
+            and sensitive_word_id in (#{sensitiveWordIds})
+        </if>
+        <if test="employeeId != null and employeeId != ''">
+            and trigger_id in (#{employeeId})
+            and source = '2'
+        </if>
+        <if test="workRoomId != null and workRoomId != ''">
+            and receiver_id = #{workRoomId}
+            and receiver_type = '3'
+        </if>
+        <if test="triggerStart != null and triggerStart != ''">
+            and trigger_time <![CDATA[ >= ]]> #{triggerStart}
+        </if>
+        <if test="triggerEnd != null and triggerEnd != ''">
+            and trigger_time <![CDATA[ <= ]]> #{triggerEnd}
+        </if>
+        limit #{page},#{perPage}
+        order By create_time desc
+    </select>
+
+</mapper>

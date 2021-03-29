@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mochat.mochat.dao.mapper.ContactMapper">
+
+    <resultMap type="com.mochat.mochat.model.workcontact.ContactData" id="getcontact">
+        <id property="contactId" column="id"/>
+        <result property="avatar" column="avatar"/>
+        <result property="gender" column="gender"/>
+        <result property="name" column="name"/>
+        <result property="remark" column="remark"/>
+        <result property="businessNo" column="business_no"/>
+        <result property="addWay" column="add_way"/>
+        <result property="createTime" column="created_at"/>
+        <result property="employeeName" column="employeeName"/>
+    </resultMap>
+
+    <!-- 一对一关联，查询账户下所有的客户 -->
+    <select id="getEmployeeContact" resultMap="getcontact">
+        select c.id,c.avatar,c.gender,c.name,c.business_no, ec.remark,ec.add_way,ec.created_at,we.name as employeeName
+        from `mc_work_contact_employee` ec
+        JOIN `mc_work_contact` c ON ec.contact_id=c.id
+        JOIN `mc_work_employee` we ON we.id=ec.employee_id
+        <where>
+            <if test="empIds !=null and empIds.length>0">
+                ec.employee_id IN
+                <foreach item="empIdItem" index="index" collection="empIds" open="(" separator="," close=")">
+                    #{empIdItem}
+                </foreach>
+            </if>
+            <if test="parem.keyWords != null and parem.keyWords!=''">
+                And c.name = like #{parem.keyWords}
+            </if>
+            <if test="parem.remark != null and parem.remark!=''">
+                AND ec.remark = #{parem.remark}
+            </if>
+            <if test="parem.gender != null and parem.gender != 3">
+                AND c.gender = #{parem.gender}
+            </if>
+            <if test="parem.addWay != null and parem.addWay!=''">
+                AND ec.add_way = #{parem.addWay}
+            </if>
+            <if test="parem.startTime != null and parem.startTime != ''">
+                AND ec.created_at &gt;= #{parem.startTime}
+            </if>
+            <if test="parem.endTime != null and parem.endTime != ''">
+                AND ec.created_at &lt;= #{parem.endTime}
+            </if>
+            <if test="parem.businessNo != null and parem.businessNo!=''">
+                AND c.business_no = #{parem.businessNo}
+            </if>
+        </where>
+    </select>
+</mapper>
