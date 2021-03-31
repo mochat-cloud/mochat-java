@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
  */
 @Slf4j
 @RestController
-@RequestMapping("/gateway/mc/workContactTag")
+@RequestMapping("/workContactTag")
 @Validated
 public class WorkContactTagController {
 

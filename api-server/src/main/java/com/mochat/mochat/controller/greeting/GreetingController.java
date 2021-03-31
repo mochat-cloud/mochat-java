@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping(path = "gateway/mc/greeting")
+@RequestMapping(path = "/greeting")
 public class GreetingController {
 
 

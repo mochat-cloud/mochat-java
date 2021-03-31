@@ -22,7 +22,7 @@ import java.util.List;
  * @description 角色管理 Controller
  */
 @RestController
-@RequestMapping("/gateway/mc/role")
+@RequestMapping("/role")
 @Validated
 public class RoleController {
 

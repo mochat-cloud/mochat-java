@@ -22,7 +22,7 @@ import java.util.*;
  * @description 渠道码 - 分组
  */
 @RestController
-@RequestMapping("/gateway/mc/channelCodeGroup")
+@RequestMapping("/channelCodeGroup")
 public class ChannelCodeGroupController {
 
     @Autowired

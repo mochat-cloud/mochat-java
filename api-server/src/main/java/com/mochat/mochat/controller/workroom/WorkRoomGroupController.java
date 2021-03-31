@@ -18,7 +18,7 @@ import java.util.Map;
  * @time: 2020/12/8 14:28
  */
 @RestController
-@RequestMapping("/gateway/mc/workRoomGroup")
+@RequestMapping("/workRoomGroup")
 @Validated
 public class WorkRoomGroupController {
 

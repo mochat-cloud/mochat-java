@@ -24,7 +24,7 @@ import java.util.Map;
  * @time: 2020/11/20 10:38
  */
 @RestController
-@RequestMapping("/gateway/mc/user")
+@RequestMapping("/user")
 public class LoginController {
 
     private final static Logger logger = LoggerFactory.getLogger(LoginController.class);

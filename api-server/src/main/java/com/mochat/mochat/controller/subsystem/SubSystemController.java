@@ -30,7 +30,7 @@ public class SubSystemController {
      * @Author: zhaojinjian
      * @Date: 2020/11/18
      */
-    @GetMapping("/gateway/mc/user/index")
+    @GetMapping("/user/index")
     public ApiRespVO index(APIGetSubSystemRequest param, @RequestAttribute ReqPerEnum permission) {
         GetSubSystemPage subSystemPage = subSystem.getSubSystemPageList(param, permission);
         return ApiRespUtils.getApiRespOfOk(subSystemPage);
@@ -44,7 +44,7 @@ public class SubSystemController {
      * @Author: zhaojinjian
      * @Date: 2020/11/20
      */
-    @PostMapping("/gateway/mc/user/store")
+    @PostMapping("/user/store")
     public ApiRespVO saveSubSystem(@RequestBody AddSubSystemRequest parem) {
         subSystem.saveSubsystem(parem);
         return ApiRespUtils.getApiRespOfOk(new ArrayList<String>());
@@ -57,7 +57,7 @@ public class SubSystemController {
      * @Author: zhaojinjian
      * @Date: 2020/11/23
      */
-    @PostMapping("/gateway/mc/user/passwordUpdate")
+    @PostMapping("/user/passwordUpdate")
     public ApiRespVO passwordUpdate(@RequestBody PasswordUpdateRequest parem) {
         parem.verifyParam();
         Integer userId = AccountService.getUserId();
@@ -72,7 +72,7 @@ public class SubSystemController {
      * @Author: zhaojinjian
      * @Date: 2020/11/23
      */
-    @PutMapping("/gateway/mc/user/update")
+    @PutMapping("/user/update")
     public ApiRespVO update(@RequestBody UpdateSubSystemRequest parem) {
         boolean result = subSystem.update(parem);
         return ApiRespUtils.getApiRespOfOk(new ArrayList<String>());
@@ -85,7 +85,7 @@ public class SubSystemController {
      * @Author: zhaojinjian
      * @Date: 2020/11/23
      */
-    @GetMapping("/gateway/mc/user/loginShow")
+    @GetMapping("/user/loginShow")
     public ApiRespVO loginShow() {
         Map<String, Integer> corpIdAndEmpIdMap = AccountService.getCorpIdAndEmpIdMap();
         Integer userId = corpIdAndEmpIdMap.get("userId");
@@ -102,7 +102,7 @@ public class SubSystemController {
      * @Author: zhaojinjian
      * @Date: 2020/11/23
      */
-    @PutMapping("/gateway/mc/user/statusUpdate")
+    @PutMapping("/user/statusUpdate")
     public ApiRespVO setStatus(@RequestBody Map<String,Object> mapData) {
         Integer status = Integer.valueOf(mapData.get("status").toString());
         String userId = mapData.get("userId").toString();
@@ -120,7 +120,7 @@ public class SubSystemController {
      * @Author: zhaojinjian
      * @Date: 2020/11/23
      */
-    @GetMapping("/gateway/mc/user/show")
+    @GetMapping("/user/show")
     public ApiRespVO getUserInfo(int userId) {
         GetSubSystemInfoResponse result = subSystem.getSubSystemInfo(userId);
         return ApiRespUtils.getApiRespOfOk(result);

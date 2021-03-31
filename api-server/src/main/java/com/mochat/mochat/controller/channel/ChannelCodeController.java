@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
  * @description 渠道活码
  */
 @RestController
-@RequestMapping("/gateway/mc/channelCode")
+@RequestMapping("/channelCode")
 public class ChannelCodeController {
 
     @Autowired

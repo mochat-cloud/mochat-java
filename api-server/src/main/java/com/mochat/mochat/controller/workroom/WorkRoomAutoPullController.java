@@ -23,7 +23,7 @@ import javax.validation.constraints.NotNull;
  */
 @Slf4j
 @RestController
-@RequestMapping("/gateway/mc/workRoomAutoPull")
+@RequestMapping("/workRoomAutoPull")
 @Validated
 public class WorkRoomAutoPullController {
 

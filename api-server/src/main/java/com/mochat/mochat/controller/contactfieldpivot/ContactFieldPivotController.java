@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * @createTime 2020/12/24 16:41
  */
 @RestController
-@RequestMapping(path = "/gateway/mc/contactFieldPivot")
+@RequestMapping(path = "/contactFieldPivot")
 public class ContactFieldPivotController {
     @Autowired
     private IWorkContactFieldPivotService contactFieldPivotService;

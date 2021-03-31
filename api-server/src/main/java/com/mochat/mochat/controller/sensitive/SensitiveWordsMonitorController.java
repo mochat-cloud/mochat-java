@@ -27,7 +27,7 @@ import java.util.Map;
  * @time: 2021/2/4 9:40
  */
 @RestController
-@RequestMapping(path = "/gateway/mc/sensitiveWordsMonitor")
+@RequestMapping(path = "/sensitiveWordsMonitor")
 public class SensitiveWordsMonitorController {
 
 

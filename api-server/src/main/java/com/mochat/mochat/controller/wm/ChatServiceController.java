@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @description 会话内容存档
  */
 @RestController()
-@RequestMapping(path = "/gateway/mc/workMessage")
+@RequestMapping(path = "/workMessage")
 public class ChatServiceController {
 
     @Autowired

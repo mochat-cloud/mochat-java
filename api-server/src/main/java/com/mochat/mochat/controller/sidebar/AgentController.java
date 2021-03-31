@@ -76,7 +76,7 @@ public class AgentController {
                 .body(file);
     }
 
-    @PostMapping("/gateway/mc/agent/txtVerifyUpload")
+    @PostMapping("/agent/txtVerifyUpload")
     @ResponseBody
     @LoginToken
     public ApiRespVO handleFileUpload(@RequestParam("file") MultipartFile file) {
@@ -89,7 +89,7 @@ public class AgentController {
      * @param isJsRedirect 是否跳转回本页面 0, 否; 1, 是
      * @param act          跳转回本页面时带的自定义参数，如客户标识，素材库标识
      */
-    @GetMapping("/gateway/mc/agent/oauth")
+    @GetMapping("/agent/oauth")
     @LoginToken
     public ApiRespVO oauth(
             @NotNull(message = "应用 ID 不能为空") Integer agentId,
@@ -100,7 +100,7 @@ public class AgentController {
         CorpEntity corpEntity = workAgentService.getCorp(agentId);
         String wxCorpId = corpEntity.getWxCorpId();
 
-        String redirectUrl = chatToolProperties.getApiUrl() + "/gateway/mc/agent/oauth/callback"
+        String redirectUrl = chatToolProperties.getApiUrl() + "/agent/oauth/callback"
                 + "?agentId=" + agentId
                 + "&isJsRedirect=" + isJsRedirect
                 + "&act=" + act;
@@ -124,7 +124,7 @@ public class AgentController {
      * @param act          跳转回本页面时带的自定义参数，如客户标识，素材库标识
      * @param code         企业微信回调时返回值
      */
-    @GetMapping("/gateway/mc/agent/oauth/callback")
+    @GetMapping("/agent/oauth/callback")
     @LoginToken
     public void oauth(
             @NotNull(message = "应用 ID 不能为空") Integer agentId,
@@ -167,7 +167,7 @@ public class AgentController {
         response.sendRedirect(redirectUrl);
     }
 
-    @GetMapping("/gateway/mc/wxJsSdk/config")
+    @GetMapping("/wxJsSdk/config")
     @LoginToken
     public ApiRespVO wxJSConfig(
             @NotNull(message = "企业 ID 无效") Integer corpId,
@@ -205,7 +205,7 @@ public class AgentController {
         return ApiRespUtils.getApiRespOfOk(map);
     }
 
-    @PostMapping("/gateway/mc/agent/store")
+    @PostMapping("/agent/store")
     public ApiRespVO storeAgent(@RequestBody JSONObject req) {
         String wxAgentId = req.getString("wxAgentId");
         if (!StringUtils.hasLength(wxAgentId)) {
@@ -224,7 +224,7 @@ public class AgentController {
         return ApiRespUtils.getApiRespOfOk();
     }
 
-    @GetMapping("/gateway/mc/chatTool/config")
+    @GetMapping("/chatTool/config")
     public ApiRespVO getChatToolConfig() {
         List<Map<String, Object>> agents = workAgentService.getChatTools();
         if (agents.isEmpty()) {

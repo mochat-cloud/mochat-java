@@ -21,7 +21,7 @@ import java.util.Map;
  * @createTime 2020/12/16 11:58
  */
 @RestController
-@RequestMapping("/gateway/mc/contactField")
+@RequestMapping("/contactField")
 public class ContactFieldController {
     @Autowired
     private IContactFieldService contactFieldService;

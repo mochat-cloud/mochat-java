@@ -35,7 +35,7 @@ public class ContactController {
      * @author zhaojinjian
      * @createTime 2020/12/2 15:43
      */
-    @GetMapping("/gateway/mc/workContact/index")
+    @GetMapping("/workContact/index")
     public ApiRespVO index(GetContactRequest parem, @RequestAttribute ReqPerEnum permission) {
         parem.verifyParam();
         GetContactPageResponse contactPageResponse = new GetContactPageResponse();
@@ -53,7 +53,7 @@ public class ContactController {
      * @author zhaojinjian
      * @createTime 2020/12/2 15:45
      */
-    @GetMapping("/gateway/mc/workContact/show")
+    @GetMapping("/workContact/show")
     public ApiRespVO showContactInfo(
             @NotNull(message = "contactId 不能为空") Integer contactId,
             @NotNull(message = "employeeId 不能为空") Integer employeeId
@@ -67,7 +67,7 @@ public class ContactController {
      * @time: 2021/2/19 4:53 下午
      * @description 客户详情接口
      */
-    @GetMapping("/gateway/mc/workContact/detail")
+    @GetMapping("/workContact/detail")
     public ApiRespVO contactDetail(@NotBlank(message = "客户微信 id 不能为空") String wxExternalUserid) {
         return ApiRespUtils.getApiRespOfOk(contactService.getContactDetailByWxExternalUserId(wxExternalUserid));
     }
@@ -77,7 +77,7 @@ public class ContactController {
      * @time: 2021/2/19 4:53 下午
      * @description 客户互动轨迹
      */
-    @GetMapping("/gateway/mc/workContact/track")
+    @GetMapping("/workContact/track")
     public ApiRespVO contactTrack(@NotNull(message = "客户 id 不能为空") Integer contactId) {
         return ApiRespUtils.getApiRespOfOk(contactService.getContactTrackByContactId(contactId));
     }
@@ -87,7 +87,7 @@ public class ContactController {
      * @author zhaojinjian
      * @createTime 2020/12/11 16:18
      */
-    @PutMapping("/gateway/mc/workContact/update")
+    @PutMapping("/workContact/update")
     public ApiRespVO updateContact(@RequestBody UpdateContactResponse parem) {
         parem.verifyParam();
         Map<String, Integer> corpIdAndEmpIdMap = AccountService.getCorpIdAndEmpIdMap();
@@ -102,7 +102,7 @@ public class ContactController {
      * @author zhaojinjian
      * @createTime 2020/12/11 16:18
      */
-    @PutMapping("/gateway/mc/workContact/synContact")
+    @PutMapping("/workContact/synContact")
     public ApiRespVO synContact() {
         Integer corpId = AccountService.getCorpId();
         if (corpId != null) {
@@ -116,7 +116,7 @@ public class ContactController {
      * @author zhaojinjian
      * @createTime 2020/12/11 16:37
      */
-    @GetMapping("/gateway/mc/workContact/source")
+    @GetMapping("/workContact/source")
     public ApiRespVO source() {
         JSONArray jsonArray = new JSONArray();
         for (AddWayEnum addWayEnum : AddWayEnum.values()) {
@@ -128,7 +128,7 @@ public class ContactController {
         return ApiRespUtils.getApiRespOfOk(jsonArray);
     }
 
-    @GetMapping("/gateway/mc/workContact/lossContact")
+    @GetMapping("/workContact/lossContact")
     public ApiRespVO getLossContact(String employeeId, Integer page, Integer perPage) {
         if (employeeId != null && !employeeId.isEmpty()) {
             Integer corpId = AccountService.getCorpId();

@@ -29,7 +29,7 @@ import java.util.Map;
  */
 @RestController
 @Validated
-@RequestMapping(path = "/gateway/mc/sensitiveWord")
+@RequestMapping(path = "/sensitiveWord")
 public class SensitiveWordController {
 
     @Autowired

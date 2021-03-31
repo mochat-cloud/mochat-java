@@ -20,7 +20,7 @@ import java.io.IOException;
  * @time: 2020/11/22 14:30
  */
 @RestController
-@RequestMapping("/gateway/mc/common")
+@RequestMapping("/common")
 public class UploadController {
 
     private final static Logger logger = LoggerFactory.getLogger(LoginController.class);
