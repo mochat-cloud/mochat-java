@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
  * @description 菜单管理 Controller
  */
 @RestController
-@RequestMapping("/gateway/mc/menu")
+@RequestMapping("/menu")
 public class MenuController {
 
     @Autowired

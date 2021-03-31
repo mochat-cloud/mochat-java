@@ -38,7 +38,6 @@ import java.util.*;
  */
 @RestController
 @Validated
-@RequestMapping("/gateway/mc")
 public class CorpController {
 
     @Autowired

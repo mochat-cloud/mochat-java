@@ -22,7 +22,7 @@ import java.util.Map;
  * @description 会话内容存档配置
  */
 @RestController()
-@RequestMapping(path = "/gateway/mc/workMessageConfig")
+@RequestMapping(path = "/workMessageConfig")
 @Validated
 public class ChatConfigController {
 

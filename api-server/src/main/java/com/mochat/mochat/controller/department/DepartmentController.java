@@ -31,7 +31,6 @@ import java.util.Map;
  * @createTime 2021/1/7 11:41
  */
 @RestController
-@RequestMapping("/gateway/mc")
 @Valid
 public class DepartmentController {
     @Autowired

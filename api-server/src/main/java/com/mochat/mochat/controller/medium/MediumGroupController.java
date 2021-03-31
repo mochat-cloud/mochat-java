@@ -21,7 +21,7 @@ import java.util.Map;
  * @time: 2020/12/4 18:42
  */
 @RestController
-@RequestMapping("/gateway/mc/mediumGroup")
+@RequestMapping("/mediumGroup")
 @Validated
 public class MediumGroupController {
 

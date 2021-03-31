@@ -1205,3 +1205,8 @@ INSERT INTO mc_rbac_menu (id, parent_id, name, level, path, icon, status, link_t
 INSERT INTO mc_rbac_menu (id, parent_id, name, level, path, icon, status, link_type, is_page_menu, link_url, data_permission, operate_id, operate_name, created_at, updated_at, deleted_at) VALUES (217, 96, '通讯录同步操作', 4, '#94#-#95#-#96#-#217#', '', 1, 1, 1, '/workEmployee/synEmployee#put', 2, 0, '系统', '2020-12-31 19:22:14', '2020-12-31 19:22:14', null);
 INSERT INTO mc_rbac_menu (id, parent_id, name, level, path, icon, status, link_type, is_page_menu, link_url, data_permission, operate_id, operate_name, sort, created_at, updated_at, deleted_at) VALUES (218, 1, '系统首页', 2, '#1#-#218#', 'home', 1, 1, 1, 'path/1610968617', 1, 1, '系统', 98, '2020-12-31 19:22:04', '2020-12-31 19:22:05', null);
 INSERT INTO mc_rbac_menu (id, parent_id, name, level, path, icon, status, link_type, is_page_menu, link_url, data_permission, operate_id, operate_name, sort, created_at, updated_at, deleted_at) VALUES (219, 218, '系统首页', 3, '#1#-#218#-#219#', '', 1, 1, 1, '/corpData/index', 2, 1, '系统', 98, '2020-12-31 19:22:04', '2020-12-31 19:22:05', null);
+#租户表
+insert into `mc_tenant` (`id`, `name`, `status`, `logo`, `login_background`, `url`, `created_at`, `updated_at`, `deleted_at`, `copyright`, `server_ips`) values('1','','1','','','','2020-11-04 17:12:26','2020-11-05 18:14:23',NULL,'','[]');
+#超级管理员
+insert into `mc_user` (`id`, `phone`, `password`, `name`, `gender`, `department`, `position`, `login_time`, `status`, `tenant_id`, `created_at`, `updated_at`, `deleted_at`, `isSuperAdmin`) values('1','18888888888','$2y$10$KAyFrpuELdoLeObnl/cZ5.OUjiKb96zCA/Sr8sbTFohPp5Aa.xQ32','刘小二','1','','','2021-03-31 17:33:16','1','1','2020-11-04 17:00:28','2021-03-23 14:18:23',NULL,'1');
+

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @time: 2020/12/16 8:34
  */
 @RestController
-@RequestMapping("gateway/mc/workContactRoom")
+@RequestMapping("/workContactRoom")
 public class WorkContactRoomController {
 
     @Autowired

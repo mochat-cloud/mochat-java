@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @Validated
-@RequestMapping("gateway/mc/workRoom")
+@RequestMapping("/workRoom")
 public class WorkRoomController {
 
     @Autowired

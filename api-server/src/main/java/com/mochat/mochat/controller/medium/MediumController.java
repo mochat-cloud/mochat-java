@@ -34,7 +34,7 @@ import java.util.Map;
  * @time: 2020/12/4 18:41
  */
 @RestController
-@RequestMapping("/gateway/mc/medium")
+@RequestMapping("/medium")
 @Validated
 public class MediumController {
 

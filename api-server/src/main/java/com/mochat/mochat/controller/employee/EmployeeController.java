@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * @description 企业成员
  */
 @RestController
-@RequestMapping(path = "/gateway/mc/workEmployee")
+@RequestMapping(path = "/workEmployee")
 public class EmployeeController {
 
     @Autowired

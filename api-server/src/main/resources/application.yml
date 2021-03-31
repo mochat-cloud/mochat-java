@@ -39,11 +39,14 @@ mybatis-plus:
       logic-delete-value: now()
       logic-not-delete-value: 'null'
 
+#客服url可以不填写
 mochat:
   serviceUrl: http://xxx.com
 
 chat-tools:
+  #API地址
   apiUrl: http://xxx.com
+  #web后台地址
   webUrl: http://xxx.com
 
 
