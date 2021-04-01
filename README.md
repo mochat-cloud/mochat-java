@@ -107,6 +107,8 @@ cd /data/www/mochat-java/api-server
 
 - Nginx 配置：具体参考开发文档
 
+- 初始管理员账号为1888888888 密码123456
+
 ##### 前端运行
 
 ```bash
