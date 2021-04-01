@@ -1,5 +1,6 @@
 package com.mochat.mochat.service.impl.greeting;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -14,8 +15,12 @@ import com.mochat.mochat.common.em.permission.ReqPerEnum;
 import com.mochat.mochat.common.model.PageModel;
 import com.mochat.mochat.common.model.RequestPage;
 import com.mochat.mochat.common.util.DateUtils;
+import com.mochat.mochat.common.util.FileUtils;
+import com.mochat.mochat.common.util.WxApiUtils;
+import com.mochat.mochat.common.util.ali.AliyunOssUtils;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.dao.entity.BusinessLogEntity;
+import com.mochat.mochat.dao.entity.WorkContactEntity;
 import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
 import com.mochat.mochat.dao.entity.greeting.GreetingEntity;
 import com.mochat.mochat.dao.entity.medium.MediumEnyity;
@@ -32,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,6 +71,135 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
     public Map<String,Object> handle(RequestPage page, ReqPerEnum permission) {
         //处理请求参数
         return handleParams(page, permission);
+    }
+
+    @Override
+    public Map<String,Object> getGreeting(String userId) {
+        //查询客户跟进人信息[企业通讯录]
+        WorkEmployeeEntity workEmployeeEntity = workEmployeeServiceImpl.getWorkEmployeeByWxUserId(userId, "id,corp_id");
+        //查询员工欢迎语
+        List<GreetingEntity> greetingEntityList = getGreetingsByCorpId(workEmployeeEntity.getCorpId(), "id,medium_id,words,range_type,employees");
+        String employees = null;
+        int count = 0;
+        Map<String,Object> commonMap = new HashMap();;
+        Map<String,Object> contentMap = new HashMap();
+        Map<String,Object> contentMapOuter =new HashMap();
+        String[] empArr = null;
+        for (GreetingEntity greetingEntity:
+                greetingEntityList) {
+            //检索通用欢迎语
+            if(greetingEntity.getRangeType().equals(RangeTypeEnum.ALL.getCode())){
+                commonMap.put("text",greetingEntity.getWords());
+                commonMap.put("mediumId",greetingEntity.getMediumId());
+            }
+            //检索指定成员欢迎语
+            if(JSONObject.parseArray(greetingEntity.getEmployees()).size() > 0){
+                JSONArray jsonArray = JSONObject.parseArray(greetingEntity.getEmployees());
+                if(jsonArray.size() != 0){
+                    for (Object json:
+                            jsonArray) {
+                        employees = json.toString() + ",";
+                    }
+                }
+                employees = employees.substring(0,employees.length() - 1);
+                empArr = employees.split(",");
+            }
+            if(employees != null){
+                count  = employees.indexOf(workEmployeeEntity.getId());
+            }
+            if(empArr == null || count != -1){
+                continue;
+            }
+            contentMap.put("text",greetingEntity.getWords());
+            contentMap.put("mediumId",greetingEntity.getMediumId());
+            contentMapOuter.put("content",contentMap);
+        }
+        if (contentMapOuter.size()  == 0 && commonMap.size() > 0) {
+            contentMapOuter = (Map<String, Object>) contentMapOuter.put("content",commonMap);;
+        }
+        if(!((Map<String, Object>) contentMapOuter.get("content")).get("mediumId").equals("")){
+            Map<String,Map<String, Object>> mediumMap = getMediumData((Integer)((Map<String, Object>)contentMapOuter.get("content")).get("mediumId"));
+            contentMapOuter.put("content",mediumMap);
+        }
+        return contentMapOuter;
+    }
+
+
+    /**
+     *
+     *
+     * @description: 发送欢迎语
+     * @author: Huayu
+     * @time: 2021/3/30 18:36
+     */
+    @Override
+    public void applyWxSendContactMessage(String wxCorpId, String welcomeCode, Map<String, JSONObject> contactInfo, Map<String, Object> content) {
+        Map<String,Object> sendWelcomeDataMap = new HashMap();
+        //微信消息体 - 文本
+        if(content.get("text") != null){
+            String contentStr = content.get("text").toString();
+            String name = null;
+            for (Map.Entry<String, JSONObject> mapEntry : contactInfo.entrySet()) {
+                JSONObject json = mapEntry.getValue();
+                if (json.getInteger("errcode") == 0) {
+                    JSONObject contactJson = json.getJSONObject("external_contact");
+                    name = contactJson.getString("name");
+                }
+            }
+            contentStr = contentStr.replace("##客户名称##",name);
+            sendWelcomeDataMap.put("text",new HashMap<String,Object>().put("content",contentStr));
+        }
+        //微信消息体 - 媒体文件
+        if(content.get("medium") != null){
+            Integer type = (Integer)(((Map<String,Object>)content.get("medium")).get("mediumType"));
+            switch (type){
+                case  2:
+                    String jsonStr = (String)((Map<String, Object>) content.get("medium")).get("mediumContent");
+                    String imagePath = JSON.parseObject(jsonStr).getString("imagePath");
+                    File imageFile = AliyunOssUtils.getFile(imagePath);
+                    String mediaId = WxApiUtils.uploadImageToTemp(AccountService.getCorpId(), imageFile);
+                    sendWelcomeDataMap.put("image",new HashMap<String,Object>().put("media_id",mediaId));
+                    break;
+                case 3:
+                    Map<String,Object> linkMap = new HashMap();
+                    JSONObject jsonObject = (JSONObject)((Map<String, Object>) content.get("medium")).get("mediumContent");
+                    linkMap.put("title",jsonObject.get("title"));
+                    linkMap.put("picurl",mediumServiceImpl.addFullPath((String) jsonObject.get("imagePath"),3));
+                    linkMap.put("desc",jsonObject.get("title"));
+                    linkMap.put("url",jsonObject.get("imageLink"));
+                    sendWelcomeDataMap.put("link",linkMap);
+                    break;
+                case 6:
+                    Map<String,Object> miniMap = new HashMap();
+                    JSONObject jsonMiniObject = (JSONObject)((Map<String, Object>) content.get("medium")).get("mediumContent");
+                    String imagePathMini = jsonMiniObject.getString("imagePath");
+                    File imageFileMini = AliyunOssUtils.getFile(imagePathMini);
+                    String mediaIdMini = WxApiUtils.uploadImageToTemp(AccountService.getCorpId(), imageFileMini);
+                    miniMap.put("title",jsonMiniObject.getString("title"));
+                    miniMap.put("pic_media_id",mediaIdMini);
+                    miniMap.put("appid",jsonMiniObject.getString("appid"));
+                    miniMap.put("page",jsonMiniObject.getString("page"));
+                    sendWelcomeDataMap.put("miniprogram",miniMap);
+            }
+        }
+        //发送欢迎语
+        String respStr = WxApiUtils.sendWelcomeCode(AccountService.getCorpId(),sendWelcomeDataMap);
+        if(respStr == null){
+            System.out.println("请求微信上推送新增客户信息失败>>>>>>>");
+        }
+    }
+
+    private Map<String,Map<String,Object>> getMediumData(Integer mediumId) {
+        Map<String,Object> map = null;
+        Map<String,Map<String,Object>> mapData = new HashMap();
+        MediumEnyity mediumEntity= mediumServiceImpl.getMediumById(mediumId);
+        if(mediumEntity != null){
+            map = new HashMap();
+            map.put("mediumType",mediumEntity.getType());
+            map.put("mediumContent", mediumEntity.getContent());
+        }
+        mapData.put("medium",map);
+        return mapData;
     }
 
     /**

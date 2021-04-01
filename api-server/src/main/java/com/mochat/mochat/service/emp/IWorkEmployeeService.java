@@ -62,4 +62,7 @@ public interface IWorkEmployeeService extends IService<WorkEmployeeEntity> {
     List<String> getWxEmpIdListByEmpIdList(List<Integer> empIdList);
 
     WorkEmployeeEntity getWorkEmployeeInfoByLogId(Integer userId);
+
+    WorkEmployeeEntity getWorkEmployeeByWxUserId(String userId, String s);
+
 }

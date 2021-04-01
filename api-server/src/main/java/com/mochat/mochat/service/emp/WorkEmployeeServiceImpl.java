@@ -609,6 +609,23 @@ public class WorkEmployeeServiceImpl extends ServiceImpl<WorkEmployeeMapper, Wor
     }
 
 
+
+    /**
+     *
+     *
+     * @description:根据wxuserid查找
+     * @author: Huayu
+     * @time: 2021/3/30 22:51
+     */
+    @Override
+    public WorkEmployeeEntity getWorkEmployeeByWxUserId(String userId, String s) {
+        QueryWrapper<WorkEmployeeEntity> workEmployeeEntityQueryWrapper = new QueryWrapper();
+        workEmployeeEntityQueryWrapper.select(s);
+        workEmployeeEntityQueryWrapper.eq("wx_user_id",userId);
+        return this.baseMapper.selectOne(workEmployeeEntityQueryWrapper);
+    }
+
+
     /**
      * @description 获取用户通讯录详情
      * @author zhaojinjian

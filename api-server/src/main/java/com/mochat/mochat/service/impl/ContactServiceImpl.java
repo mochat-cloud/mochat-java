@@ -1075,6 +1075,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
     @Override
     public void addExternalContact(String wxCorpId, String externalUserid, String userId, String welcomeCode, String state) {
         WorkEmployeeEntity employeeEntity = workEmployeeService.getWorkEmployeeInfo(userId);
+        Map<String,Object> contentMap = null;
         if (employeeEntity != null) {
             Integer empId = employeeEntity.getId();
 
@@ -1084,7 +1085,6 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
             Map<String, JSONObject> contactInfo = externalContactService.getExternalContactMap(contactUserid, employeeEntity.getCorpId());
             Map<WorkContactEntity, Map<String, Map<WorkContactEmployeeEntity, Map<String, WorkContactTagPivotEntity>>>> modelMap = externalContactToWorkContact(contactInfo, employeeEntity.getCorpId(), userId);
             List<WorkContactEntity> contactList = modelMap.keySet().stream().collect(Collectors.toList());
-
             boolean result = insertAllContact(contactList, employeeEntity.getCorpId());
             List<WorkContactTagPivotEntity> roomTags = new ArrayList<>();
             //获取客户Tag集合
@@ -1126,15 +1126,21 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
                             break;
                         }
                     }
-                    sendWelcomeMsgService.send(employeeEntity.getCorpId(), welcomeCode, roomAutoPullDetail.getLeadingWords(), roomQrcodeMediaId);
+                    //sendWelcomeMsgService.send(employeeEntity.getCorpId(), welcomeCode, roomAutoPullDetail.getLeadingWords(), roomQrcodeMediaId);
                 }
             }
             if (state != null && state.contains("channelCode")) {
                 // 获取渠道码 id
                 Integer channelCodeId = Integer.parseInt(state.split("-")[1]);
                 Map<String, String> map = channelCodeService.getWelcomeMsgMap(channelCodeId);
-                sendWelcomeMsgService.send(employeeEntity.getCorpId(), welcomeCode, map);
+                //sendWelcomeMsgService.send(employeeEntity.getCorpId(), welcomeCode, map);
             }
+            //发送欢迎语
+            if(state == null || state.equals("")){
+                //sendWelcomeMsgService.send(employeeEntity.getCorpId(), welcomeCode, map);
+                contentMap = greetingServiceImpl.getGreeting(userId);
+            }
+            greetingServiceImpl.applyWxSendContactMessage(wxCorpId,welcomeCode,contactInfo,(Map<String,Object>)contentMap.get("content"));
             if (result) {
                 List<WorkContactEmployeeEntity> contactEmployeeList = new ArrayList<>();
                 List<WorkContactTagPivotEntity> contactTagPivotList = new ArrayList<>();
@@ -1168,10 +1174,10 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
                             }
                         }
                     }
-                    result = contactTagPivotService.insertAllTagPivot(roomTags);
+                    //                 result = contactTagPivotService.insertAllTagPivot(roomTags);
                 }
                 if (contactEmployeeList != null && contactEmployeeList.size() > 0) {
-                    result = workContactEmployeeService.insertAllContactEmployee(contactEmployeeList);
+                    //                 result = workContactEmployeeService.insertAllContactEmployee(contactEmployeeList);
                 }
 
                 // 添加互动轨迹

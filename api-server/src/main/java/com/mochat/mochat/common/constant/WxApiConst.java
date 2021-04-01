@@ -168,6 +168,17 @@ public interface WxApiConst {
      */
     String API_GET_EXTERNAL_LIST = API_BASE + "/externalcontact/list";
 
+
+    /**
+     * 微信 发送欢迎语
+     * <p>
+     * POST https://qyapi.weixin.qq.com/cgi-bin/externalcontact/send_welcome_msg?access_token=ACCESS_TOKEN
+     * <p>
+     * access_token: 调用接口凭证
+     */
+    String API_ADD_WELCOME_MSG = API_BASE + "externalcontact/send_welcome_msg";
+
+
     /**
      * 微信 获取客户详情
      * <p>

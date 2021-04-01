@@ -622,6 +622,26 @@ public class WxApiUtils {
     }
 
     /**
+     *
+     *
+     * @description: 发送欢迎语
+     * @author: Huayu
+     * @time: 2021/3/29 17:23
+     */
+    public static  String sendWelcomeCode(Integer corpId,Map<String, Object> map){
+        String reqUrl = API_ADD_WELCOME_MSG + "?access_token=" + getAccessTokenEmployee(corpId);
+        JSONObject reqJson = new JSONObject(map);
+        String paramJson = reqJson.toJSONString();
+        String respJson = doPostResult(reqUrl, null, paramJson);
+        if (CONST_ACCESS_TOKEN_INVALID.equals(respJson)) {
+            reqUrl = API_GET_WORKROOM_INFO + "?access_token=" + getNewAccessTokenEmployee(corpId);
+            respJson = doPostResult(reqUrl, null, paramJson);
+        }
+        return respJson;
+
+    }
+
+    /**
      * @author: yangpengwei
      * @time: 2021/3/23 4:44 下午
      * @description 获取指定的应用详情
