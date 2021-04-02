@@ -98,11 +98,9 @@ public class AliyunOssUtils {
     }
 
     public static File getFile(String key) {
-        int index = key.lastIndexOf(".");
-        String suffix = key.substring(index);
         File file = null;
         try {
-            file = File.createTempFile(FileUtils.getRandomString(), suffix);
+            file = File.createTempFile("temp", System.currentTimeMillis()+"");
             OSS client = AliyunComponent.getClient();
             // 下载OSS文件到本地文件。如果指定的本地文件存在会覆盖，不存在则新建。
             client.getObject(new GetObjectRequest(ossProperties.getBucketName(), key), file);
