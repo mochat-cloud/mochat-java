@@ -1183,6 +1183,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
                 // 添加互动轨迹
 
             }
+
         } else {
             //TODO  根据微信成员userid，没有在本地库找到对应的员工信息；
         }
