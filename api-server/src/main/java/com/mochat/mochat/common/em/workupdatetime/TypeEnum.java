@@ -23,6 +23,8 @@ public enum TypeEnum {
 
     CHAT(5,"会放内容存档");
 
+    CORP_DATA(6,"企业数据");
+
     private int code;
     private String msg;
 

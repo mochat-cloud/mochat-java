@@ -1,6 +1,7 @@
 package com.mochat.mochat.service;
 
 import com.mochat.mochat.common.em.workupdatetime.TypeEnum;
+import com.mochat.mochat.dao.entity.WorkUpdateTimeEntity;
 
 public interface IWorkUpdateTimeService {
 
@@ -18,4 +19,10 @@ public interface IWorkUpdateTimeService {
      * @return
      */
     String getLastUpdateTime(TypeEnum typeEnum);
+
+    WorkUpdateTimeEntity getWorkUpdateTimeByCorpIdType(Integer corpId, int code);
+
+    Integer updateWorkUpdateTimeById(Integer id, WorkUpdateTimeEntity workUpdateTimeEntity);
+
+    Integer createWorkUpdateTime(WorkUpdateTimeEntity workUpdateTimeEntity1);
 }

@@ -1,6 +1,7 @@
 package com.mochat.mochat.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.mochat.mochat.common.em.workupdatetime.TypeEnum;
 import com.mochat.mochat.common.util.DateUtils;
 import com.mochat.mochat.dao.entity.WorkUpdateTimeEntity;
@@ -66,5 +67,27 @@ public class WorkUpdateTimeServiceImp implements IWorkUpdateTimeService {
             return "";
         }
         return DateUtils.formatS1(entity.getLastUpdateTime().getTime());
+    }
+
+
+    @Override
+    public WorkUpdateTimeEntity getWorkUpdateTimeByCorpIdType(Integer corpId, int code) {
+        QueryWrapper<WorkUpdateTimeEntity> workUpdateTimeEntityQueryWrapper = new QueryWrapper();
+        workUpdateTimeEntityQueryWrapper.getSqlSelect();
+        workUpdateTimeEntityQueryWrapper.eq("corp_id",corpId);
+        workUpdateTimeEntityQueryWrapper.eq("type",code);
+        return workUpdateTimeMapper.selectOne(workUpdateTimeEntityQueryWrapper);
+    }
+
+    @Override
+    public Integer updateWorkUpdateTimeById(Integer id, WorkUpdateTimeEntity workUpdateTimeEntity) {
+        UpdateWrapper<WorkUpdateTimeEntity> updateTimeEntityUpdateWrapper = new UpdateWrapper();
+        updateTimeEntityUpdateWrapper.eq("id",id);
+        return workUpdateTimeMapper.update(workUpdateTimeEntity,updateTimeEntityUpdateWrapper);
+    }
+
+    @Override
+    public Integer createWorkUpdateTime(WorkUpdateTimeEntity workUpdateTimeEntity1) {
+        return workUpdateTimeMapper.insert(workUpdateTimeEntity1);
     }
 }

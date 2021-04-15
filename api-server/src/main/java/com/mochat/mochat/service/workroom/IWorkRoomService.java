@@ -13,6 +13,7 @@ import com.mochat.mochat.model.workroom.WorkContactRoomIndexResp;
 import com.mochat.mochat.model.workroom.WorkRoomIndexModel;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -51,4 +52,9 @@ public interface IWorkRoomService extends IService<WorkRoomEntity> {
 
     @Override
     WorkRoomMapper getBaseMapper();
+
+
+    List<WorkRoomEntity> countWorkRoomByCorpIds(Integer corpId);
+
+    List<WorkRoomEntity> countAddWorkRoomsByCorpIdTime(Integer corpId, Date startTime, Date endTime);
 }

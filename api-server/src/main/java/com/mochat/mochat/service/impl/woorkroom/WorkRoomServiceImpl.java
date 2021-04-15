@@ -809,6 +809,26 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
         workRoomWrapper.in("wx_room_id",wxRoomIdStr);
         return this.baseMapper.selectList(workRoomWrapper);
     }
+
+    @Override
+    public List<WorkRoomEntity> countWorkRoomByCorpIds(Integer corpId) {
+        QueryWrapper<WorkRoomEntity> workRoomWrapper = new QueryWrapper<>();
+        workRoomWrapper.getSqlSelect();
+        workRoomWrapper.eq("corp_id",corpId);
+        return this.baseMapper.selectList(workRoomWrapper);
+
+    }
+
+    @Override
+    public List<WorkRoomEntity> countAddWorkRoomsByCorpIdTime(Integer corpId, Date startTime, Date endTime) {
+        QueryWrapper<WorkRoomEntity> workRoomWrapper = new QueryWrapper<>();
+        workRoomWrapper.getSqlSelect();
+        workRoomWrapper.eq("corp_id",corpId);
+        workRoomWrapper.ge("create_time",startTime);
+        workRoomWrapper.lt("create_time",endTime);
+        return this.baseMapper.selectList(workRoomWrapper);
+    }
+
 }
 
 

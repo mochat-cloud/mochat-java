@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,6 +132,31 @@ public class WorkContactRoomServiceImpl extends ServiceImpl<WorkContactRoomMappe
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("room_id", id);
         return this.workContactRoomMapper.getWorkContactRoomsByRoomId(map);
+    }
+
+    @Override
+    public List<WorkContactRoomEntity> countWorkEmployeesByRoomIds(String roomIds) {
+        QueryWrapper<WorkContactRoomEntity> workContactRoomQueryWrapper = new QueryWrapper<WorkContactRoomEntity>();
+        workContactRoomQueryWrapper.in("room_id", roomIds);
+        return this.baseMapper.selectList(workContactRoomQueryWrapper);
+    }
+
+    @Override
+    public List<WorkContactRoomEntity> countAddWorkContactRoomsByRoomIdTime(String roomIds, Date startTime, Date endTime) {
+        QueryWrapper<WorkContactRoomEntity> workContactRoomQueryWrapper = new QueryWrapper<WorkContactRoomEntity>();
+        workContactRoomQueryWrapper.in("room_id", roomIds);
+        workContactRoomQueryWrapper.ge("join_time", startTime);
+        workContactRoomQueryWrapper.lt("join_time", endTime);
+        return this.baseMapper.selectList(workContactRoomQueryWrapper);
+    }
+
+    @Override
+    public List<WorkContactRoomEntity> countQuitWorkContactRoomsByRoomIdTime(String roomIds, Date startTime, Date endTime) {
+        QueryWrapper<WorkContactRoomEntity> workContactRoomQueryWrapper = new QueryWrapper<WorkContactRoomEntity>();
+        workContactRoomQueryWrapper.in("room_id", roomIds);
+        workContactRoomQueryWrapper.ge("out_time", startTime);
+        workContactRoomQueryWrapper.lt("out_time", endTime);
+        return this.baseMapper.selectList(workContactRoomQueryWrapper);
     }
 
 }

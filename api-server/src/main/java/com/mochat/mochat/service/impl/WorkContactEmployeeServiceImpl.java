@@ -531,6 +531,33 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
         return voResult;
     }
 
+    @Override
+    public List<WorkContactEmployeeEntity> countWorkContactEmployeesByCorpId(Integer corpId, int code) {
+        QueryWrapper<WorkContactEmployeeEntity> workContactEmployeeEntityQueryWrapper = new QueryWrapper();
+        workContactEmployeeEntityQueryWrapper.eq("corp_id",corpId);
+        workContactEmployeeEntityQueryWrapper.eq("status",code);
+        return this.baseMapper.selectList(workContactEmployeeEntityQueryWrapper);
+    }
+
+    @Override
+    public List<WorkContactEmployeeEntity> countWorkContactEmployeesByCorpIdTime(Integer corpId, Date startTime, Date endTime) {
+        QueryWrapper<WorkContactEmployeeEntity> workContactEmployeeEntityQueryWrapper = new QueryWrapper();
+        workContactEmployeeEntityQueryWrapper.eq("corp_id",corpId);
+        workContactEmployeeEntityQueryWrapper.ge("create_time",startTime);
+        workContactEmployeeEntityQueryWrapper.lt("create_time",endTime);
+        return this.baseMapper.selectList(workContactEmployeeEntityQueryWrapper);
+
+    }
+
+    @Override
+    public List<WorkContactEmployeeEntity> countLossWorkContactEmployeesByCorpIdTime(Integer corpId, Date startTime, Date endTime) {
+        QueryWrapper<WorkContactEmployeeEntity> workContactEmployeeEntityQueryWrapper = new QueryWrapper();
+        workContactEmployeeEntityQueryWrapper.eq("corp_id",corpId);
+        workContactEmployeeEntityQueryWrapper.ge("create_time",startTime);
+        workContactEmployeeEntityQueryWrapper.lt("create_time",endTime);
+        return this.baseMapper.selectList(workContactEmployeeEntityQueryWrapper);
+    }
+
     private void setCurrentStatistics(RespChannelCodeStatisticsVO voResult, ReqChannelCodeStatisticsDTO req) {
         QueryWrapper<WorkContactEmployeeEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("corp_id", AccountService.getCorpId());

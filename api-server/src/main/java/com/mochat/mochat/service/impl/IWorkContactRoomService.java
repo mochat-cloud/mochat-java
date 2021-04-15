@@ -6,6 +6,7 @@ import com.mochat.mochat.dao.mapper.WorkContactRoomMapper;
 import com.mochat.mochat.model.transfer.GetContactRoom;
 import com.mochat.mochat.model.workroom.WorkContactRoomIndexReq;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,4 +31,10 @@ public interface IWorkContactRoomService extends IService<WorkContactRoomEntity>
 
     @Override
     WorkContactRoomMapper getBaseMapper();
+
+    List<WorkContactRoomEntity> countWorkEmployeesByRoomIds(String roomIds);
+
+    List<WorkContactRoomEntity> countAddWorkContactRoomsByRoomIdTime(String roomIds, Date startTime, Date endTime);
+
+    List<WorkContactRoomEntity> countQuitWorkContactRoomsByRoomIdTime(String roomIds, Date startTime, Date endTime);
 }

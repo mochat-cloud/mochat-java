@@ -9,6 +9,7 @@ import com.mochat.mochat.model.channel.RespChannelCodeStatisticsItemVO;
 import com.mochat.mochat.model.channel.RespChannelCodeStatisticsVO;
 import com.mochat.mochat.model.workcontact.LossContact;
 
+import java.util.Date;
 import java.util.List;
 
 public interface IWorkContactEmployeeService extends IService<WorkContactEmployeeEntity> {
@@ -34,4 +35,10 @@ public interface IWorkContactEmployeeService extends IService<WorkContactEmploye
      * @description 渠道码 - 统计折线图
      */
     RespChannelCodeStatisticsVO getStatistics(ReqChannelCodeStatisticsDTO req);
+
+    List<WorkContactEmployeeEntity> countWorkContactEmployeesByCorpId(Integer corpId, int code);
+
+    List<WorkContactEmployeeEntity> countWorkContactEmployeesByCorpIdTime(Integer corpId, Date startTime, Date endTime);
+
+    List<WorkContactEmployeeEntity> countLossWorkContactEmployeesByCorpIdTime(Integer corpId, Date startTime, Date endTime);
 }
