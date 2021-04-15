@@ -625,6 +625,13 @@ public class WorkEmployeeServiceImpl extends ServiceImpl<WorkEmployeeMapper, Wor
         return this.baseMapper.selectOne(workEmployeeEntityQueryWrapper);
     }
 
+    @Override
+    public List<WorkEmployeeEntity> countWorkEmployeesByCorpId(Integer corpId) {
+        QueryWrapper<WorkEmployeeEntity> workEmployeeEntityQueryWrapper = new QueryWrapper();
+        workEmployeeEntityQueryWrapper.eq("corp_id",corpId);
+        return this.baseMapper.selectList(workEmployeeEntityQueryWrapper);
+    }
+
 
     /**
      * @description 获取用户通讯录详情

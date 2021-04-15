@@ -6,6 +6,7 @@ import com.mochat.mochat.common.model.RequestPage;
 import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
+import com.mochat.mochat.dao.entity.CorpDataEntity;
 import com.mochat.mochat.dao.entity.CorpEntity;
 import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
 import com.mochat.mochat.dao.entity.wm.WorkMsgConfigEntity;
@@ -242,118 +243,35 @@ public class CorpController {
     }
 
 
-    @GetMapping(value = "/corpData/lineChat")
-    public ApiRespVO lineChat(){
-        Map<String,Object> map = null;
-        List<Map<String,Object>> mapList = new ArrayList();
-        Integer id = 20;
-        Integer addContactNum = 1;
-        Integer addIntoRoomNum = 0;
-        Integer lossContactNum = 1;
-        Integer quitRoomNum = 0;
-        String[] date1 = {"2021-02-23 00:00:00","2021-02-24 00:00:00","2021-02-25 00:00:00","2021-02-26 00:00:00","2021-02-27 00:00:00"};
-        String[] date2 = {"2021-02-28 00:00:00","2021-03-01 00:00:00","2021-03-02 00:00:00","2021-03-03 00:00:00","2021-03-04 00:00:00"};
-        String[] date3 = {"2021-03-05 00:00:00","2021-03-06 00:00:00","2021-03-07 00:00:00","2021-03-08 00:00:00","2021-03-09 00:00:00"};
-        String[] date4 = {"2021-03-10 00:00:00","2021-03-12 00:00:00","2021-03-13 00:00:00","2021-03-14 00:00:00","2021-03-15 00:00:00"};
-        String[] date5 = {"2021-03-16 00:00:00","2021-03-17 00:00:00","2021-03-18 00:00:00","2021-03-19 00:00:00","2021-03-20 00:00:00"};
-        String[] date6 = {"2021-03-21 00:00:00","2021-03-22 00:00:00","2021-03-23 00:00:00","2021-03-24 00:00:00"};
-        for (int i = 0; i < 5; i++) {
-            map = new HashMap();
-            map.put("id",id);
-            map.put("addContactNum",addContactNum);
-            map.put("addIntoRoomNum",addIntoRoomNum);
-            map.put("lossContactNum",lossContactNum);
-            map.put("quitRoomNum",quitRoomNum);
-            map.put("date",date1[i]);
-            mapList.add(map);
-            id++;
+    /**
+     *企业首页数据统计
+     * @description:
+     * @return:
+     * @author: Huayu
+     */
+    @GetMapping(value = "/corpData/index")
+    public ApiRespVO index() throws Exception{
+        if(AccountService.getCorpId() == null){
+            throw new CommonException("请先选择企业");
         }
-        for (int i = 0; i < 5; i++) {
-            map = new HashMap();
-            map.put("id",id);
-            map.put("addContactNum",addContactNum);
-            map.put("addIntoRoomNum",addIntoRoomNum);
-            map.put("lossContactNum",lossContactNum);
-            map.put("quitRoomNum",quitRoomNum);
-            map.put("date",date2[i]);
-            mapList.add(map);
-            id++;
-        }
-        for (int i = 0; i < 5; i++) {
-            map = new HashMap();
-            map.put("id",id);
-            map.put("addContactNum",addContactNum);
-            map.put("addIntoRoomNum",addIntoRoomNum);
-            map.put("lossContactNum",lossContactNum);
-            map.put("quitRoomNum",quitRoomNum);
-            map.put("date",date3[i]);
-            mapList.add(map);
-            id++;
-        }
-        for (int i = 0; i < 5; i++) {
-            map = new HashMap();
-            map.put("id",id);
-            map.put("addContactNum",addContactNum);
-            map.put("addIntoRoomNum",addIntoRoomNum);
-            map.put("lossContactNum",lossContactNum);
-            map.put("quitRoomNum",quitRoomNum);
-            map.put("date",date4[i]);
-            mapList.add(map);
-            id++;
-        }
-        for (int i = 0; i < 5; i++) {
-            map = new HashMap();
-            map.put("id",id);
-            map.put("addContactNum",addContactNum);
-            map.put("addIntoRoomNum",addIntoRoomNum);
-            map.put("lossContactNum",lossContactNum);
-            map.put("quitRoomNum",quitRoomNum);
-            map.put("date",date5[i]);
-            mapList.add(map);
-            id++;
-        }
-
-        for (int i = 0; i < 4; i++) {
-            map = new HashMap();
-            map.put("id",id);
-            map.put("addContactNum",addContactNum);
-            map.put("addIntoRoomNum",addIntoRoomNum);
-            map.put("lossContactNum",lossContactNum);
-            map.put("quitRoomNum",quitRoomNum);
-            map.put("date",date6[i]);
-            mapList.add(map);
-            id++;
-        }
-        return ApiRespUtils.getApiRespOfOk(mapList);
+        Map<String,Object> map = corpServiceImpl.handleCorpDta();
+        return ApiRespUtils.getApiRespOfOk(map);
     }
 
 
-
-    @GetMapping(value = "/corpData/index")
-    public ApiRespVO index(){
-        Map<String,Object> map = new HashMap();
-        map.put("weChatContactNum",38);
-        map.put("weChatRoomNum",1);
-        map.put("roomMemberNum",5);
-        map.put("corpMemberNum",7);
-        map.put("addContactNum",0);
-        map.put("lastAddContactNum",0);
-        map.put("addIntoRoomNum",0);
-        map.put("lastAddIntoRoomNum",0);
-        map.put("lossContactNum",0);
-        map.put("lastLossContactNum",0);
-        map.put("quitRoomNum",0);
-        map.put("lastQuitRoomNum",0);
-        map.put("addFriendsNum",4);
-        map.put("lastAddFriendsNum",9);
-        map.put("monthAddRoomNum",0);
-        map.put("lastMonthAddRoomNum",0);
-        map.put("monthAddRoomMemberNum",0);
-        map.put("lastMonthAddRoomMemberNum",0);
-        map.put("monthLossContactNum",3);
-        map.put("lastMonthLossContactNum",4);
-        map.put("updateTime","2021-03-26 06:50:00");
-        return ApiRespUtils.getApiRespOfOk(map);
+    /**
+     *首页数据统计折线图
+     * @description:
+     * @return:
+     * @author: Huayu
+     */
+    @GetMapping(value = "/corpData/lineChat")
+    public ApiRespVO lineChat(){
+        if(AccountService.getCorpId() == null){
+            throw new CommonException("请先选择企业");
+        }
+        List<CorpDataEntity> corpDataEntityList = corpServiceImpl.handleLineChatDta();
+        return ApiRespUtils.getApiRespOfOk(corpDataEntityList);
     }
 
     public static String getRandomString(int length) {
