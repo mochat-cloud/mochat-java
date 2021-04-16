@@ -21,7 +21,7 @@ public enum TypeEnum {
      */
     DEPARTMENT(4,"部门"),
 
-    CHAT(5,"会放内容存档");
+    CHAT(5,"会放内容存档"),
 
     CORP_DATA(6,"企业数据");
 
