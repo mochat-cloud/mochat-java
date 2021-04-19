@@ -10,8 +10,7 @@ import com.mochat.mochat.dao.entity.*;
 import com.mochat.mochat.dao.mapper.ContactMapper;
 import com.mochat.mochat.dao.mapper.CorpDataMapper;
 import com.mochat.mochat.service.impl.ICorpService;
-import com.mochat.mochat.service.im
-pl.IWorkContactEmployeeService;
+import com.mochat.mochat.service.impl.IWorkContactEmployeeService;
 import com.mochat.mochat.service.impl.IWorkContactRoomService;
 import com.mochat.mochat.service.workroom.IWorkRoomGroupService;
 import com.mochat.mochat.service.workroom.IWorkRoomService;
