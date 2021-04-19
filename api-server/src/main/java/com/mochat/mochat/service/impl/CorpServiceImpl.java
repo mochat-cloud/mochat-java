@@ -15,6 +15,7 @@ import com.mochat.mochat.dao.entity.wm.WorkMsgConfigEntity;
 import com.mochat.mochat.dao.mapper.corp.CorpMapper;
 import com.mochat.mochat.model.corp.CorpPageItemVO;
 import com.mochat.mochat.service.AccountService;
+import com.mochat.mochat.dao.entity.CorpDataEntity;
 import com.mochat.mochat.service.ICorpDataService;
 import com.mochat.mochat.service.IWorkUpdateTimeService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
