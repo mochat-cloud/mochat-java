@@ -57,7 +57,7 @@
     <update id="updateWorkContactRoomByIds" parameterType="com.mochat.mochat.dao.entity.WorkContactRoomEntity">
         update mc_work_contact_room
         <set>
-            <if test="outTime != null">out_time=#{outTime}</if>
+            <if test="outTime != null">out_time=#{outTime},</if>
             <if test="status != null">status=#{status}</if>
         </set>
         where id=#{id}
