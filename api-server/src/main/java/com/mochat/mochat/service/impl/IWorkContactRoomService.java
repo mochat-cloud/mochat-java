@@ -37,4 +37,6 @@ public interface IWorkContactRoomService extends IService<WorkContactRoomEntity>
     List<WorkContactRoomEntity> countAddWorkContactRoomsByRoomIdTime(String roomIds, Date startTime, Date endTime);
 
     List<WorkContactRoomEntity> countQuitWorkContactRoomsByRoomIdTime(String roomIds, Date startTime, Date endTime);
+
+    boolean createWorkContactRooms(List<WorkContactRoomEntity> workContactRoomEntityCreateList);
 }

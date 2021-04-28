@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -120,7 +121,9 @@ public class WorkContactRoomServiceImpl extends ServiceImpl<WorkContactRoomMappe
         for (String id : str) {
             WorkContactRoomEntity workContactRoomEntity = new WorkContactRoomEntity();
             workContactRoomEntity.setId(Integer.valueOf(id));
-            workContactRoomEntity.setOutTime(String.valueOf(time));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String sd = sdf.format(new Date(time)); // 时间戳转换日期
+            workContactRoomEntity.setOutTime(sd);
             workContactRoomEntity.setStatus(2);
             i = workContactRoomMapper.updateWorkContactRoomByIds(workContactRoomEntity);
         }
@@ -157,6 +160,11 @@ public class WorkContactRoomServiceImpl extends ServiceImpl<WorkContactRoomMappe
         workContactRoomQueryWrapper.ge("out_time", startTime);
         workContactRoomQueryWrapper.lt("out_time", endTime);
         return this.baseMapper.selectList(workContactRoomQueryWrapper);
+    }
+
+    @Override
+    public boolean createWorkContactRooms(List<WorkContactRoomEntity> workContactRoomEntityCreateList) {
+        return this.saveBatch(workContactRoomEntityCreateList);
     }
 
 }

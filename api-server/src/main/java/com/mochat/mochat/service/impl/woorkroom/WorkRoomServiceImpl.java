@@ -378,42 +378,43 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
                 workContactRoomModelMap.remove(WXWorkRoomModel.getChatId());
                 //群成员
                 List<WXWorkRoomInfoModel> WXWorkRoomInfoModelList = WXWorkRoomModel.getWXWorkRoomInfoModel();
-                for (WXWorkRoomInfoModel WXWorkRoomInfoModel :
+                for (WXWorkRoomInfoModel WXWorkRoomInfoModel1 :
                         WXWorkRoomInfoModelList) {
                     Integer contactId = 0;
                     Integer employeeId = 0;
-                    if (WXWorkRoomInfoModel.getType().equals(1)) {
-                        employeeId = employeeMap.get(WXWorkRoomInfoModel.getUserid()) != null ? (Integer) employeeMap.get(WXWorkRoomInfoModel.getUserid()) : 0;
+                    if (WXWorkRoomInfoModel1.getType().equals(1)) {
+                        employeeId = employeeMap.get(WXWorkRoomInfoModel1.getUserid()) != null ? (Integer) employeeMap.get(WXWorkRoomInfoModel1.getUserid()) : 0;
                     } else {
-                        contactId = contactMap.get(WXWorkRoomInfoModel.getUserid()) != null ? (Integer) contactMap.get(WXWorkRoomInfoModel.getUserid()) : 0;
+                        contactId = contactMap.get(WXWorkRoomInfoModel1.getUserid()) != null ? (Integer) contactMap.get(WXWorkRoomInfoModel1.getUserid()) : 0;
                     }
-                    if (currentRoomModel.getWXWorkContactRoomInfoModelListMap().get(WXWorkRoomInfoModel.getUserid().toString()) != null) {
+                    if (currentRoomModel.getWXWorkContactRoomInfoModelListMap().get(WXWorkRoomInfoModel1.getUserid()) != null) {
                         WorkContactRoomEntity workContactRoomEntity = new WorkContactRoomEntity();
                         List<WorkContactRoomEntity> workContactRoomEntityList = workContactRoomServiceImpl.getWorkContactRoomsByRoomId(currentRoomModel.getId());
                         Integer id = workContactRoomEntityList.get(0).getId();
                         workContactRoomEntity.setId(id);
                         workContactRoomEntity.setContactId(contactId);
                         workContactRoomEntity.setEmployeeId(employeeId);
-                        workContactRoomEntity.setUnionid(WXWorkRoomInfoModel.getUnionid() == null ? "" : WXWorkRoomInfoModel.getUnionid());
-                        workContactRoomEntity.setJoinScene(WXWorkRoomInfoModel.getJoin_scene());
-                        workContactRoomEntity.setType(WXWorkRoomInfoModel.getType());
+                        workContactRoomEntity.setUnionid(WXWorkRoomInfoModel1.getUnionid() == null ? "" : WXWorkRoomInfoModel1.getUnionid());
+                        workContactRoomEntity.setJoinScene(WXWorkRoomInfoModel1.getJoin_scene());
+                        workContactRoomEntity.setType(WXWorkRoomInfoModel1.getType());
                         workContactRoomEntity.setStatus(1);
-                        workContactRoomEntity.setJoinTime(WXWorkRoomInfoModel.getJoin_time());
+                        workContactRoomEntity.setJoinTime(WXWorkRoomInfoModel1.getJoin_time());
                         workContactRoomEntity.setOutTime("");
                         workContactRoomEntityUpdateList.add(workContactRoomEntity);
                         //删除wxuserid的key
-                        currentRoomModel.getWXWorkContactRoomInfoModelListMap().remove(WXWorkRoomInfoModel.getUserid().toString());
+                        currentRoomModel.getWXWorkContactRoomInfoModelListMap().remove(WXWorkRoomInfoModel1.getUserid().toString());
                     } else {
                         WorkContactRoomEntity workContactRoomEntity = new WorkContactRoomEntity();
-                        workContactRoomEntity.setWxUserId(WXWorkRoomInfoModel.getUserid());
+                        workContactRoomEntity.setWxUserId(WXWorkRoomInfoModel1.getUserid());
                         workContactRoomEntity.setContactId(contactId);
+                        workContactRoomEntity.setRoomId(currentRoomModel.getId());
                         workContactRoomEntity.setEmployeeId(employeeId);
                         workContactRoomEntity.setRoomCase(WXWorkRoomModel.getChatId());
-                        workContactRoomEntity.setUnionid(WXWorkRoomInfoModel.getUnionid() == null ? "" : WXWorkRoomInfoModel.getUnionid());
-                        workContactRoomEntity.setJoinScene(WXWorkRoomInfoModel.getJoin_scene());
-                        workContactRoomEntity.setType(WXWorkRoomInfoModel.getType());
+                        workContactRoomEntity.setUnionid(WXWorkRoomInfoModel1.getUnionid() == null ? "" : WXWorkRoomInfoModel1.getUnionid());
+                        workContactRoomEntity.setJoinScene(WXWorkRoomInfoModel1.getJoin_scene());
+                        workContactRoomEntity.setType(WXWorkRoomInfoModel1.getType());
                         workContactRoomEntity.setStatus(1);
-                        workContactRoomEntity.setJoinTime(WXWorkRoomInfoModel.getJoin_time());
+                        workContactRoomEntity.setJoinTime(WXWorkRoomInfoModel1.getJoin_time());
                         workContactRoomEntity.setOutTime("");
                         workContactRoomEntityCreateList.add(workContactRoomEntity);
                     }
@@ -537,19 +538,23 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
                 }
             }
             //客户成员新增数据
-            if (workRoomEntityCreateList.size() > 0) {
+            if (workContactRoomEntityCreateList.size() > 0) {
                 if (flag) {
-                    Map<String, Integer> map = new HashMap<>();
-                    for (WorkRoomEntity workRoomEntity :
-                            workRoomEntityCreateList) {
-                        map.put(workRoomEntity.getWxChatId(), workRoomEntity.getId());
-                    }
-                    for (WorkContactRoomEntity workContactRoomEntity :
-                            workContactRoomEntityCreateList) {
-                        if (map.get(workContactRoomEntity.getRoomCase()) != null) {
-                            workContactRoomEntity.setRoomId(map.get(workContactRoomEntity.getRoomCase()));
-                            workContactRoomServiceImpl.createWorkContactRoom(workContactRoomEntity);
+                    if (workRoomEntityCreateList.size() > 0) {
+                        Map<String, Integer> map = new HashMap<>();
+                        for (WorkRoomEntity workRoomEntity :
+                                workRoomEntityCreateList) {
+                            map.put(workRoomEntity.getWxChatId(), workRoomEntity.getId());
                         }
+                        for (WorkContactRoomEntity workContactRoomEntity :
+                                workContactRoomEntityCreateList) {
+                            if (map.get(workContactRoomEntity.getRoomCase()) != null) {
+                                workContactRoomEntity.setRoomId(map.get(workContactRoomEntity.getRoomCase()));
+                                workContactRoomServiceImpl.createWorkContactRoom(workContactRoomEntity);
+                            }
+                        }
+                    } else {
+                        workContactRoomServiceImpl.createWorkContactRooms(workContactRoomEntityCreateList);
                     }
                 }
             }
@@ -588,28 +593,29 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
         }
         //客户成员群聊列表
         Map<String, Object> workContactRoomMap = new HashMap<String, Object>();
-        List<Map<String, Object>> WXWorkContactRoomInfoModelList = new ArrayList<Map<String, Object>>();
         for (WorkRoomEntity workRoomEntity :
                 workRoomEntityList) {
             List<WorkContactRoomEntity> workContactRoomEntityList = workContactRoomServiceImpl.getWorkContactRoomsInfoByRoomId(workRoomEntity.getId());
             if (workContactRoomEntityList.size() > 0) {
-                WorkContactRoomEntity workContactRoomEntity = workContactRoomEntityList.get(0);
-                if (workContactRoomEntity.getStatus().equals(2)) {
-                    continue;
-                }
                 Map<String, Object> workContactRoomInfoMap = new HashMap<String, Object>();
                 WXWorkContactRoomModel WXWorkContactRoomModel = new WXWorkContactRoomModel();
-                WXWorkContactRoomModel.setChatId(workRoomEntity.getWxChatId());
-                WXWorkContactRoomModel.setId(workRoomEntity.getId());
-                WXWorkContactRoomModel.setOwnerId(workRoomEntity.getOwnerId());
-                WXWorkContactRoomInfoModel WXWorkContactRoomInfoModel = new WXWorkContactRoomInfoModel();
-                WXWorkContactRoomInfoModel.setId(workContactRoomEntity.getId());
-                WXWorkContactRoomInfoModel.setWxUserId(workContactRoomEntity.getWxUserId());
-                WXWorkContactRoomInfoModel.setRoomId(workContactRoomEntity.getRoomId().toString());
-                WXWorkContactRoomInfoModel.setStatus(workContactRoomEntity.getStatus());
-                workContactRoomInfoMap.put(workContactRoomEntity.getWxUserId(), WXWorkContactRoomInfoModel);
-                WXWorkContactRoomModel.setWXWorkContactRoomInfoModelListMap(workContactRoomInfoMap);
-                workContactRoomMap.put(workRoomEntity.getWxChatId(), WXWorkContactRoomModel);
+                for (WorkContactRoomEntity workContactRoomEntity:
+                        workContactRoomEntityList) {
+                    if (workContactRoomEntity.getStatus().equals(2)) {
+                        continue;
+                    }
+                    WXWorkContactRoomModel.setChatId(workRoomEntity.getWxChatId());
+                    WXWorkContactRoomModel.setId(workRoomEntity.getId());
+                    WXWorkContactRoomModel.setOwnerId(workRoomEntity.getOwnerId());
+                    WXWorkContactRoomInfoModel WXWorkContactRoomInfoModel = new WXWorkContactRoomInfoModel();
+                    WXWorkContactRoomInfoModel.setId(workContactRoomEntity.getId());
+                    WXWorkContactRoomInfoModel.setWxUserId(workContactRoomEntity.getWxUserId());
+                    WXWorkContactRoomInfoModel.setRoomId(workContactRoomEntity.getRoomId().toString());
+                    WXWorkContactRoomInfoModel.setStatus(workContactRoomEntity.getStatus());
+                    workContactRoomInfoMap.put(workContactRoomEntity.getWxUserId(), WXWorkContactRoomInfoModel);
+                    WXWorkContactRoomModel.setWXWorkContactRoomInfoModelListMap(workContactRoomInfoMap);
+                    workContactRoomMap.put(workRoomEntity.getWxChatId(), WXWorkContactRoomModel);
+                }
             }
         }
         //企业通讯录列表
