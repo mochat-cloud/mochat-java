@@ -54,6 +54,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'com.vdurmont:emoji-java:4.0.0'
     testImplementation 'junit:junit:4.13.1'
     testImplementation 'org.mockito:mockito-core:3.3.3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
