@@ -20,6 +20,7 @@ import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.common.util.ali.AliyunOssUtils;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.dao.entity.BusinessLogEntity;
+import com.mochat.mochat.dao.entity.CorpEntity;
 import com.mochat.mochat.dao.entity.WorkContactEntity;
 import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
 import com.mochat.mochat.dao.entity.greeting.GreetingEntity;
@@ -30,6 +31,7 @@ import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.businessLog.IBusinessLogService;
 import com.mochat.mochat.service.emp.IWorkEmployeeDepartmentService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
+import com.mochat.mochat.service.impl.ICorpService;
 import com.mochat.mochat.service.greeting.IGreetingService;
 import com.mochat.mochat.service.impl.medium.IMediumService;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +68,10 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
 
     @Autowired
     private IBusinessLogService businessLogService;
+
+    @Autowired
+    private ICorpService corpService;
+
 
     @Override
     public Map<String,Object> handle(RequestPage page, ReqPerEnum permission) {
@@ -134,6 +140,10 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
      */
     @Override
     public void applyWxSendContactMessage(String wxCorpId, String welcomeCode, Map<String, JSONObject> contactInfo, Map<String, Object> content) {
+        LambdaQueryChainWrapper<CorpEntity> corpEntityWrapper = corpService.lambdaQuery();
+        corpEntityWrapper.eq(CorpEntity::getWxCorpId,wxCorpId);
+        corpEntityWrapper.select(CorpEntity::getCorpId);
+        CorpEntity corpEntity = corpEntityWrapper.one();
         Map<String,Object> sendWelcomeDataMap = new HashMap();
         //微信消息体 - 文本
         if(content.get("text") != null){
@@ -157,8 +167,10 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
                     String jsonStr = (String)((Map<String, Object>) content.get("medium")).get("mediumContent");
                     String imagePath = JSON.parseObject(jsonStr).getString("imagePath");
                     File imageFile = AliyunOssUtils.getFile(imagePath);
-                    String mediaId = WxApiUtils.uploadImageToTemp(AccountService.getCorpId(), imageFile);
-                    sendWelcomeDataMap.put("image",new HashMap<String,Object>().put("media_id",mediaId));
+                    String mediaId = WxApiUtils.uploadImageToTemp(corpEntity.getCorpId(), imageFile);
+                    Map mediaMap = new HashMap<String,Object>();
+                    mediaMap.put("media_id",mediaId);
+                    sendWelcomeDataMap.put("image",mediaMap);
                     break;
                 case 3:
                     Map<String,Object> linkMap = new HashMap();
@@ -174,7 +186,7 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
                     JSONObject jsonMiniObject = (JSONObject)((Map<String, Object>) content.get("medium")).get("mediumContent");
                     String imagePathMini = jsonMiniObject.getString("imagePath");
                     File imageFileMini = AliyunOssUtils.getFile(imagePathMini);
-                    String mediaIdMini = WxApiUtils.uploadImageToTemp(AccountService.getCorpId(), imageFileMini);
+                    String mediaIdMini = WxApiUtils.uploadImageToTemp(corpEntity.getCorpId(), imageFileMini);
                     miniMap.put("title",jsonMiniObject.getString("title"));
                     miniMap.put("pic_media_id",mediaIdMini);
                     miniMap.put("appid",jsonMiniObject.getString("appid"));
@@ -183,7 +195,7 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
             }
         }
         //发送欢迎语
-        String respStr = WxApiUtils.sendWelcomeCode(AccountService.getCorpId(),sendWelcomeDataMap);
+        String respStr = WxApiUtils.sendWelcomeCode(corpEntity.getCorpId(),sendWelcomeDataMap);
         if(respStr == null){
             System.out.println("请求微信上推送新增客户信息失败>>>>>>>");
         }
