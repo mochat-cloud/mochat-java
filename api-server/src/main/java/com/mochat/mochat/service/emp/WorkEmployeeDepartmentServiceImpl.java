@@ -9,10 +9,14 @@ import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.dao.entity.WorkDeptEntity;
 import com.mochat.mochat.dao.entity.WorkEmployeeDepartmentEntity;
 import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
+import com.mochat.mochat.dao.entity.permission.McRbacRoleEntity;
+import com.mochat.mochat.dao.entity.permission.McRbacUserRoleEntity;
 import com.mochat.mochat.dao.mapper.WorkEmployeeDepartmentMapper;
 import com.mochat.mochat.model.dept.DeptPageItemVO;
 import com.mochat.mochat.model.dept.ReqDeptPageDTO;
 import com.mochat.mochat.service.AccountService;
+import com.mochat.mochat.service.permission.IRbacRoleService;
+import com.mochat.mochat.service.permission.IRbacUserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -34,6 +38,13 @@ public class WorkEmployeeDepartmentServiceImpl extends ServiceImpl<WorkEmployeeD
 
     @Autowired
     private IWorkDeptService workDeptService;
+
+    @Autowired
+    private IRbacUserRoleService rbacUserRoleService;
+
+    @Autowired
+    private IRbacRoleService rbacRoleService;
+
 
     @Override
     public List<WorkEmployeeDepartmentEntity> getDeptEmployeeList(List<Integer> deptIds) {
@@ -106,38 +117,54 @@ public class WorkEmployeeDepartmentServiceImpl extends ServiceImpl<WorkEmployeeD
             List<Integer> departmentIdList = new ArrayList();
             departmentIdList.add(Integer.valueOf(map.get("departmentId").toString()));
             List<WorkEmployeeDepartmentEntity> workEmployeeDepartmentEntityList = getDeptEmployeeList(departmentIdList);
-            StringBuilder sb = new StringBuilder();
-            String empId = null;
-            for (WorkEmployeeDepartmentEntity workEmployeeDepartmentEntity :
-                    workEmployeeDepartmentEntityList) {
-                empId = workEmployeeDepartmentEntity.getEmployeeId().toString();
-                sb.append(empId).append(",");
+            if(workEmployeeDepartmentEntityList != null && workEmployeeDepartmentEntityList.size() > 0){
+                StringBuilder sb = new StringBuilder();
+                String empId = null;
+                for (WorkEmployeeDepartmentEntity workEmployeeDepartmentEntity :
+                        workEmployeeDepartmentEntityList) {
+                    empId = workEmployeeDepartmentEntity.getEmployeeId().toString();
+                    sb.append(empId).append(",");
+                }
+                String empIdArr = sb.substring(0, sb.length() - 1);
+                //查询数据
+                String clStr = "id,log_user_id,name,mobile";
+                workEmployeeEntityList = workEmployeeService.getWorkEmployeeList(page, perPage, clStr, empIdArr);
             }
-            String empIdArr = sb.substring(0, sb.length() - 1);
-            //查询数据
-            String clStr = "id,log_user_id,name,mobile";
-            workEmployeeEntityList = workEmployeeService.getWorkEmployeeList(page, perPage, clStr, empIdArr);
-            int totalPageNum = (workEmployeeEntityList.size() + Integer.valueOf(perPage) - 1) / Integer.valueOf(perPage);
-            map.put("page", new PageModel(Integer.valueOf(perPage), workEmployeeEntityList.size(), totalPageNum));
+            int totalPageNum = (workEmployeeEntityList == null ? 0 :workEmployeeEntityList.size() + Integer.valueOf(perPage) - 1) / Integer.valueOf(perPage);
+            map.put("page", new PageModel(Integer.valueOf(perPage), workEmployeeEntityList == null ? 0 :workEmployeeEntityList.size(), totalPageNum));
         } else {
             String clStr = "id,log_user_id,name,mobile";
             workEmployeeEntityList = workEmployeeService.getWorkEmployeeList(page, perPage, clStr, null);
-            int totalPageNum = (workEmployeeEntityList.size() + Integer.valueOf(perPage) - 1) / Integer.valueOf(perPage);
-            map.put("page", new PageModel(Integer.valueOf(perPage), workEmployeeEntityList.size(), totalPageNum));
+            int totalPageNum = (workEmployeeEntityList == null ? 0 :workEmployeeEntityList.size() + Integer.valueOf(perPage) - 1) / Integer.valueOf(perPage);
+            map.put("page", new PageModel(Integer.valueOf(perPage), workEmployeeEntityList == null ? 0 :workEmployeeEntityList.size(), totalPageNum));
         }
         //数据处理
-        Map<String, Object> mapData = null;
-        List<Map<String, Object>> mapList = new ArrayList();
-        for (WorkEmployeeEntity workEmployeeEntity :
-                workEmployeeEntityList) {
-            //TODO  根据用户id-获取角色名称
+        List<Map<String, Object>> mapList = null;
+        if(workEmployeeEntityList != null && workEmployeeEntityList.size() > 0){
+            Map<String, Object> mapData = null;
+            mapList = new ArrayList();
+            for (WorkEmployeeEntity workEmployeeEntity :
+                    workEmployeeEntityList) {
+                //根据用户id-获取角色名称
+                Integer userId = workEmployeeEntity.getId();
+                LambdaQueryChainWrapper<McRbacUserRoleEntity> mcRbacUserRoleWrapper = rbacUserRoleService.lambdaQuery();
+                mcRbacUserRoleWrapper.eq(McRbacUserRoleEntity::getUserId,userId);
+                mcRbacUserRoleWrapper.select(McRbacUserRoleEntity::getRoleId);
+                McRbacUserRoleEntity mcRbacUserRoleEntity = mcRbacUserRoleWrapper.one();
+                McRbacRoleEntity mcRbacRoleEntity = null;
+                if(mcRbacUserRoleEntity != null){
+                    LambdaQueryChainWrapper<McRbacRoleEntity> mcRbacRoleWrapper = rbacRoleService.lambdaQuery();
+                    mcRbacRoleWrapper.eq(McRbacRoleEntity::getId,mcRbacUserRoleEntity.getRoleId());
+                    mcRbacRoleEntity = mcRbacRoleWrapper.one();
+                }
+                mapData = new HashMap<String, Object>();
+                mapData.put("employeeId", workEmployeeEntity.getId());
+                mapData.put("employeeName", workEmployeeEntity.getName());
+                mapData.put("phone", workEmployeeEntity.getMobile());
+                mapData.put("roleName", mcRbacRoleEntity != null ? mcRbacRoleEntity.getName() : null);
+                mapList.add(mapData);
+            }
 
-
-            mapData = new HashMap<String, Object>();
-            mapData.put("employeeId", workEmployeeEntity.getId());
-            mapData.put("employeeName", workEmployeeEntity.getName());
-            mapData.put("phone", workEmployeeEntity.getMobile());
-            mapList.add(mapData);
         }
         map.put("list", mapList);
         return map;
