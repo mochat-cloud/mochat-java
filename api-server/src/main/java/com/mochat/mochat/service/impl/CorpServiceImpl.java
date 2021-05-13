@@ -10,7 +10,7 @@ import com.mochat.mochat.common.em.workupdatetime.TypeEnum;
 import com.mochat.mochat.common.model.RequestPage;
 import com.mochat.mochat.common.util.DateUtils;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
-import com.mochat.mochat.dao.entity.CorpEntity;
+import com.mochat.mochat.dao.entity.*;
 import com.mochat.mochat.dao.entity.wm.WorkMsgConfigEntity;
 import com.mochat.mochat.dao.mapper.corp.CorpMapper;
 import com.mochat.mochat.model.corp.CorpPageItemVO;
