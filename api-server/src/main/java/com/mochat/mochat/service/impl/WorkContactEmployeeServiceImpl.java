@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,23 +54,28 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
     @Autowired
     private IContactService contactService;
 
+    @Resource
+    private WorkContactEmployeeMapper workContactEmployeeMapper;
+
+
     /**
      * @description 获取员工下客户
      * @author zhaojinjian
      * @createTime 2020/12/3 14:26
      */
     @Override
-    public WorkContactEmployeeEntity getWorkContactEmployeeInfo(Integer corpId, Integer empId, Integer contactId) {
+    public WorkContactEmployeeEntity getWorkContactEmployeeInfo(Integer corpId, Integer empId, Integer contactId,Integer id) {
         WorkContactEmployeeEntity workContactEmployee = new WorkContactEmployeeEntity();
         workContactEmployee.setContactId(contactId);
         workContactEmployee.setEmployeeId(empId);
         workContactEmployee.setCorpId(corpId);
-        List<WorkContactEmployeeEntity> contactEmployeeEntityList = this.baseMapper.selectList(new QueryWrapper<>(workContactEmployee));
-        if (contactEmployeeEntityList.isEmpty()) {
+        workContactEmployee.setId(id);
+        List<WorkContactEmployeeEntity> workContactEmployeeEntityList = workContactEmployeeMapper.getContactEmployeeInfo(contactId,empId,corpId,1,id);
+        if (workContactEmployeeEntityList.isEmpty()) {
             throw new ParamException("未查询到客户详情");
         }
 
-        return contactEmployeeEntityList.get(0);
+        return workContactEmployeeEntityList.get(0);
     }
 
     /**
@@ -119,14 +125,18 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
         contactEmployeeWrapper.in("employee_id", empId);
         contactEmployeeWrapper.eq("corp_id", corpId);
         contactEmployeeWrapper.isNotNull("deleted_at");
-        Page pages = new Page(page, perPage);
-        Page<WorkContactEmployeeEntity> contactEmployeePage = this.baseMapper.selectPage(pages, contactEmployeeWrapper);
-        List<WorkContactEmployeeEntity> list = contactEmployeePage.getRecords();
+        StringBuilder sb = new StringBuilder();
+        for (Integer id:
+                empId) {
+            sb.append(String.valueOf(id)).append(",");
+        }
+        String empIds = sb.substring(0,sb.length()-1);
+        List<WorkContactEmployeeEntity> list = workContactEmployeeMapper.getContactEmployee(empIds,corpId,page-1,perPage);
         if (list != null) {
             LossContact lossContact = new LossContact();
             lossContact.setPerPage(perPage);
-            lossContact.setTotal(contactEmployeePage.getTotal());
-            lossContact.setTotalPage(new Double(Math.ceil(contactEmployeePage.getTotal() / perPage)).longValue());
+            lossContact.setTotal(Long.parseLong(String.valueOf(list.size())));
+            lossContact.setTotalPage(new Double(Math.ceil(Long.parseLong(String.valueOf(list.size())) / perPage)).longValue());
             lossContact.setEmpIdAndContactId(list.stream().collect(Collectors.toMap(h -> h.getEmployeeId() + "-" + h.getId(), h -> h.getContactId())));
             return lossContact;
         }

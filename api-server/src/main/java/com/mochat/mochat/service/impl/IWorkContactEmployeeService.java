@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface IWorkContactEmployeeService extends IService<WorkContactEmployeeEntity> {
-    WorkContactEmployeeEntity getWorkContactEmployeeInfo(Integer corpId, Integer empId, Integer contactId);
+    WorkContactEmployeeEntity getWorkContactEmployeeInfo(Integer corpId, Integer empId, Integer contactId,Integer id);
     List<Integer> getBelongToEmployeeId(Integer contactId, Integer corp_id);
     List<Integer> getEmployeeToContact(Integer corpId,Integer empId);
     LossContact getEmployeeLossContactId(Integer corpId, List<Integer> empId, Integer page, Integer perPage);

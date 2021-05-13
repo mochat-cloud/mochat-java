@@ -12,6 +12,7 @@ import com.mochat.mochat.common.em.workcontactroom.Status;
 import com.mochat.mochat.common.model.RequestPage;
 import com.mochat.mochat.common.util.DateUtils;
 import com.mochat.mochat.common.util.WxApiUtils;
+import com.mochat.mochat.common.util.ali.AliyunOssUtils;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.dao.entity.*;
 import com.mochat.mochat.dao.entity.workroom.WorkRoomGroupEntity;
@@ -703,13 +704,13 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
                     for (WorkEmployeeEntity workEmployee :
                             workEmployeeEntityList) {
                         workContactRoomIndex.setName(workEmployee.getName());
-                        workContactRoomIndex.setAvatar(workEmployee.getAvatar());
+                        workContactRoomIndex.setAvatar(AliyunOssUtils.getUrl(workEmployee.getAvatar()));
                     }
                 } else if (workContactRoom.getType().equals(2)) {
                     for (WorkContactEntity workContact :
                             workContactEntityList) {
                         workContactRoomIndex.setName(workContact.getName());
-                        workContactRoomIndex.setAvatar(workContact.getAvatar());
+                        workContactRoomIndex.setAvatar(AliyunOssUtils.getUrl(workContact.getAvatar()));
                     }
                 }
                 Integer isOwner = workContactRoom.getEmployeeId().equals(workRoomEntity.getOwnerId()) ? 1 : 0;

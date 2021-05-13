@@ -51,6 +51,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -86,7 +87,11 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
     @Autowired
     private IMediumService mediumService;
 
+    @Autowired
     private IWorkContactService workContactServiceImpl;
+
+    @Autowired
+    private IWorkContactEmployeeService workContactEmployeeServiceImpl;
 
 
     /**
@@ -259,17 +264,15 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
         List<WorkContactTagPivotEntity> contactTagPivotEntityList = contactTagPivotService.lambdaQuery()
                 .in(WorkContactTagPivotEntity::getContactId, contactIdList)
                 .list();
-        Map<Integer, List<Integer>> contactIdTagIdListMap = new HashMap<>(contactTagPivotEntityList.size());
+        Map<Integer, Integer> contactIdTagIdListMap = new HashMap<>(contactTagPivotEntityList.size());
         List<Integer> tagIdList = new ArrayList<>();
         for (WorkContactTagPivotEntity entity : contactTagPivotEntityList) {
             tagIdList.add(entity.getContactTagId());
 
-            List<Integer> tagIds = contactIdTagIdListMap.get(entity.getContactId());
-            if (Objects.isNull(tagIds)) {
-                tagIds = new ArrayList<>();
-                contactIdRoomIdListMap.put(entity.getContactId(), tagIds);
-            } else {
-                tagIds.add(entity.getContactTagId());
+            //List<Integer> tagIds = contactIdTagIdListMap.get(entity.getContactId());
+            if (entity.getContactTagId() != null) {
+                //tagIds = new ArrayList<>();
+                contactIdTagIdListMap.put(entity.getContactId(), entity.getContactTagId());
             }
         }
 
@@ -281,7 +284,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
                     .in(WorkContactTagEntity::getId, tagIdList)
                     .list();
             for (WorkContactTagEntity entity : tagEntityList) {
-                roomIdNameMap.put(entity.getId(), entity.getName());
+                tagIdNameMap.put(entity.getId(), entity.getName());
             }
         }
 
@@ -331,11 +334,9 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
             vo.setRoomName(roomNameList);
 
             List<String> tagNameList = new ArrayList<>();
-            List<Integer> tagIds = contactIdTagIdListMap.get(cId);
+            Integer tagIds = contactIdTagIdListMap.get(cId);
             if (Objects.nonNull(tagIds)) {
-                for (Integer tagId : tagIds) {
-                    roomNameList.add(tagIdNameMap.get(tagId));
-                }
+                tagNameList.add(tagIdNameMap.get(tagIds));
             }
             vo.setTag(tagNameList);
 
@@ -663,7 +664,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
         //endregion
 
         //region 客户通讯录中间表数据
-        WorkContactEmployeeEntity workContactEmployee = workContactEmployeeService.getWorkContactEmployeeInfo(corpId, empId, contactId);
+        WorkContactEmployeeEntity workContactEmployee = workContactEmployeeService.getWorkContactEmployeeInfo(corpId, empId, contactId,null);
         contactInfoResponse.setRemark(workContactEmployee.getRemark());
         contactInfoResponse.setDescription(workContactEmployee.getDescription());
         List<Integer> empIds = workContactEmployeeService.getBelongToEmployeeId(contactId, corpId);
@@ -1045,15 +1046,19 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
 
         JSONArray resultList = new JSONArray();
         for (Map.Entry<String, Integer> entry : lossContact.getEmpIdAndContactId().entrySet()) {
-            Optional<WorkContactEntity> contactOp = contactList.stream().filter(c -> c.getId() == entry.getValue()).findAny();
+            Optional<WorkContactEntity> contactOp = contactList.stream().filter(c -> c.getId().equals(entry.getValue())).findAny();
             WorkContactEntity contactEntity = contactOp.get();
             Integer empId = Integer.parseInt(entry.getKey().split("-")[0]);
+            Integer id = Integer.parseInt(entry.getKey().split("-")[1]);
             JSONObject json = new JSONObject();
             json.put("contactId", entry.getValue());
-            json.put("avatar", contactEntity.getAvatar());
+            json.put("avatar", AliyunOssUtils.getUrl(contactEntity.getAvatar()));
+            WorkContactEmployeeEntity workContactEmployeeEntity = workContactEmployeeServiceImpl.getWorkContactEmployeeInfo(corpId,empId,contactEntity.getId(),id);
+            WorkEmployeeEntity workEmployeeEntity = employeeService.getWorkEmployeeInfo(empId);
+            json.put("remark", workEmployeeEntity.getName());
             json.put("nickName", contactEntity.getNickName());
-            json.put("deletedAt", contactEntity.getDeletedAt());
-            json.put("tag", workContactTagList.stream().filter(w -> w.getContactId() == contactEntity.getId() && w.getEmpId() == empId).map(GetEmployeeTagModel::getTagName).toArray());
+            json.put("deletedAt", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(workContactEmployeeEntity.getDeletedAt().getTime()));
+            json.put("tag", workContactTagList.stream().filter(w -> w.getContactId().equals(contactEntity.getId()) && w.getEmpId().equals(empId)).map(GetEmployeeTagModel::getTagName).toArray());
             json.put("employeeName", corpEmployeeName.get(empId));
             resultList.add(json);
         }
@@ -1292,7 +1297,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
                         //做判断不存在要新增
                         List<WorkContactEmployeeEntity> contactEmployeeEntities = list.getKey();
                         List<WorkContactTagPivotEntity> contactFieldPivots = list.getValue();
-                        WorkContactEmployeeEntity contactEmployeeEntity = workContactEmployeeService.getWorkContactEmployeeInfo(employeeEntity.getCorpId(), employeeEntity.getId(), contactId);
+                        WorkContactEmployeeEntity contactEmployeeEntity = workContactEmployeeService.getWorkContactEmployeeInfo(employeeEntity.getCorpId(), employeeEntity.getId(), contactId,null);
                         contactEmployeeEntities.get(0).setId(contactEmployeeEntity.getId());
                         workContactEmployeeService.updateContactEmployee(contactEmployeeEntities.get(0));
                         contactTagPivotService.updateContactTapPivot(contactFieldPivots);
