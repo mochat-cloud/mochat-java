@@ -23,7 +23,7 @@ import java.net.URL;
 @Slf4j
 public class AliyunUpload {
 
-    private static OssProperties ossProperties = AliyunComponent.ossProperties;
+    private static AliyunOssProperties ossProperties = AliyunComponent.ossProperties;
 
     public static void upLoad(File file, String key) {
         if (null == file || file.length() < 1) {
@@ -65,8 +65,7 @@ public class AliyunUpload {
             client.putObject(ossProperties.getBucketName(), key, inputStream);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             client.shutdown();
         }
     }

@@ -1,6 +1,8 @@
 package com.mochat.mochat.service.channel;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
@@ -14,10 +16,13 @@ import com.mochat.mochat.common.util.ali.AliyunOssUtils;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
+import com.mochat.mochat.dao.entity.*;
 import com.mochat.mochat.dao.entity.channel.ChannelCodeEntity;
 import com.mochat.mochat.dao.entity.channel.ChannelCodeGroupEntity;
+import com.mochat.mochat.dao.entity.medium.MediumEnyity;
 import com.mochat.mochat.dao.mapper.channel.ChannelCodeMapper;
 import com.mochat.mochat.job.sync.WorkChannelCodeSyncLogic;
+import com.mochat.mochat.model.channel.*;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.businessLog.IBusinessLogService;
 import com.mochat.mochat.service.contact.IWorkContactTagGroupService;
@@ -27,8 +32,7 @@ import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import com.mochat.mochat.service.impl.IWorkContactEmployeeService;
 import com.mochat.mochat.service.impl.IWorkContactService;
 import com.mochat.mochat.service.impl.IWorkContactTagService;
-import com.mochat.mochat.dao.entity.*;
-import com.mochat.mochat.model.channel.*;
+import com.mochat.mochat.service.impl.medium.IMediumService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,19 +82,15 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
     @Autowired
     private IWorkEmployeeDepartmentService employeeDepartmentService;
 
+    @Autowired
+    private IMediumService mediumService;
+
     @Override
     public void storeOrUpdateCode(ReqChannelCodeDTO req) {
         String codeName = req.getBaseInfo().getName();
         if (Objects.isNull(codeName) || codeName.isEmpty()) {
             throw new ParamException("活码名称不能为空");
         }
-
-//        int count = lambdaQuery().eq(ChannelCodeEntity::getCorpId, AccountService.getCorpId())
-//                .eq(ChannelCodeEntity::getName, codeName)
-//                .count();
-//        if (count > 0) {
-//            throw new ParamException("活码名称已存在");
-//        }
 
         List<Integer> tagIdList = req.getBaseInfo().getTags();
         if (tagIdList.isEmpty()) {
@@ -186,30 +186,30 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
         }
 
         RespChannelCodeVO vo = new RespChannelCodeVO();
-        setBaseInfo(entity, vo);
-        setDrainageEmployee(entity, vo);
-        setWelcomeMessage(entity, vo);
+        setBaseInfoVO(entity, vo);
+        setDrainageEmployeeVO(entity, vo);
+        setWelcomeMessageVO(entity, vo);
         return vo;
     }
 
-    private void setBaseInfo(ChannelCodeEntity entity, RespChannelCodeVO vo) {
-        RespChannelCodeVO.BaseInfoDTO baseInfoDTO = new RespChannelCodeVO.BaseInfoDTO();
+    private void setBaseInfoVO(ChannelCodeEntity entity, RespChannelCodeVO vo) {
+        RespChannelCodeVO.BaseInfoVO baseInfoVO = new RespChannelCodeVO.BaseInfoVO();
 
         ChannelCodeGroupEntity groupEntity = channelCodeGroupService.getById(entity.getGroupId());
-        baseInfoDTO.setGroupId(groupEntity.getId());
-        baseInfoDTO.setGroupName(groupEntity.getName());
-        baseInfoDTO.setName(entity.getName());
-        baseInfoDTO.setAutoAddFriend(entity.getAutoAddFriend());
+        baseInfoVO.setGroupId(groupEntity.getId());
+        baseInfoVO.setGroupName(groupEntity.getName());
+        baseInfoVO.setName(entity.getName());
+        baseInfoVO.setAutoAddFriend(entity.getAutoAddFriend());
 
         List<Integer> tagIdList = JSON.parseArray(entity.getTags(), Integer.class);
-        baseInfoDTO.setSelectedTags(tagIdList);
+        baseInfoVO.setSelectedTags(tagIdList);
 
         List<WorkContactTagGroupEntity> tagGroupEntityList = workContactTagGroupService.lambdaQuery()
                 .eq(WorkContactTagGroupEntity::getCorpId, AccountService.getCorpId())
                 .list();
-        List<RespChannelCodeVO.BaseInfoDTO.TagsDTO> tagsDTOList = new ArrayList<>();
+        List<RespChannelCodeVO.BaseInfoVO.TagsDTO> tagsDTOList = new ArrayList<>();
         for (WorkContactTagGroupEntity tagGroupEntity : tagGroupEntityList) {
-            RespChannelCodeVO.BaseInfoDTO.TagsDTO tagsDTO = new RespChannelCodeVO.BaseInfoDTO.TagsDTO();
+            RespChannelCodeVO.BaseInfoVO.TagsDTO tagsDTO = new RespChannelCodeVO.BaseInfoVO.TagsDTO();
             tagsDTO.setGroupId(tagGroupEntity.getId());
             tagsDTO.setGroupName(tagGroupEntity.getGroupName());
 
@@ -217,9 +217,9 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
                     .eq(WorkContactTagEntity::getCorpId, tagGroupEntity.getCorpId())
                     .eq(WorkContactTagEntity::getContactTagGroupId, tagGroupEntity.getId())
                     .list();
-            List<RespChannelCodeVO.BaseInfoDTO.TagsDTO.ListDTO> tagDTOList = new ArrayList<>();
+            List<RespChannelCodeVO.BaseInfoVO.TagsDTO.ListDTO> tagDTOList = new ArrayList<>();
             for (WorkContactTagEntity tagEntity : tagEntityList) {
-                RespChannelCodeVO.BaseInfoDTO.TagsDTO.ListDTO tagDTO = new RespChannelCodeVO.BaseInfoDTO.TagsDTO.ListDTO();
+                RespChannelCodeVO.BaseInfoVO.TagsDTO.ListDTO tagDTO = new RespChannelCodeVO.BaseInfoVO.TagsDTO.ListDTO();
                 tagDTO.setTagId(tagEntity.getId());
                 tagDTO.setTagName(tagEntity.getName());
                 tagDTO.setIsSelected(tagIdList.contains(tagEntity.getId()) ? 1 : 2);
@@ -229,34 +229,88 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
             tagsDTO.setList(tagDTOList);
             tagsDTOList.add(tagsDTO);
         }
-        baseInfoDTO.setTags(tagsDTOList);
+        baseInfoVO.setTags(tagsDTOList);
 
-        vo.setBaseInfo(baseInfoDTO);
+        vo.setBaseInfo(baseInfoVO);
     }
 
-    private void setDrainageEmployee(ChannelCodeEntity entity, RespChannelCodeVO vo) {
-//        JSONObject drainageEmployeeDTO = JSON.parseObject(entity.getDrainageEmployee());
-        DrainageEmployeeDTO drainageEmployeeDTO =
-                JSON.parseObject(entity.getDrainageEmployee(), DrainageEmployeeDTO.class);
-        vo.setDrainageEmployee(drainageEmployeeDTO);
+    private void setDrainageEmployeeVO(ChannelCodeEntity entity, RespChannelCodeVO vo) {
+        DrainageEmployeeVO drainageEmployeeVO = JSON.parseObject(entity.getDrainageEmployee(), DrainageEmployeeVO.class);
+        setAddMaxVO(drainageEmployeeVO);
+        vo.setDrainageEmployee(drainageEmployeeVO);
     }
 
-    private void setWelcomeMessage(ChannelCodeEntity entity, RespChannelCodeVO vo) {
-//        JSONObject welcomeMessageDTO = JSON.parseObject(entity.getWelcomeMessage());
-        WelcomeMessageDTO welcomeMessageDTO = JSON.parseObject(entity.getDrainageEmployee(), WelcomeMessageDTO.class);
-        vo.setWelcomeMessage(welcomeMessageDTO);
+    private void setAddMaxVO(DrainageEmployeeVO drainageEmployeeVO) {
+        DrainageEmployeeVO.AddMaxVO addMaxVO = drainageEmployeeVO.getAddMax();
+        List<Integer> empIdList = addMaxVO.getSpareEmployeeIds();
+        List<String> empNameList = workEmployeeService.lambdaQuery()
+                .select(WorkEmployeeEntity::getName)
+                .in(WorkEmployeeEntity::getId, empIdList)
+                .list()
+                .stream()
+                .map(WorkEmployeeEntity::getName)
+                .collect(Collectors.toList());
+        addMaxVO.setSpareEmployeeName(empNameList);
+    }
+
+    private void setWelcomeMessageVO(ChannelCodeEntity entity, RespChannelCodeVO vo) {
+        WelcomeMessageVO welcomeMessageVO = JSON.parseObject(entity.getWelcomeMessage(), WelcomeMessageVO.class);
+        setWelcomeMessageContent(welcomeMessageVO);
+        vo.setWelcomeMessage(welcomeMessageVO);
+    }
+
+    private void setWelcomeMessageContent(WelcomeMessageVO welcomeMessageVO) {
+        List<JSONObject> messageDetailVOList = welcomeMessageVO.getMessageDetail();
+        JSONObject messageDetailVO1 = messageDetailVOList.get(0);
+        setMediumToMessageContent(messageDetailVO1);
+
+        JSONObject messageDetailVO2 = messageDetailVOList.get(1);
+        JSONArray detailArray2 = messageDetailVO2.getJSONArray("detail");
+        if (detailArray2 != null && detailArray2.size() > 0) {
+            for (int i = 0; i < detailArray2.size(); i++) {
+                JSONObject detail2 = detailArray2.getJSONObject(i);
+                JSONArray timeSlotArray2 = detail2.getJSONArray("timeSlot");
+                if (timeSlotArray2 != null && timeSlotArray2.size() > 0) {
+                    for (int i1 = 0; i1 < timeSlotArray2.size(); i1++) {
+                        JSONObject timeSlot2 = timeSlotArray2.getJSONObject(i);
+                        setMediumToMessageContent(timeSlot2);
+                    }
+                }
+            }
+        }
+
+        JSONObject messageDetailVO3 = messageDetailVOList.get(2);
+        JSONArray detailArray3 = messageDetailVO3.getJSONArray("detail");
+        if (detailArray3 != null && detailArray3.size() > 0) {
+            for (int i = 0; i < detailArray3.size(); i++) {
+                JSONObject detail3 = detailArray3.getJSONObject(i);
+                JSONArray timeSlotArray3 = detail3.getJSONArray("timeSlot");
+                if (timeSlotArray3 != null && timeSlotArray3.size() > 0) {
+                    for (int i1 = 0; i1 < timeSlotArray3.size(); i1++) {
+                        JSONObject timeSlot3 = timeSlotArray3.getJSONObject(i);
+                        setMediumToMessageContent(timeSlot3);
+                    }
+                }
+            }
+        }
+    }
+
+    private void setMediumToMessageContent(JSONObject jsonObject) {
+        int mediumId = jsonObject.getIntValue("mediumId");
+        jsonObject.put("content", JSONObject.parseObject(getMediumContentById(mediumId)));
+    }
+
+    private String getMediumContentById(int mediumId) {
+        if (mediumId > 0) {
+            MediumEnyity mediumEnyity = mediumService.getMediumById(mediumId);
+            return mediumEnyity.getContent();
+        } else {
+            return "{}";
+        }
     }
 
     @Override
-    public Map<String, String> getWelcomeMsgMap(Integer channelCodeId) {
-        if (Objects.isNull(channelCodeId)) {
-            throw new ParamException("渠道码 id 不能为空");
-        }
-        ChannelCodeEntity channelCodeEntity = getById(channelCodeId);
-        return getWelcomeMessageMap(channelCodeEntity);
-    }
-
-    private Map<String, String> getWelcomeMessageMap(ChannelCodeEntity channelCodeEntity) {
+    public Map<String, String> getWelcomeMessageMap(ChannelCodeEntity channelCodeEntity) {
         WelcomeMessageDTO welcomeMessageDTO =
                 JSON.parseObject(channelCodeEntity.getWelcomeMessage(), WelcomeMessageDTO.class);
         boolean open = 1 == welcomeMessageDTO.getScanCodePush();
@@ -275,11 +329,12 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
                 }
                 if (Objects.isNull(map) || 1 == size) {
                     WelcomeMessageDTO.MessageDetailDTO messageDetailDTO = messageDetailDTOList.get(0);
+                    String welcomeContent = messageDetailDTO.getWelcomeContent();
+                    int mediumId = messageDetailDTO.getMediumId();
+
                     map = new HashMap<>(2);
-                    // 成员 id 数组
-                    map.put("welcomeContent", messageDetailDTO.getWelcomeContent());
-                    // 部门 id 数组
-                    map.put("content", JSON.toJSONString(messageDetailDTO.getContent()));
+                    map.put("welcomeContent", welcomeContent);
+                    map.put("content", getMediumContentById(mediumId));
                 }
                 return map;
             }
@@ -295,11 +350,12 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
                     for (WelcomeMessageDTO.MessageDetailDTO.DetailDTO.TimeSlotDTO timeSlotDTO :
                             detailDTO.getTimeSlot()) {
                         if (DateUtils.inTimeByS5(timeSlotDTO.getStartTime(), timeSlotDTO.getEndTime())) {
+                            String welcomeContent = timeSlotDTO.getWelcomeContent();
+                            int mediumId = timeSlotDTO.getMediumId();
+
                             Map<String, String> map = new HashMap<>(2);
-                            // 成员 id 数组
-                            map.put("welcomeContent", timeSlotDTO.getWelcomeContent());
-                            // 部门 id 数组
-                            map.put("content", JSON.toJSONString(timeSlotDTO.getContent()));
+                            map.put("welcomeContent", welcomeContent);
+                            map.put("content", getMediumContentById(mediumId));
                             return map;
                         }
                     }
@@ -317,11 +373,12 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
                     for (WelcomeMessageDTO.MessageDetailDTO.DetailDTO.TimeSlotDTO timeSlotDTO :
                             detailDTO.getTimeSlot()) {
                         if (DateUtils.inTimeByS5(timeSlotDTO.getStartTime(), timeSlotDTO.getEndTime())) {
+                            String welcomeContent = timeSlotDTO.getWelcomeContent();
+                            int mediumId = timeSlotDTO.getMediumId();
+
                             Map<String, String> map = new HashMap<>(2);
-                            // 成员 id 数组
-                            map.put("welcomeContent", timeSlotDTO.getWelcomeContent());
-                            // 部门 id 数组
-                            map.put("content", JSON.toJSONString(timeSlotDTO.getContent()));
+                            map.put("welcomeContent", welcomeContent);
+                            map.put("content", getMediumContentById(mediumId));
                             return map;
                         }
                     }
@@ -374,7 +431,7 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
     public Page<RespChannelCodeContactVO> getChannelCodeContactByReq(Integer channelCodeId, RequestPage page) {
         QueryWrapper<WorkContactEmployeeEntity> queryContactEmployeeWrapper = Wrappers.query();
         queryContactEmployeeWrapper.select("contact_id c_id", "GROUP_CONCAT(employee_id) e_ids");
-        queryContactEmployeeWrapper.eq("state", "channelCodeId-" + channelCodeId);
+        queryContactEmployeeWrapper.eq("state", "channelCode-" + channelCodeId);
         queryContactEmployeeWrapper.eq("corp_id", AccountService.getCorpId());
         queryContactEmployeeWrapper.groupBy("contact_id");
         Page<Map<String, Object>> pageQuery = ApiRespUtils.initPage(page);
@@ -427,7 +484,7 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
         LambdaQueryChainWrapper<ChannelCodeEntity> lambdaQueryWrapper = lambdaQuery();
         // 权限管理查询配置
         setWrapperPermission(lambdaQueryWrapper, permission);
-        
+
         lambdaQueryWrapper.eq(ChannelCodeEntity::getCorpId, AccountService.getCorpId());
 
         String name = req.getName();
@@ -444,7 +501,7 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
         if (!Objects.isNull(groupId)) {
             lambdaQueryWrapper.eq(ChannelCodeEntity::getGroupId, groupId);
         }
-        
+
         lambdaQueryWrapper.page(codeEntityPage);
 
         List<ChannelCodeEntity> codeEntityList = codeEntityPage.getRecords();
@@ -472,7 +529,7 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
 
             int countNum = contactEmployeeService.lambdaQuery()
                     .eq(WorkContactEmployeeEntity::getCorpId, AccountService.getCorpId())
-                    .eq(WorkContactEmployeeEntity::getState, "channelCodeId-" + e.getId())
+                    .eq(WorkContactEmployeeEntity::getState, "channelCode-" + e.getId())
                     .count();
             vo.setContactNum(countNum);
 
@@ -507,7 +564,7 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
             List<Integer> idList = employeeDepartmentService.getDeptAndChildDeptEmpIdList();
             logWrapper.in(BusinessLogEntity::getOperationId, idList);
         }
-        
+
         if (permission == ReqPerEnum.EMPLOYEE) {
             int empId = AccountService.getEmpId();
             logWrapper.eq(BusinessLogEntity::getOperationId, empId);

@@ -1,6 +1,6 @@
 package com.mochat.mochat.dao.mapper.workroom;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mochat.mochat.dao.entity.WorkRoomEntity;
 import com.mochat.mochat.model.workroom.WorkRoomIndexModel;
 

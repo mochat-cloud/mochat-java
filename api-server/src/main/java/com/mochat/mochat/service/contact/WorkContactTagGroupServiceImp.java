@@ -31,15 +31,13 @@ import java.util.List;
 public class WorkContactTagGroupServiceImp extends ServiceImpl<WorkContactTagGroupMapper, WorkContactTagGroupEntity> implements IWorkContactTagGroupService {
 
     @Autowired
-    private WorkContactTagGroupMapper workContactTagGroupMapper;
-
-    @Autowired
     private IWorkContactTagService workContactTagService;
 
     @Override
     public List<ContactTagGroupIndexVO> getGroupList(RequestPage req) {
         int corpId = AccountService.getCorpId();
-        List<WorkContactTagGroupEntity> groupEntities = workContactTagGroupMapper.selectList(
+
+        List<WorkContactTagGroupEntity> groupEntities = baseMapper.selectList(
                 new QueryWrapper<WorkContactTagGroupEntity>()
                         .select("id", "group_name")
                         .eq("corp_id", corpId)
@@ -69,7 +67,7 @@ public class WorkContactTagGroupServiceImp extends ServiceImpl<WorkContactTagGro
 
         WorkContactTagGroupEntity entity = new WorkContactTagGroupEntity();
         entity.setId(groupTagId);
-        entity = workContactTagGroupMapper.selectOne(new QueryWrapper<>(entity));
+        entity = baseMapper.selectOne(new QueryWrapper<>(entity));
 
         if (entity == null) {
             throw new CommonException(RespContactErrCodeEnum.CONTACT_NO_TAG_GROUP);
@@ -89,7 +87,7 @@ public class WorkContactTagGroupServiceImp extends ServiceImpl<WorkContactTagGro
         }
         WorkContactTagGroupEntity entity = new WorkContactTagGroupEntity();
         entity.setId(groupTagId);
-        entity = workContactTagGroupMapper.selectOne(new QueryWrapper<>(entity));
+        entity = baseMapper.selectOne(new QueryWrapper<>(entity));
         if (entity == null) {
             throw new CommonException(RespContactErrCodeEnum.CONTACT_NO_TAG_GROUP);
         }
@@ -100,7 +98,7 @@ public class WorkContactTagGroupServiceImp extends ServiceImpl<WorkContactTagGro
             WxApiUtils.requestDelGroupTag(corpId, wxGroupId);
         }
 
-        workContactTagGroupMapper.deleteById(entity.getId());
+        baseMapper.deleteById(entity.getId());
     }
 
     @Override
@@ -110,23 +108,23 @@ public class WorkContactTagGroupServiceImp extends ServiceImpl<WorkContactTagGro
         WorkContactTagGroupEntity entity = new WorkContactTagGroupEntity();
         entity.setCorpId(corpId);
         entity.setGroupName(groupTagName);
-        entity = workContactTagGroupMapper.selectOne(new QueryWrapper<>(entity));
+        entity = baseMapper.selectOne(new QueryWrapper<>(entity));
         if (entity != null) {
             throw new CommonException(RespContactErrCodeEnum.CONTACT_TAG_GROUP_ALREADY_EXISTS);
         } else {
             entity = new WorkContactTagGroupEntity();
             entity.setCorpId(corpId);
             entity.setGroupName(groupTagName);
-            workContactTagGroupMapper.insert(entity);
+            baseMapper.insert(entity);
         }
     }
 
     @Override
     public void updateGroup(Integer groupTagId, String groupTagName, Integer isUpdate) {
         if (isUpdate == 1) {
-            int count = workContactTagGroupMapper.selectCount(
+            int count = baseMapper.selectCount(
                     new QueryWrapper<WorkContactTagGroupEntity>()
-                    .eq("group_name",groupTagName)
+                            .eq("group_name", groupTagName)
             );
             if (count > 0) {
                 throw new CommonException(groupTagName + "标签组已存在");
@@ -134,7 +132,7 @@ public class WorkContactTagGroupServiceImp extends ServiceImpl<WorkContactTagGro
 
             WorkContactTagGroupEntity entity = new WorkContactTagGroupEntity();
             entity.setId(groupTagId);
-            entity = workContactTagGroupMapper.selectOne(new QueryWrapper<>(entity));
+            entity = baseMapper.selectOne(new QueryWrapper<>(entity));
             if (entity == null) {
                 throw new ParamException("标签组id不存在");
             }
@@ -146,7 +144,7 @@ public class WorkContactTagGroupServiceImp extends ServiceImpl<WorkContactTagGro
             }
 
             entity.setGroupName(groupTagName);
-            workContactTagGroupMapper.updateById(entity);
+            baseMapper.updateById(entity);
         }
     }
 
@@ -165,11 +163,11 @@ public class WorkContactTagGroupServiceImp extends ServiceImpl<WorkContactTagGro
         WorkContactTagGroupEntity entity = new WorkContactTagGroupEntity();
         entity.setWxGroupId(wxTagGroupId);
         entity.setCorpId(corpId);
-        entity = workContactTagGroupMapper.selectOne(new QueryWrapper<>(entity));
+        entity = baseMapper.selectOne(new QueryWrapper<>(entity));
         if (entity == null) {
             throw new ParamException("标签组不存在");
         }
         workContactTagService.deleteTagByGroupId(corpId, entity.getId(), false);
-        workContactTagGroupMapper.deleteById(entity.getId());
+        baseMapper.deleteById(entity.getId());
     }
 }

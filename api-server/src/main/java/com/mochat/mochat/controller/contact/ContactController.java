@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.mochat.mochat.common.em.contactfield.AddWayEnum;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.job.sync.WorkContactServiceSyncLogic;
 import com.mochat.mochat.model.ApiRespVO;
 import com.mochat.mochat.model.workcontact.GetContactPageResponse;
 import com.mochat.mochat.model.workcontact.GetContactRequest;
@@ -27,8 +28,12 @@ import java.util.Map;
  **/
 @RestController
 public class ContactController {
+
     @Autowired
     private IContactService contactService;
+
+    @Autowired
+    private WorkContactServiceSyncLogic contactServiceSyncLogic;
 
     /**
      * @description 客户列表
@@ -104,11 +109,8 @@ public class ContactController {
      */
     @PutMapping("/workContact/synContact")
     public ApiRespVO synContact() {
-        Integer corpId = AccountService.getCorpId();
-        if (corpId != null) {
-            contactService.synContact(corpId);
-        }
-        return ApiRespUtils.getApiRespOfOk(new ArrayList<>());
+        contactServiceSyncLogic.onSync(AccountService.getCorpId());
+        return ApiRespUtils.getApiRespOfOk();
     }
 
     /**

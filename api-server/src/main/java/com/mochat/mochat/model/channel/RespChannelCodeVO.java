@@ -1,6 +1,5 @@
 package com.mochat.mochat.model.channel;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,23 +14,21 @@ public class RespChannelCodeVO {
     /**
      * baseInfo
      */
-    private BaseInfoDTO baseInfo;
+    private BaseInfoVO baseInfo;
+
     /**
      * drainageEmployee
      */
-    private DrainageEmployeeDTO drainageEmployee;
+    private DrainageEmployeeVO drainageEmployee;
 
     /**
      * welcomeMessage
      */
-    private WelcomeMessageDTO welcomeMessage;
+    private WelcomeMessageVO welcomeMessage;
 
-    /**
-     * BaseInfoDTO
-     */
     @NoArgsConstructor
     @Data
-    public static class BaseInfoDTO {
+    public static class BaseInfoVO {
 
         /**
          * groupId

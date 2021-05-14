@@ -5,9 +5,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.common.util.ali.AliyunOssUtils;
+import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import com.mochat.mochat.service.impl.IContactService;
 import com.mochat.mochat.service.impl.ICorpService;
-import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
@@ -49,11 +49,11 @@ public class ExternalContactServiceImpl implements IExternalContactService {
     @Override
     @Async
     public void updateRemark(Integer empId, Integer corpId, Integer contactId, String remark, String description) {
-        String external_userid = workContactService.getWXExternalUserid(contactId);
-        String userId = workEmployeeService.getWorkEmployeeInfo(empId).getWxUserId();
+        String wxContactId = workContactService.getWxExternalUserId(contactId);
+        String wxEmpId = workEmployeeService.getById(empId).getWxUserId();
         Map<String, Object> mark_tag_parem = new HashMap<>();
-        mark_tag_parem.put("userid", userId);
-        mark_tag_parem.put("external_userid", external_userid);
+        mark_tag_parem.put("userid", wxEmpId);
+        mark_tag_parem.put("external_userid", wxContactId);
         if (remark != null && remark.length() > 0) {
             mark_tag_parem.put("remark", remark);
         }

@@ -158,7 +158,7 @@ public class WorkMsgConfigServiceImpl extends ServiceImpl<WorkMsgConfigMapper, W
         Map<String,Object> matchWordsMap = new HashMap();
         //获得信息发送方|接收方信息
         List<String> participantIdArr = new ArrayList();
-        List<String> wxRoomIdArr = new ArrayList();;
+        List<String> wxRoomIdArr = new ArrayList();
         for (WorkMsgEntity workMsgEntity:
                 workMsgEntityList) {
             participantIdArr.add(workMsgEntity.getFrom());

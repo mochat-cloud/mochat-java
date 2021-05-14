@@ -35,8 +35,8 @@ public class WorkChannelCodeSyncLogic {
         int corpId = entity.getCorpId();
         boolean skipVerify = 1 == entity.getAutoAddFriend();
         int type = entity.getType();
-        // status 组成规则: channelCodeId- + entity.getId
-        String state = "channelCodeId-" + entity.getId();
+        // status 组成规则: channelCode- + entity.getId
+        String state = "channelCode-" + entity.getId();
 
         // 微信获取二维码
         String resultJson = WxApiUtils.requestCreateContactWay(

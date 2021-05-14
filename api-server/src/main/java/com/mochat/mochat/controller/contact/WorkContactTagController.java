@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.mochat.mochat.common.model.RequestPage;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.config.ex.ParamException;
+import com.mochat.mochat.job.sync.WorkContactTagSyncLogic;
 import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.impl.IWorkContactTagService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,8 @@ public class WorkContactTagController {
 
     @Autowired
     private IWorkContactTagService workContactTagService;
+    @Autowired
+    private WorkContactTagSyncLogic contactTagServiceSyncLogic;
 
     /**
      * 获取标签列表
@@ -49,12 +53,12 @@ public class WorkContactTagController {
     }
 
     /**
-     * 同步标签 TODO 是否异步
+     * 同步标签
      */
     @PutMapping("/synContactTag")
     public ApiRespVO synContactTag() {
-        workContactTagService.synContactTag();
-        return ApiRespUtils.getApiRespOfOk("");
+        contactTagServiceSyncLogic.onSync(AccountService.getCorpId());
+        return ApiRespUtils.getApiRespOfOk();
     }
 
     /**

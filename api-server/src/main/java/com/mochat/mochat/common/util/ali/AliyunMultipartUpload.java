@@ -32,7 +32,7 @@ public class AliyunMultipartUpload {
     private static final int PART_SIZE = 5 * 1024 * 1024;
     private static final int PART_COUNT_MAX = 10000;
 
-    private static OssProperties ossProperties = AliyunComponent.ossProperties;
+    private static AliyunOssProperties ossProperties = AliyunComponent.ossProperties;
 
     private static OSS client;
 

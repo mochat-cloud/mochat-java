@@ -30,27 +30,32 @@ public class WelcomeMessageDTO {
         private Integer type;
 
         /**
-         * content 媒体内容
+         * welcomeContent
          */
-        private ContentDTO content;
+        private String welcomeContent;
 
         /**
-         * mediumId 素材库ID
+         * mediumId
          */
         private String mediumId;
 
         /**
-         * welcomeContent 欢迎语内容
-         */
-        private String welcomeContent;
-        /**
          * status
          */
         private Integer status;
+
         /**
          * detail
          */
         private List<DetailDTO> detail;
+
+        public int getMediumId() {
+            try {
+                return Integer.parseInt(mediumId);
+            } catch (Exception e) {
+                return 0;
+            }
+        }
 
         /**
          * DetailDTO
@@ -58,26 +63,10 @@ public class WelcomeMessageDTO {
         @NoArgsConstructor
         @Data
         public static class DetailDTO {
-            /**
-             * key
-             */
-            private String key;
-            /**
-             * endDate
-             */
-            private String endDate;
-            /**
-             * startDate
-             */
+
             private String startDate;
-            /**
-             * timeSlot
-             */
-            private List<TimeSlotDTO> timeSlot;
-            /**
-             * dataString
-             */
-            private List<String> dataString;
+
+            private String endDate;
 
             /**
              * chooseCycle
@@ -85,31 +74,44 @@ public class WelcomeMessageDTO {
             private List<Integer> chooseCycle;
 
             /**
+             * timeSlot
+             */
+            private List<TimeSlotDTO> timeSlot;
+
+            /**
              * TimeSlotDTO
              */
             @NoArgsConstructor
             @Data
             public static class TimeSlotDTO {
-                /**
-                 * content
-                 */
-                private ContentDTO content;
-                /**
-                 * endTime
-                 */
-                private String endTime;
-                /**
-                 * mediumId
-                 */
-                private String mediumId;
-                /**
-                 * startTime
-                 */
-                private String startTime;
+
                 /**
                  * welcomeContent
                  */
                 private String welcomeContent;
+
+                /**
+                 * mediumId
+                 */
+                private String mediumId;
+
+                /**
+                 * startTime
+                 */
+                private String startTime;
+
+                /**
+                 * endTime
+                 */
+                private String endTime;
+
+                public int getMediumId() {
+                    try {
+                        return Integer.parseInt(mediumId);
+                    } catch (Exception e) {
+                        return 0;
+                    }
+                }
             }
         }
     }

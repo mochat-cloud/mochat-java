@@ -1,6 +1,6 @@
 package com.mochat.mochat.dao.entity;
+
 import com.baomidou.mybatisplus.annotation.*;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
 
 import java.util.Date;
@@ -18,7 +18,7 @@ import java.util.Date;
 @TableName("mc_work_contact_employee")
 public class WorkContactEmployeeEntity {
 
-    @TableId(type= IdType.AUTO)
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**
@@ -110,11 +110,15 @@ public class WorkContactEmployeeEntity {
     private Date updatedAt;
 
     @TableLogic
-	private Date deletedAt;
+    private Date deletedAt;
 
     /**
      * 客户信息
      */
     @TableField(exist = false)
     private WorkContactEntity workContact;
+
+    public Integer getStatus() {
+        return status == null ? 1 : status;
+    }
 }

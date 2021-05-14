@@ -16,31 +16,44 @@ import java.util.List;
 
 public interface IContactService extends IService<WorkContactEntity> {
     /**
+     * @param parem   搜索条件
+     * @param empId   员工 id
+     * @param corpId  企业 id
+     * @param perEnum 用户权限
      * @author: yangpengwei
      * @time: 2021/3/16 2:13 下午
      * @description 获取客户列表
-     *
-     * @param parem 搜索条件
-     * @param empId 员工 id
-     * @param corpId 企业 id
-     * @param perEnum 用户权限
      */
     GetContactPageResponse getContactPage(GetContactRequest parem, int empId, int corpId, ReqPerEnum perEnum);
 
     GetContactInfoResponse getContactInfo(Integer contactId, Integer empId, Integer corpId);
+
     boolean updateBusinessNo(Integer empId, Integer contactId, String businessNo);
+
     boolean updateContact(UpdateContactResponse parem, Integer corpId, Integer empId);
+
     boolean synContact(Integer corpId);
+
     boolean insertAllContact(List<WorkContactEntity> contacts);
-    boolean insertAllContact(List<WorkContactEntity> contacts,Integer corpId);
+
+    boolean insertAllContact(List<WorkContactEntity> contacts, Integer corpId);
+
     boolean insertContact(WorkContactEntity contact);
+
     JSONObject getlossContact(Integer corpId, List<Integer> empId, Integer page, Integer perPage);
-    String getWXExternalUserid(int contactId);
+
+    String getWxExternalUserId(int contactId);
+
     Integer getContactId(String wxExternalUserid);
-    void addExternalContact(String wxCorpId, String externalUserid,String userId,String welcomeCode,String state);
+
+    void addExternalContact(int corpId, String wxEmpId, String wxContactId, String welcomeCode, String state);
+
     void editExternalContact(String externalUserid, String userId);
+
     void deleteExternalContact(String externalUserid, String userId);
+
     void externalContactDeleteEmployee(String externalUserid, String userId);
+
     Integer insertWXSynContact(JSONObject contactJson, Integer corpId);
 
     ContactDetailVO getContactDetailByWxExternalUserId(String wxExternalUserid);

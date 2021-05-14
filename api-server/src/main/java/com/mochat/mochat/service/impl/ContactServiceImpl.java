@@ -20,28 +20,27 @@ import com.mochat.mochat.common.util.ali.AliyunOssUtils;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
+import com.mochat.mochat.dao.entity.*;
+import com.mochat.mochat.dao.entity.channel.ChannelCodeEntity;
 import com.mochat.mochat.dao.entity.medium.MediumEnyity;
 import com.mochat.mochat.dao.mapper.ContactEmployeeTrackMapper;
 import com.mochat.mochat.dao.mapper.ContactMapper;
 import com.mochat.mochat.model.contact.ContactDetailVO;
 import com.mochat.mochat.model.contact.ContactTrackVO;
 import com.mochat.mochat.model.transfer.GetContactRoom;
+import com.mochat.mochat.model.workcontact.*;
 import com.mochat.mochat.model.workcontacttag.GetContactTapModel;
 import com.mochat.mochat.model.workcontacttag.GetEmployeeTagModel;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.IWorkUpdateTimeService;
 import com.mochat.mochat.service.channel.IChannelCodeService;
-import com.mochat.mochat.service.contact.ICorpTagService;
 import com.mochat.mochat.service.contact.IExternalContactService;
 import com.mochat.mochat.service.contact.ISendWelcomeMsgService;
 import com.mochat.mochat.service.emp.IWorkEmployeeDepartmentService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
-import com.mochat.mochat.service.greeting.IGreetingService;
 import com.mochat.mochat.service.impl.medium.IMediumService;
 import com.mochat.mochat.service.workroom.IWorkRoomAutoPullService;
 import com.mochat.mochat.service.workroom.IWorkRoomService;
-import com.mochat.mochat.dao.entity.*;
-import com.mochat.mochat.model.workcontact.*;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -76,12 +75,6 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
     private IWorkContactFieldPivotService contactFieldPivotService;
 
     /**
-     * 欢迎语
-     */
-    @Autowired
-    private IGreetingService greetingServiceImpl;
-
-    /**
      * 媒体库
      */
     @Autowired
@@ -93,6 +86,8 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
     @Autowired
     private IWorkContactEmployeeService workContactEmployeeServiceImpl;
 
+    @Autowired
+    private IWorkContactService workContactService;
 
     /**
      * 客户标签
@@ -124,12 +119,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
     @Autowired
     @Lazy
     private IExternalContactService externalContactService;
-    /**
-     * 企业微信客户标签
-     */
-    @Autowired
-    @Lazy
-    private ICorpTagService corpTagService;
+
     @Autowired
     private ISendWelcomeMsgService sendWelcomeMsgService;
 
@@ -264,24 +254,27 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
         List<WorkContactTagPivotEntity> contactTagPivotEntityList = contactTagPivotService.lambdaQuery()
                 .in(WorkContactTagPivotEntity::getContactId, contactIdList)
                 .list();
-        Map<Integer, Integer> contactIdTagIdListMap = new HashMap<>(contactTagPivotEntityList.size());
-        List<Integer> tagIdList = new ArrayList<>();
+        Map<String, List<Integer>> contactEmpAndTagIdListMap = new HashMap<>();
+        List<Integer> tagIdListAll = new ArrayList<>();
         for (WorkContactTagPivotEntity entity : contactTagPivotEntityList) {
-            tagIdList.add(entity.getContactTagId());
+            tagIdListAll.add(entity.getContactTagId());
+            String key = entity.getContactId() + "-" + entity.getEmployeeId();
 
-            //List<Integer> tagIds = contactIdTagIdListMap.get(entity.getContactId());
-            if (entity.getContactTagId() != null) {
-                //tagIds = new ArrayList<>();
-                contactIdTagIdListMap.put(entity.getContactId(), entity.getContactTagId());
+            List<Integer> tagIdList = null;
+            if (contactEmpAndTagIdListMap.containsKey(key)) {
+                tagIdList = contactEmpAndTagIdListMap.get(key);
+            } else {
+                tagIdList = new ArrayList<>();
+                contactEmpAndTagIdListMap.put(key, tagIdList);
             }
+            tagIdList.add(entity.getContactTagId());
         }
 
-
-        Map<Integer, String> tagIdNameMap = new HashMap<>(tagIdList.size());
-        if (!tagIdList.isEmpty()) {
+        Map<Integer, String> tagIdNameMap = new HashMap<>(tagIdListAll.size());
+        if (!tagIdListAll.isEmpty()) {
             List<WorkContactTagEntity> tagEntityList = contactTagService.lambdaQuery()
                     .select(WorkContactTagEntity::getId, WorkContactTagEntity::getName)
-                    .in(WorkContactTagEntity::getId, tagIdList)
+                    .in(WorkContactTagEntity::getId, tagIdListAll)
                     .list();
             for (WorkContactTagEntity entity : tagEntityList) {
                 tagIdNameMap.put(entity.getId(), entity.getName());
@@ -322,7 +315,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
             vo.setRemark(entity.getRemark());
             vo.setAddWay(entity.getAddWay());
             vo.setAddWayText(AddWayEnum.getByCode(entity.getAddWay()));
-            vo.setCreateTime(DateUtils.formatS1(entity.getCreateTime().getTime()*1000));
+            vo.setCreateTime(DateUtils.formatS1(entity.getCreateTime().getTime() * 1000));
 
             List<String> roomNameList = new ArrayList<>();
             List<Integer> roomIds = contactIdRoomIdListMap.get(cId);
@@ -334,9 +327,12 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
             vo.setRoomName(roomNameList);
 
             List<String> tagNameList = new ArrayList<>();
-            Integer tagIds = contactIdTagIdListMap.get(cId);
-            if (Objects.nonNull(tagIds)) {
-                tagNameList.add(tagIdNameMap.get(tagIds));
+            String key = entity.getContactId() + "-" + entity.getEmployeeId();
+            if (contactEmpAndTagIdListMap.containsKey(key)) {
+                List<Integer> tagIds = contactEmpAndTagIdListMap.get(key);
+                for (Integer tagId : tagIds) {
+                    tagNameList.add(tagIdNameMap.get(tagId));
+                }
             }
             vo.setTag(tagNameList);
 
@@ -664,7 +660,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
         //endregion
 
         //region 客户通讯录中间表数据
-        WorkContactEmployeeEntity workContactEmployee = workContactEmployeeService.getWorkContactEmployeeInfo(corpId, empId, contactId,null);
+        WorkContactEmployeeEntity workContactEmployee = workContactEmployeeService.getWorkContactEmployeeInfo(corpId, empId, contactId, null);
         contactInfoResponse.setRemark(workContactEmployee.getRemark());
         contactInfoResponse.setDescription(workContactEmployee.getDescription());
         List<Integer> empIds = workContactEmployeeService.getBelongToEmployeeId(contactId, corpId);
@@ -686,7 +682,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
     }
 
     @Override
-    public String getWXExternalUserid(int contactId) {
+    public String getWxExternalUserId(int contactId) {
         WorkContactEntity workContactEntity = this.baseMapper.selectById(contactId);
         if (workContactEntity != null) {
             return workContactEntity.getWxExternalUserid();
@@ -738,13 +734,13 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
     @Transactional
     public boolean updateContact(UpdateContactResponse parem, Integer corpId, Integer empId) {
         if (parem.getContactId() != null) {
-            if (parem.getBusinessNo() != null && !parem.getBusinessNo().isEmpty()) {
+            if (StringUtils.hasLength(parem.getBusinessNo())) {
                 updateBusinessNo(empId, parem.getContactId(), parem.getBusinessNo());
             }
             if (parem.getTag() != null && !parem.getTag().isEmpty()) {
-                contactTagPivotService.updateContactTapPivot(empId, parem.getContactId(), parem.getTag());
+                contactTagPivotService.updateContactTagPivot(empId, parem.getContactId(), parem.getTag());
             }
-            if ((parem.getDescription() != null && !parem.getDescription().isEmpty()) || (parem.getRemark() != null && !parem.getRemark().isEmpty())) {
+            if (StringUtils.hasLength(parem.getRemark()) || StringUtils.hasLength(parem.getDescription())) {
                 workContactEmployeeService.updateRemarkOrDescription(corpId, empId, parem.getContactId(), parem.getRemark(), parem.getDescription());
             }
             return true;
@@ -784,23 +780,23 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
         if (diffContactList != null && diffContactList.size() > 0) {
             //result = this.saveBatch(diffContactList);
             int result1 = 0;
-            for (WorkContactEntity workContactEntity:
+            for (WorkContactEntity workContactEntity :
                     diffContactList) {
                 workContactEntity.setName(EmojiParser.parseToAliases(workContactEntity.getName()));
                 result1 = this.baseMapper.insert(workContactEntity);
             }
-            if(result1 > 0){
+            if (result1 > 0) {
                 result = true;
             }
         }
         if (contacts != null && contacts.size() > 0) {
-            int result2  = 0;
-            for (WorkContactEntity workContactEntity:
+            int result2 = 0;
+            for (WorkContactEntity workContactEntity :
                     contacts) {
                 workContactEntity.setName(EmojiParser.parseToAliases(workContactEntity.getName()));
                 result2 = this.baseMapper.updateById(workContactEntity);
             }
-            if(result2 > 0){
+            if (result2 > 0) {
                 result = true;
             }
         }
@@ -856,7 +852,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
         //endregion
     }
 
-    /**saveTrack
+    /**
      * @description 同步客户
      * @author zhaojinjian
      * @createTime 2020/12/12 11:43
@@ -1053,8 +1049,8 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
             JSONObject json = new JSONObject();
             json.put("contactId", entry.getValue());
             json.put("avatar", AliyunOssUtils.getUrl(contactEntity.getAvatar()));
-            WorkContactEmployeeEntity workContactEmployeeEntity = workContactEmployeeServiceImpl.getWorkContactEmployeeInfo(corpId,empId,contactEntity.getId(),id);
-            WorkEmployeeEntity workEmployeeEntity = employeeService.getWorkEmployeeInfo(empId);
+            WorkContactEmployeeEntity workContactEmployeeEntity = workContactEmployeeServiceImpl.getWorkContactEmployeeInfo(corpId, empId, contactEntity.getId(), id);
+            WorkEmployeeEntity workEmployeeEntity = employeeService.getWorkEmployeeInfoById(empId);
             json.put("remark", workEmployeeEntity.getName());
             json.put("nickName", contactEntity.getNickName());
             json.put("deletedAt", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(workContactEmployeeEntity.getDeletedAt().getTime()));
@@ -1078,122 +1074,92 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
      * @createTime 2020/12/16 19:05
      */
     @Override
-    public void addExternalContact(String wxCorpId, String externalUserid, String userId, String welcomeCode, String state) {
-        WorkEmployeeEntity employeeEntity = workEmployeeService.getWorkEmployeeInfo(userId);
-        Map<String,Object> contentMap = null;
-        if (employeeEntity != null) {
-            Integer empId = employeeEntity.getId();
+    public void addExternalContact(int corpId, String wxEmpId, String wxContactId, String welcomeCode, String state) {
+        WorkEmployeeEntity employeeEntity = workEmployeeService.getWorkEmployeeInfoByWxEmpId(wxEmpId);
+        if (employeeEntity == null) {
+            return;
+        }
 
-            JSONArray contactUserid = new JSONArray();
-            contactUserid.add(externalUserid);
-            //获取微信客户详情
-            Map<String, JSONObject> contactInfo = externalContactService.getExternalContactMap(contactUserid, employeeEntity.getCorpId());
-            Map<WorkContactEntity, Map<String, Map<WorkContactEmployeeEntity, Map<String, WorkContactTagPivotEntity>>>> modelMap = externalContactToWorkContact(contactInfo, employeeEntity.getCorpId(), userId);
-            List<WorkContactEntity> contactList = modelMap.keySet().stream().collect(Collectors.toList());
-            boolean result = insertAllContact(contactList, employeeEntity.getCorpId());
-            List<WorkContactTagPivotEntity> roomTags = new ArrayList<>();
-            //获取客户Tag集合
-            if (state != null && state.contains("workRoomAutoPullId")) {
-                //获取自动拉群id
-                Integer roomAutoPullId = Integer.parseInt(state.split("-")[1]);
-                //获取自动拉群详情
-                WorkRoomAutoPullEntity roomAutoPullDetail = workRoomAutoPullService.getRoomAutoPullInfo(roomAutoPullId);
-                //
-                if (roomAutoPullDetail != null) {
-                    String tags = roomAutoPullDetail.getTags();
-                    JSONArray tagArray = JSONArray.parseArray(tags);
-                    for (int i = 0; i < tagArray.size(); i++) {
-                        WorkContactTagPivotEntity tagPivotEntity = new WorkContactTagPivotEntity();
-                        tagPivotEntity.setContactTagId(Integer.parseInt(tagArray.get(i).toString()));
-                        tagPivotEntity.setEmployeeId(empId);
-                        tagPivotEntity.setCreatedAt(new Date());
-                        tagPivotEntity.setType(1);
-                        tagPivotEntity.setContactId(contactList.get(0).getId());
-                        roomTags.add(tagPivotEntity);
-                    }
+        Integer empId = employeeEntity.getId();
+        boolean result = workContactService.createAndSyncContact(corpId, empId, wxEmpId, wxContactId);
+        if (result) {
+            WorkContactEntity contactEntity = lambdaQuery()
+                    .select(WorkContactEntity::getId, WorkContactEntity::getName)
+                    .eq(WorkContactEntity::getWxExternalUserid, wxContactId)
+                    .one();
+            int contactId = contactEntity.getId();
+            String contactName = contactEntity.getName();
 
-                    String roomJson = roomAutoPullDetail.getRooms();
-                    JSONArray roomJsonArray = JSON.parseArray(roomJson);
-                    String roomQrcodeMediaId = "";
-                    for (int i = 0; i < roomJsonArray.size(); i++) {
-                        JSONObject roomJsonObj = roomJsonArray.getJSONObject(i);
-                        int roomId = roomJsonObj.getIntValue("roomId");
-                        int maxNum = roomJsonObj.getIntValue("maxNum");
-                        WorkRoomEntity roomEntity = roomService.getById(roomId);
-                        int roomMax = roomEntity.getRoomMax();
-                        int count = contactRoomService.lambdaQuery()
-                                .eq(WorkContactRoomEntity::getRoomId, roomEntity.getId())
-                                .count();
-                        if (count < roomMax && count < maxNum) {
-                            // 拉人中 发送此群二维码
-                            File roomQrcodeFile = AliyunOssUtils.getFile(roomJsonObj.getString("roomQrcodeUrl"));
-                            roomQrcodeMediaId = WxApiUtils.uploadImageToTemp(employeeEntity.getCorpId(), roomQrcodeFile);
-                            break;
-                        }
-                    }
-                    //sendWelcomeMsgService.send(employeeEntity.getCorpId(), welcomeCode, roomAutoPullDetail.getLeadingWords(), roomQrcodeMediaId);
-                }
-            }
-            if (state != null && state.contains("channelCode")) {
-                // 获取渠道码 id
-                Integer channelCodeId = Integer.parseInt(state.split("-")[1]);
-                Map<String, String> map = channelCodeService.getWelcomeMsgMap(channelCodeId);
-                //sendWelcomeMsgService.send(employeeEntity.getCorpId(), welcomeCode, map);
-            }
-            //发送欢迎语
-            if(state == null || state.equals("")){
-                //sendWelcomeMsgService.send(employeeEntity.getCorpId(), welcomeCode, map);
-                contentMap = greetingServiceImpl.getGreeting(userId);
-            }
-            greetingServiceImpl.applyWxSendContactMessage(wxCorpId,welcomeCode,contactInfo,(Map<String,Object>)contentMap.get("content"));
-            if (result) {
-                List<WorkContactEmployeeEntity> contactEmployeeList = new ArrayList<>();
-                List<WorkContactTagPivotEntity> contactTagPivotList = new ArrayList<>();
-                for (Map.Entry<WorkContactEntity, Map<String, Map<WorkContactEmployeeEntity, Map<String, WorkContactTagPivotEntity>>>> entry : modelMap.entrySet()) {
-                    for (Map.Entry<String, Map<WorkContactEmployeeEntity, Map<String, WorkContactTagPivotEntity>>> aa : entry.getValue().entrySet()) {
-                        for (Map.Entry<WorkContactEmployeeEntity, Map<String, WorkContactTagPivotEntity>> bb : aa.getValue().entrySet()) {
-                            bb.getKey().setContactId(entry.getKey().getId());
-                            bb.getKey().setEmployeeId(empId);
-                            List<String> wxTagIds = bb.getValue().keySet().stream().collect(Collectors.toList());
-                            Map<String, Integer> tagIds = contactTagService.getContactTagId(wxTagIds);
-                            for (Map.Entry<String, WorkContactTagPivotEntity> cc : bb.getValue().entrySet()) {
-                                cc.getValue().setContactId(entry.getKey().getId());
-                                cc.getValue().setEmployeeId(empId);
-                                cc.getValue().setContactTagId(tagIds.get(cc.getKey()));
-                            }
-                            contactTagPivotList.addAll(bb.getValue().values().stream().filter(c -> c.getContactTagId() != null).collect(Collectors.toList()));
-                        }
-                        contactEmployeeList.addAll(aa.getValue().keySet().stream().collect(Collectors.toList()));
-                    }
-                }
-                if ((contactTagPivotList != null && contactTagPivotList.size() > 0) || roomTags.size() > 0) {
-                    if (contactTagPivotList != null && contactTagPivotList.size() > 0) {
-                        roomTags.addAll(contactTagPivotList);
-                        if (roomTags.size() > 0) {
-                            List<WorkContactTagPivotEntity> diffContactTagPivot = roomTags.stream().filter(item -> !contactTagPivotList.stream().map(e -> e.getId()).collect(Collectors.toList()).contains(item.getId())).collect(Collectors.toList());
-                            //求出自动拉群和当前客户标签的差集
-                            List<Integer> tagIdList = diffContactTagPivot.stream().map(WorkContactTagPivotEntity::getContactTagId).collect(Collectors.toList());
-                            if (tagIdList != null && tagIdList.size() > 0) {
-                                //修改客户标签
-                                corpTagService.wxUpdateTag(userId, externalUserid, tagIdList);
-                            }
-                        }
-                    }
-                    //                 result = contactTagPivotService.insertAllTagPivot(roomTags);
-                }
-                if (contactEmployeeList != null && contactEmployeeList.size() > 0) {
-                    //                 result = workContactEmployeeService.insertAllContactEmployee(contactEmployeeList);
-                }
-
-                // 添加互动轨迹
-
+            if (!StringUtils.hasLength(state)) {
+                sendWelcomeMsgService.sendMsg(corpId, welcomeCode, "");
+                return;
             }
 
-        } else {
-            //TODO  根据微信成员userid，没有在本地库找到对应的员工信息；
+            int id = Integer.parseInt(state.split("-")[1]);
+
+            if (state.contains("workRoomAutoPullId")) {
+                addExternalContactOfRoomAutoLogic(corpId, empId, contactId, contactName, id, welcomeCode);
+                return;
+            }
+            if (state.contains("channelCode")) {
+                addExternalContactOfChannelCodeLogic(corpId, empId, contactId, contactName, id, welcomeCode);
+                return;
+            }
         }
     }
 
+    public void addExternalContactOfRoomAutoLogic(int corpId, int empId, int contactId, String contactName,
+                                                  int roomAutoPullId, String welcomeCode) {
+        // 获取自动拉群详情
+        WorkRoomAutoPullEntity roomAutoPullDetail = workRoomAutoPullService.getRoomAutoPullInfo(roomAutoPullId);
+        if (roomAutoPullDetail != null) {
+            String tags = roomAutoPullDetail.getTags();
+            incrementalContactTagPivot(empId, contactId, tags);
+
+            String leadingWords = roomAutoPullDetail.getLeadingWords().replaceAll("##客户名称##", contactName);
+            String roomJson = roomAutoPullDetail.getRooms();
+            JSONArray roomJsonArray = JSON.parseArray(roomJson);
+            String roomQrcodeMediaId = "";
+            for (int i = 0; i < roomJsonArray.size(); i++) {
+                JSONObject roomJsonObj = roomJsonArray.getJSONObject(i);
+                int roomId = roomJsonObj.getIntValue("roomId");
+                int maxNum = roomJsonObj.getIntValue("maxNum");
+                WorkRoomEntity roomEntity = roomService.getById(roomId);
+                int roomMax = roomEntity.getRoomMax();
+                int count = contactRoomService.lambdaQuery()
+                        .eq(WorkContactRoomEntity::getRoomId, roomEntity.getId())
+                        .count();
+                if (count < roomMax && count < maxNum) {
+                    // 拉人中 发送此群二维码
+                    File roomQrcodeFile = AliyunOssUtils.getFile(roomJsonObj.getString("roomQrcodeUrl"));
+                    roomQrcodeMediaId = WxApiUtils.uploadImageToTemp(corpId, roomQrcodeFile);
+                    break;
+                }
+            }
+            if (StringUtils.hasLength(roomQrcodeMediaId)) {
+                sendWelcomeMsgService.sendMsgOfRoomAutoPull(corpId, welcomeCode, leadingWords, roomQrcodeMediaId);
+            }
+        }
+    }
+
+    public void addExternalContactOfChannelCodeLogic(int corpId, int empId, int contactId, String contactName,
+                                                     int channelCodeId, String welcomeCode) {
+        ChannelCodeEntity channelCodeEntity = channelCodeService.getById(channelCodeId);
+        String tags = channelCodeEntity.getTags();
+        incrementalContactTagPivot(empId, contactId, tags);
+
+        Map<String, String> map = channelCodeService.getWelcomeMessageMap(channelCodeEntity);
+        if (map != null) {
+            map.put("contactName", contactName);
+            sendWelcomeMsgService.sendMsgOfChannelCode(corpId, welcomeCode, map);
+        }
+    }
+
+    private void incrementalContactTagPivot(int empId, int contactId, String tags) {
+        JSONArray tagArray = JSONArray.parseArray(tags);
+        List<Integer> tagIdList = tagArray.toJavaList(Integer.class);
+        workContactService.incrementalContactTagPivot(empId, contactId, tagIdList);
+    }
 
     private MediumEnyity getMedium(String mediumId) {
         return mediumService.getMediumById(Integer.valueOf(mediumId));
@@ -1279,7 +1245,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
      */
     @Override
     public void editExternalContact(String externalUserid, String userId) {
-        WorkEmployeeEntity employeeEntity = workEmployeeService.getWorkEmployeeInfo(userId);
+        WorkEmployeeEntity employeeEntity = workEmployeeService.getWorkEmployeeInfoByWxEmpId(userId);
         if (employeeEntity != null) {
             JSONArray contactUserId = new JSONArray();
             //获取微信客户详情
@@ -1297,10 +1263,10 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
                         //做判断不存在要新增
                         List<WorkContactEmployeeEntity> contactEmployeeEntities = list.getKey();
                         List<WorkContactTagPivotEntity> contactFieldPivots = list.getValue();
-                        WorkContactEmployeeEntity contactEmployeeEntity = workContactEmployeeService.getWorkContactEmployeeInfo(employeeEntity.getCorpId(), employeeEntity.getId(), contactId,null);
+                        WorkContactEmployeeEntity contactEmployeeEntity = workContactEmployeeService.getWorkContactEmployeeInfo(employeeEntity.getCorpId(), employeeEntity.getId(), contactId, null);
                         contactEmployeeEntities.get(0).setId(contactEmployeeEntity.getId());
                         workContactEmployeeService.updateContactEmployee(contactEmployeeEntities.get(0));
-                        contactTagPivotService.updateContactTapPivot(contactFieldPivots);
+                        contactTagPivotService.updateContactTagPivot(contactFieldPivots);
                     }
                 }
             }
@@ -1314,13 +1280,14 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
      */
     @Override
     public void deleteExternalContact(String externalUserid, String userId) {
-        WorkEmployeeEntity employeeEntity = workEmployeeService.getWorkEmployeeInfo(userId);
+        WorkEmployeeEntity employeeEntity = workEmployeeService.getWorkEmployeeInfoByWxEmpId(userId);
         if (employeeEntity != null) {
             QueryWrapper<WorkContactEntity> contactWrapper = new QueryWrapper<>();
             contactWrapper.eq("wx_external_userid", externalUserid);
             WorkContactEntity contactEntity = new WorkContactEntity();
             contactEntity.setDeletedAt(new Date());
             this.update(contactEntity, contactWrapper);
+            contactEntity = this.baseMapper.selectOne(contactWrapper);
             workContactEmployeeService.deleteContactEmployee(employeeEntity.getCorpId(), employeeEntity.getId(), contactEntity.getId());
             contactTagPivotService.deleteContactTagPivot(employeeEntity.getId(), contactEntity.getId());
         }
@@ -1333,7 +1300,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
      */
     @Override
     public void externalContactDeleteEmployee(String externalUserid, String userId) {
-        WorkEmployeeEntity employeeEntity = workEmployeeService.getWorkEmployeeInfo(userId);
+        WorkEmployeeEntity employeeEntity = workEmployeeService.getWorkEmployeeInfoByWxEmpId(userId);
         if (employeeEntity != null) {
             Integer contactId = getContactId(externalUserid);
             workContactEmployeeService.deleteContactEmployee(employeeEntity.getCorpId(), employeeEntity.getId(), contactId);

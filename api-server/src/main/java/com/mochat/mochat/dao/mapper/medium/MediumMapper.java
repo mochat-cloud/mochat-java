@@ -1,6 +1,6 @@
 package com.mochat.mochat.dao.mapper.medium;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mochat.mochat.dao.entity.medium.MediumEnyity;
 import java.util.List;
 import java.util.Map;

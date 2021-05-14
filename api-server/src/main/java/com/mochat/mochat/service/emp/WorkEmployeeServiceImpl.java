@@ -21,11 +21,11 @@ import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.dao.entity.*;
 import com.mochat.mochat.dao.mapper.WorkEmployeeMapper;
+import com.mochat.mochat.model.emp.*;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.IWorkUpdateTimeService;
 import com.mochat.mochat.service.impl.ICorpService;
 import com.mochat.mochat.service.impl.ISubSystemService;
-import com.mochat.mochat.model.emp.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,7 +122,7 @@ public class WorkEmployeeServiceImpl extends ServiceImpl<WorkEmployeeMapper, Wor
         map.clear();
 
         if (!workDeptEntityList.isEmpty()) {
-            deptService.insertDeptments(workDeptEntityList,corpId);
+            deptService.insertDeptments(workDeptEntityList, corpId);
         }
     }
 
@@ -589,7 +589,7 @@ public class WorkEmployeeServiceImpl extends ServiceImpl<WorkEmployeeMapper, Wor
      * @Date: 2020/11/23
      */
     @Override
-    public WorkEmployeeEntity getWorkEmployeeInfo(Integer empId) {
+    public WorkEmployeeEntity getWorkEmployeeInfoById(Integer empId) {
         return this.baseMapper.selectById(empId);
     }
 
@@ -603,16 +603,13 @@ public class WorkEmployeeServiceImpl extends ServiceImpl<WorkEmployeeMapper, Wor
     @Override
     public WorkEmployeeEntity getWorkEmployeeInfoByLogId(Integer userId) {
         QueryWrapper<WorkEmployeeEntity> workEmployeeEntityQueryWrapper = new QueryWrapper();
-        workEmployeeEntityQueryWrapper.eq("log_user_id",userId);
-        workEmployeeEntityQueryWrapper.eq("corp_id",AccountService.getCorpId());
+        workEmployeeEntityQueryWrapper.eq("log_user_id", userId);
+        workEmployeeEntityQueryWrapper.eq("corp_id", AccountService.getCorpId());
         return this.baseMapper.selectOne(workEmployeeEntityQueryWrapper);
     }
 
 
-
     /**
-     *
-     *
      * @description:根据wxuserid查找
      * @author: Huayu
      * @time: 2021/3/30 22:51
@@ -621,14 +618,14 @@ public class WorkEmployeeServiceImpl extends ServiceImpl<WorkEmployeeMapper, Wor
     public WorkEmployeeEntity getWorkEmployeeByWxUserId(String userId, String s) {
         QueryWrapper<WorkEmployeeEntity> workEmployeeEntityQueryWrapper = new QueryWrapper();
         workEmployeeEntityQueryWrapper.select(s);
-        workEmployeeEntityQueryWrapper.eq("wx_user_id",userId);
+        workEmployeeEntityQueryWrapper.eq("wx_user_id", userId);
         return this.baseMapper.selectOne(workEmployeeEntityQueryWrapper);
     }
 
     @Override
     public List<WorkEmployeeEntity> countWorkEmployeesByCorpId(Integer corpId) {
         QueryWrapper<WorkEmployeeEntity> workEmployeeEntityQueryWrapper = new QueryWrapper();
-        workEmployeeEntityQueryWrapper.eq("corp_id",corpId);
+        workEmployeeEntityQueryWrapper.eq("corp_id", corpId);
         return this.baseMapper.selectList(workEmployeeEntityQueryWrapper);
     }
 
@@ -639,7 +636,7 @@ public class WorkEmployeeServiceImpl extends ServiceImpl<WorkEmployeeMapper, Wor
      * @createTime 2020/12/16 19:03
      */
     @Override
-    public WorkEmployeeEntity getWorkEmployeeInfo(String userId) {
+    public WorkEmployeeEntity getWorkEmployeeInfoByWxEmpId(String userId) {
         QueryWrapper<WorkEmployeeEntity> employeeWrapper = new QueryWrapper<>();
         employeeWrapper.eq("wx_user_id", userId);
         return this.baseMapper.selectOne(employeeWrapper);
@@ -820,7 +817,7 @@ public class WorkEmployeeServiceImpl extends ServiceImpl<WorkEmployeeMapper, Wor
     public List<WorkEmployeeEntity> getWorkEmployeesByMobile(String phone, String clStr) {
         QueryWrapper<WorkEmployeeEntity> workEmployeeEntityQueryWrapper = new QueryWrapper();
         workEmployeeEntityQueryWrapper.select(clStr);
-        workEmployeeEntityQueryWrapper.eq("mobile",phone);
+        workEmployeeEntityQueryWrapper.eq("mobile", phone);
         return this.baseMapper.selectList(workEmployeeEntityQueryWrapper);
     }
 
@@ -828,19 +825,19 @@ public class WorkEmployeeServiceImpl extends ServiceImpl<WorkEmployeeMapper, Wor
     public List<WorkEmployeeEntity> getWorkEmployeeList(String page, String perPage, String clStr, String empIdArr) {
         QueryWrapper<WorkEmployeeEntity> workEmployeeEntityQueryWrapper = new QueryWrapper();
         workEmployeeEntityQueryWrapper.select(clStr);
-        if(empIdArr != null && !empIdArr.equals("")){
+        if (empIdArr != null && !empIdArr.equals("")) {
             String[] empIdStr = empIdArr.split(",");
             List<String> list = new ArrayList();
-            for (String str:
+            for (String str :
                     empIdStr) {
                 list.add(str);
             }
-            workEmployeeEntityQueryWrapper.in("id",list);
+            workEmployeeEntityQueryWrapper.in("id", list);
         }
         IPage<WorkEmployeeEntity> pageModel = new Page<WorkEmployeeEntity>();
         pageModel.setCurrent(Long.parseLong(page));
         pageModel.setSize(Long.parseLong(perPage));
-        return this.baseMapper.selectPage(pageModel,workEmployeeEntityQueryWrapper).getRecords();
+        return this.baseMapper.selectPage(pageModel, workEmployeeEntityQueryWrapper).getRecords();
     }
 
     @Override
@@ -848,13 +845,13 @@ public class WorkEmployeeServiceImpl extends ServiceImpl<WorkEmployeeMapper, Wor
         QueryWrapper<WorkEmployeeEntity> workEmployeeEntityQueryWrapper = new QueryWrapper();
         workEmployeeEntityQueryWrapper.select(s);
         StringBuilder sb = new StringBuilder();
-        for (String str:
+        for (String str :
                 participantIdArr) {
             sb.append(str).append(",");
         }
-        String participantIdStr = sb.substring(0,sb.length()-1);
+        String participantIdStr = sb.substring(0, sb.length() - 1);
         workEmployeeEntityQueryWrapper.in(participantIdStr);
-        workEmployeeEntityQueryWrapper.eq("corp_id",corpId);
+        workEmployeeEntityQueryWrapper.eq("corp_id", corpId);
         return this.baseMapper.selectList(workEmployeeEntityQueryWrapper);
     }
 

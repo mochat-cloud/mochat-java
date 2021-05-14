@@ -53,7 +53,6 @@ public interface IWorkRoomService extends IService<WorkRoomEntity> {
     @Override
     WorkRoomMapper getBaseMapper();
 
-
     List<WorkRoomEntity> countWorkRoomByCorpIds(Integer corpId);
 
     List<WorkRoomEntity> countAddWorkRoomsByCorpIdTime(Integer corpId, Date startTime, Date endTime);

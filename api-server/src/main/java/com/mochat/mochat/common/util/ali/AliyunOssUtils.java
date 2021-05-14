@@ -2,7 +2,6 @@ package com.mochat.mochat.common.util.ali;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.model.GetObjectRequest;
-import com.mochat.mochat.common.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -24,10 +23,10 @@ public class AliyunOssUtils {
 
     private static final int LIMIT = 10 * 1024 * 1024;
 
-    private static OssProperties ossProperties = AliyunComponent.ossProperties;
+    private static AliyunOssProperties ossProperties = AliyunComponent.ossProperties;
 
     @Autowired
-    public void setOssProperties(OssProperties ossProperties) {
+    public void setOssProperties(AliyunOssProperties ossProperties) {
         AliyunOssUtils.ossProperties = ossProperties;
     }
 
@@ -100,7 +99,7 @@ public class AliyunOssUtils {
     public static File getFile(String key) {
         File file = null;
         try {
-            file = File.createTempFile("temp", System.currentTimeMillis()+"");
+            file = File.createTempFile("temp", System.currentTimeMillis() + "");
             OSS client = AliyunComponent.getClient();
             // 下载OSS文件到本地文件。如果指定的本地文件存在会覆盖，不存在则新建。
             client.getObject(new GetObjectRequest(ossProperties.getBucketName(), key), file);

@@ -26,27 +26,42 @@ public interface IWorkEmployeeService extends IService<WorkEmployeeEntity> {
     void updateEmpDeptIndex(int corpId, WXEmployeeDTO dto);
 
     void syncDepartment(int corpId);
+
     void syncEmployee(int corpId);
+
     void syncEmployeeStatistic(int corpId);
 
     /**
      * 查看通讯录表中是否存在当前手机号，然后绑定
+     *
      * @param mobile
      * @param logUserId
      */
-    void  verifyEmployeeMobile(String mobile,Integer logUserId);
-    WorkEmployeeEntity getWorkEmployeeInfo(Integer empId);
-    WorkEmployeeEntity getWorkEmployeeInfo(String userId);
+    void verifyEmployeeMobile(String mobile, Integer logUserId);
+
+    WorkEmployeeEntity getWorkEmployeeInfoById(Integer empId);
+
+    WorkEmployeeEntity getWorkEmployeeInfoByWxEmpId(String userId);
+
     List<WorkEmployeeEntity> getWorkEmployeeByLogUserId(Integer logUserId);
+
     List<WorkEmployeeEntity> getWorkEmployeeByUserId(String userId);
-    String [] getEmployeeName(List<Integer> empIds);
-    Map<Integer,String> getCorpEmployeeName(Integer corpId,List<Integer> empIds);
-    JSONArray getCorpEmployeeName(Integer corpId,String searchKeyWords);
-    Map<String,Integer> getCorpByUserId(Integer corpId);
+
+    String[] getEmployeeName(List<Integer> empIds);
+
+    Map<Integer, String> getCorpEmployeeName(Integer corpId, List<Integer> empIds);
+
+    JSONArray getCorpEmployeeName(Integer corpId, String searchKeyWords);
+
+    Map<String, Integer> getCorpByUserId(Integer corpId);
+
     List<WorkEmployeeEntity> getWorkEmployeeByLogUserId(String userId, String corpId);
+
     List<WorkEmployeeEntity> getWorkEmployeeByCorpIdLogUserId(String corpId, String userId);
+
     List<WorkEmployeeEntity> getWorkEmployeesById(String ownerIdArr);
-    List<WorkEmployeeEntity> getWorkEmployeesByCorpIdName(Integer corpId, String name,String clStr);
+
+    List<WorkEmployeeEntity> getWorkEmployeesByCorpIdName(Integer corpId, String name, String clStr);
 
     List<WorkEmployeeEntity> getWorkEmployeesByCorpId(Integer corpId, String s);
 

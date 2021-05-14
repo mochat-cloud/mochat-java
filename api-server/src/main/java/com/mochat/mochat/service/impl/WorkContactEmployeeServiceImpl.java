@@ -2,11 +2,6 @@ package com.mochat.mochat.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -31,8 +26,8 @@ import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import java.io.Serializable;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -57,20 +52,19 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
     @Resource
     private WorkContactEmployeeMapper workContactEmployeeMapper;
 
-
     /**
      * @description 获取员工下客户
      * @author zhaojinjian
      * @createTime 2020/12/3 14:26
      */
     @Override
-    public WorkContactEmployeeEntity getWorkContactEmployeeInfo(Integer corpId, Integer empId, Integer contactId,Integer id) {
+    public WorkContactEmployeeEntity getWorkContactEmployeeInfo(Integer corpId, Integer empId, Integer contactId, Integer id) {
         WorkContactEmployeeEntity workContactEmployee = new WorkContactEmployeeEntity();
         workContactEmployee.setContactId(contactId);
         workContactEmployee.setEmployeeId(empId);
         workContactEmployee.setCorpId(corpId);
         workContactEmployee.setId(id);
-        List<WorkContactEmployeeEntity> workContactEmployeeEntityList = workContactEmployeeMapper.getContactEmployeeInfo(contactId,empId,corpId,1,id);
+        List<WorkContactEmployeeEntity> workContactEmployeeEntityList = workContactEmployeeMapper.getContactEmployeeInfo(contactId, empId, corpId, 1, id);
         if (workContactEmployeeEntityList.isEmpty()) {
             throw new ParamException("未查询到客户详情");
         }
@@ -126,12 +120,12 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
         contactEmployeeWrapper.eq("corp_id", corpId);
         contactEmployeeWrapper.isNotNull("deleted_at");
         StringBuilder sb = new StringBuilder();
-        for (Integer id:
+        for (Integer id :
                 empId) {
             sb.append(String.valueOf(id)).append(",");
         }
-        String empIds = sb.substring(0,sb.length()-1);
-        List<WorkContactEmployeeEntity> list = workContactEmployeeMapper.getContactEmployee(empIds,corpId,page-1,perPage);
+        String empIds = sb.substring(0, sb.length() - 1);
+        List<WorkContactEmployeeEntity> list = workContactEmployeeMapper.getContactEmployee(empIds, corpId, page - 1, perPage);
         if (list != null) {
             LossContact lossContact = new LossContact();
             lossContact.setPerPage(perPage);
@@ -150,10 +144,11 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
      */
     @Override
     public boolean updateRemarkOrDescription(Integer corpId, Integer empId, Integer contactId, String remark, String description) {
-        if (remark.isEmpty() && description.isEmpty()) {
+        if (!StringUtils.hasLength(remark) && !StringUtils.hasLength(description)) {
             //描述和备注必须有一个存在值
             return false;
         }
+
         //修改企业微信客户备注信息
         externalContactService.updateRemark(empId, corpId, contactId, remark, description);
 
@@ -185,18 +180,18 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
         for (WorkContactEmployeeEntity e : list) {
             int empId = e.getEmployeeId();
             int contactId = e.getContactId();
-            String name = employeeService.getWorkEmployeeInfo(empId).getName();
-            System.out.println("empId>>>>>>>>>>>>>>>>>>>"+empId+"contactId>>>>>>>>>>>>>"+contactId+"name>>>>>>>>>>>"+name+"客户来源>>>>>>>>>"+e.getAddWay());
+            String name = employeeService.getById(empId).getName();
+            System.out.println("empId>>>>>>>>>>>>>>>>>>>" + empId + "contactId>>>>>>>>>>>>>" + contactId + "name>>>>>>>>>>>" + name + "客户来源>>>>>>>>>" + e.getAddWay());
             String addWay = e.getAddWay() == null ? AddWayEnum.getByCode(0) : AddWayEnum.getByCode(e.getAddWay());
             String content = String.format("客户通过%s添加企业成员【%s】", addWay, name);
             contactService.saveTrack(empId, contactId, EventEnum.CREATE, content);
         }
-        for (WorkContactEmployeeEntity workContactEmployeeEntity:
+        for (WorkContactEmployeeEntity workContactEmployeeEntity :
                 list) {
             workContactEmployeeEntity.setRemark(EmojiParser.parseToAliases(workContactEmployeeEntity.getRemark()));
             contactEmployeeList.add(workContactEmployeeEntity);
         }
-        for (WorkContactEmployeeEntity workContactEmployeeEntity:
+        for (WorkContactEmployeeEntity workContactEmployeeEntity :
                 contactEmployeeList) {
             flag = this.add(workContactEmployeeEntity);
         }
@@ -210,14 +205,14 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
             WorkContactEmployeeEntity obj;
             // 更新情况
             obj = detail(entity.getContactId(), entity.getEmployeeId());
-            if(obj == null){
+            if (obj == null) {
                 return result = this.save(entity);
-            }else{
+            } else {
                 UpdateWrapper<WorkContactEmployeeEntity> workContactEmployeeEntityWrapper = new UpdateWrapper<>();
-                workContactEmployeeEntityWrapper.eq("contact_id",entity.getContactId());
-                workContactEmployeeEntityWrapper.eq("employee_id",entity.getEmployeeId());
-                int i = this.baseMapper.update(entity,workContactEmployeeEntityWrapper);
-                if(i > 0){
+                workContactEmployeeEntityWrapper.eq("contact_id", entity.getContactId());
+                workContactEmployeeEntityWrapper.eq("employee_id", entity.getEmployeeId());
+                int i = this.baseMapper.update(entity, workContactEmployeeEntityWrapper);
+                if (i > 0) {
                     return true;
                 }
             }
@@ -267,7 +262,7 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
 
         QueryWrapper<WorkContactEmployeeEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("corp_id", AccountService.getCorpId());
-        queryWrapper.eq("state", "channelCodeId-" + req.getChannelCodeId());
+        queryWrapper.eq("state", "channelCode-" + req.getChannelCodeId());
 
         String startTime = "";
         String endTime = "";
@@ -297,7 +292,7 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
             int count = days / req.getPerPage();
             int countP = days % req.getPerPage();
             if (countP > 0) {
-                count ++;
+                count++;
             }
             total = days;
             totalPage = Math.max(count, 1);
@@ -323,7 +318,7 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
             int count = 7 / req.getPerPage();
             int countP = 7 % req.getPerPage();
             if (countP > 0) {
-                count ++;
+                count++;
             }
             total = 7;
             totalPage = Math.max(count, 1);
@@ -367,7 +362,7 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
             int count = 12 / req.getPerPage();
             int countP = 12 % req.getPerPage();
             if (countP > 0) {
-                count ++;
+                count++;
             }
             total = 12;
             totalPage = Math.max(count, 1);
@@ -423,7 +418,7 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
 
         QueryWrapper<WorkContactEmployeeEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("corp_id", AccountService.getCorpId());
-        queryWrapper.eq("state", "channelCodeId-" + req.getChannelCodeId());
+        queryWrapper.eq("state", "channelCode-" + req.getChannelCodeId());
 
         String startTime = "";
         String endTime = "";
@@ -544,17 +539,17 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
     @Override
     public List<WorkContactEmployeeEntity> countWorkContactEmployeesByCorpId(Integer corpId, int code) {
         QueryWrapper<WorkContactEmployeeEntity> workContactEmployeeEntityQueryWrapper = new QueryWrapper();
-        workContactEmployeeEntityQueryWrapper.eq("corp_id",corpId);
-        workContactEmployeeEntityQueryWrapper.eq("status",code);
+        workContactEmployeeEntityQueryWrapper.eq("corp_id", corpId);
+        workContactEmployeeEntityQueryWrapper.eq("status", code);
         return this.baseMapper.selectList(workContactEmployeeEntityQueryWrapper);
     }
 
     @Override
     public List<WorkContactEmployeeEntity> countWorkContactEmployeesByCorpIdTime(Integer corpId, Date startTime, Date endTime) {
         QueryWrapper<WorkContactEmployeeEntity> workContactEmployeeEntityQueryWrapper = new QueryWrapper();
-        workContactEmployeeEntityQueryWrapper.eq("corp_id",corpId);
-        workContactEmployeeEntityQueryWrapper.ge("create_time",startTime);
-        workContactEmployeeEntityQueryWrapper.lt("create_time",endTime);
+        workContactEmployeeEntityQueryWrapper.eq("corp_id", corpId);
+        workContactEmployeeEntityQueryWrapper.ge("create_time", startTime);
+        workContactEmployeeEntityQueryWrapper.lt("create_time", endTime);
         return this.baseMapper.selectList(workContactEmployeeEntityQueryWrapper);
 
     }
@@ -562,16 +557,16 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
     @Override
     public List<WorkContactEmployeeEntity> countLossWorkContactEmployeesByCorpIdTime(Integer corpId, Date startTime, Date endTime) {
         QueryWrapper<WorkContactEmployeeEntity> workContactEmployeeEntityQueryWrapper = new QueryWrapper();
-        workContactEmployeeEntityQueryWrapper.eq("corp_id",corpId);
-        workContactEmployeeEntityQueryWrapper.ge("create_time",startTime);
-        workContactEmployeeEntityQueryWrapper.lt("create_time",endTime);
+        workContactEmployeeEntityQueryWrapper.eq("corp_id", corpId);
+        workContactEmployeeEntityQueryWrapper.ge("create_time", startTime);
+        workContactEmployeeEntityQueryWrapper.lt("create_time", endTime);
         return this.baseMapper.selectList(workContactEmployeeEntityQueryWrapper);
     }
 
     private void setCurrentStatistics(RespChannelCodeStatisticsVO voResult, ReqChannelCodeStatisticsDTO req) {
         QueryWrapper<WorkContactEmployeeEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("corp_id", AccountService.getCorpId());
-        queryWrapper.eq("state", "channelCodeId-" + req.getChannelCodeId());
+        queryWrapper.eq("state", "channelCode-" + req.getChannelCodeId());
 
         long currentMillis = System.currentTimeMillis();
         String currentDate = DateUtils.formatS3(currentMillis);

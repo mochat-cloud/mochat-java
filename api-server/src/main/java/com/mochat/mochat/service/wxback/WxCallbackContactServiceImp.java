@@ -24,8 +24,15 @@ public class WxCallbackContactServiceImp implements IWxCallbackContactService {
 
         //客户回调
         if (ADD_EXTERNAL_CONTACT.equals(changeType)) {
-            contactService.addExternalContact(wxCorpId, xmlJsonObject.getString("externaluserid"), xmlJsonObject.getString("userid"), xmlJsonObject.getString("welcomecode"), xmlJsonObject.getString("state"));
+            contactService.addExternalContact(
+                    corpId,
+                    xmlJsonObject.getString("userid"),
+                    xmlJsonObject.getString("externaluserid"),
+                    xmlJsonObject.getString("welcomecode"),
+                    xmlJsonObject.getString("state")
+            );
         }
+
         if (EDIT_EXTERNAL_CONTACT.equals(changeType)) {
             contactService.editExternalContact(xmlJsonObject.getString("externaluserid"), xmlJsonObject.getString("userid"));
         }

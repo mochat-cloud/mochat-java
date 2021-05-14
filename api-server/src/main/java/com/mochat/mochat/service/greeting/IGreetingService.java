@@ -11,20 +11,19 @@ import java.util.Map;
 public interface IGreetingService {
 
 
-    Map<String,Object> handle(RequestPage page, ReqPerEnum permission);
+    Map<String, Object> handle(RequestPage page, ReqPerEnum permission);
 
     Integer createGreeting(GreetingEntity greetingEntity);
 
     Integer updateGreetingById(String greetingId, Map<String, Object> mapData);
 
-    GreetingEntity getGreetingById(Integer greetingId,String clStr);
+    GreetingEntity getGreetingById(Integer greetingId, String clStr);
 
     Integer deleteGreeting(Integer greetingId);
 
     List<GreetingEntity> getGreetingsByCorpId(Integer corpId, String s);
 
+    Map<String, Object> getGreeting(String userId);
 
-    Map<String,Object> getGreeting(String userId);
-
-    void applyWxSendContactMessage(String wxCorpId, String welcomeCode, Map<String, JSONObject> contactInfo, Map<String, Object> content);
+    void applyWxSendContactMessage(int corpId, String welcomeCode, Map<String, JSONObject> contactInfo, Map<String, Object> content);
 }

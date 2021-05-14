@@ -604,7 +604,7 @@ public class WxApiUtils {
     }
 
     /**
-     * 修改客户详情
+     * 获取客户详情
      *
      * @param corpId
      * @return
@@ -669,6 +669,7 @@ public class WxApiUtils {
      * @return 素材文件 id
      */
     public static String uploadImageToTemp(Integer corpId, File file) {
+        System.out.println("=================上传文件素材========================");
         String url = API_UPLOAD_FILE_TO_TEMP + "?type=image&access_token=" + getAccessTokenEmployee(corpId);
         String key = "media_id";
         String respJson = doPostResult(url, key, file);

@@ -9,6 +9,8 @@ import com.mochat.mochat.dao.entity.ChatToolEntity;
 import com.mochat.mochat.dao.entity.CorpEntity;
 import com.mochat.mochat.dao.entity.WorkAgentEntity;
 import com.mochat.mochat.dao.mapper.WorkAgentMapper;
+import com.mochat.mochat.model.properties.ChatToolProperties;
+import com.mochat.mochat.model.sidebar.ChatToolVO;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.IChatToolService;
 import com.mochat.mochat.service.impl.ICorpService;
@@ -30,6 +32,9 @@ public class WorkAgentServiceImpl extends ServiceImpl<WorkAgentMapper, WorkAgent
 
     @Autowired
     private IChatToolService chatToolService;
+
+    @Autowired
+    private ChatToolProperties chatToolProperties;
 
     @Override
     public CorpEntity getCorp(Integer agentId) {
@@ -109,7 +114,23 @@ public class WorkAgentServiceImpl extends ServiceImpl<WorkAgentMapper, WorkAgent
             vo.put("id", entity.getId());
             vo.put("name", entity.getName());
             vo.put("squareLogoUrl", entity.getSquareLogoUrl());
-            vo.put("chatTools", chatToolEntityList);
+
+            List<ChatToolVO> chatToolVOList = new ArrayList<>();
+            for (ChatToolEntity chatToolEntity : chatToolEntityList) {
+                ChatToolVO chatToolVO = new ChatToolVO();
+                chatToolVO.setId(chatToolEntity.getId());
+                chatToolVO.setPageName(chatToolEntity.getPageName());
+                chatToolVO.setPageFlag(chatToolEntity.getPageFlag());
+                chatToolVO.setPageUrl(
+                        chatToolProperties.getWebUrl()
+                                + "?agentId=" + entity.getId()
+                                + "&pageFlag=" + chatToolEntity.getPageFlag()
+                );
+
+                chatToolVOList.add(chatToolVO);
+            }
+            vo.put("chatTools", chatToolVOList);
+
             voList.add(vo);
         }
 

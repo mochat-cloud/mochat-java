@@ -7,12 +7,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mochat.mochat.common.em.workcontact.EventEnum;
 import com.mochat.mochat.dao.entity.WorkContactTagEntity;
 import com.mochat.mochat.dao.entity.WorkContactTagPivotEntity;
-import com.mochat.mochat.dao.mapper.WorkContactTagMapper;
 import com.mochat.mochat.dao.mapper.WorkContactTagPivotMapper;
+import com.mochat.mochat.job.sync.WorkContactTagSyncLogic;
 import com.mochat.mochat.model.workcontacttag.ContactTagId;
-import com.mochat.mochat.service.contact.ICorpTagService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,14 +27,10 @@ import java.util.stream.Collectors;
 public class WorkContactTagPivotServiceImpl extends ServiceImpl<WorkContactTagPivotMapper, WorkContactTagPivotEntity> implements IWorkContactTagPivotService {
 
     @Autowired
-    @Lazy
-    private ICorpTagService corpTagService;
+    private WorkContactTagSyncLogic contactTagSyncLogic;
 
     @Autowired
     private IWorkContactTagService contactTagService;
-
-    @Autowired
-    private WorkContactTagMapper workContactTagMapper;
 
     @Autowired
     private IContactService contactService;
@@ -122,7 +116,7 @@ public class WorkContactTagPivotServiceImpl extends ServiceImpl<WorkContactTagPi
      */
     @Override
     @Transactional
-    public boolean updateContactTapPivot(Integer empId, Integer contactId, List<Integer> tagIds) {
+    public boolean updateContactTagPivot(Integer empId, Integer contactId, List<Integer> tagIds) {
         QueryWrapper<WorkContactTagPivotEntity> contactTagPivotWrapper = new QueryWrapper<>();
         contactTagPivotWrapper.select("contact_tag_id");
         contactTagPivotWrapper.eq("employee_id", empId);
@@ -157,7 +151,7 @@ public class WorkContactTagPivotServiceImpl extends ServiceImpl<WorkContactTagPi
     }
 
     @Override
-    public boolean updateContactTapPivot(List<WorkContactTagPivotEntity> list) {
+    public boolean updateContactTagPivot(List<WorkContactTagPivotEntity> list) {
         return this.updateBatchById(list);
     }
 
@@ -183,9 +177,9 @@ public class WorkContactTagPivotServiceImpl extends ServiceImpl<WorkContactTagPi
         boolean result = this.saveBatch(list);
         if (result) {
             // 调用异步企业微信修改标签
-            corpTagService.wxUpdateTag(empId, contactId, tagIds);
+            contactTagSyncLogic.contactAddWxTag(empId, contactId, tagIds);
             StringBuilder stringBuffer = new StringBuilder();
-            List<WorkContactTagEntity> tagEntityList = workContactTagMapper.selectBatchIds(tagIds);
+            List<WorkContactTagEntity> tagEntityList = contactTagService.listByIds(tagIds);
             for (WorkContactTagEntity e : tagEntityList) {
                 stringBuffer.append("、【").append(e.getName()).append("】");
             }
@@ -292,7 +286,7 @@ public class WorkContactTagPivotServiceImpl extends ServiceImpl<WorkContactTagPi
     public boolean deleteMultipleTagPivot(List<Integer> tagIds, Integer empId, Integer contactId) {
         this.baseMapper.deleteBatchIds(tagIds);
         // 调用异步企业微信修改标签
-        corpTagService.wxUpdateTag(empId, contactId, tagIds);
+        contactTagSyncLogic.contactDeleteWxTag(empId, contactId, tagIds);
         return true;
     }
 

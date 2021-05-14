@@ -18,6 +18,7 @@ import com.mochat.mochat.dao.entity.*;
 import com.mochat.mochat.dao.entity.workroom.WorkRoomGroupEntity;
 import com.mochat.mochat.dao.mapper.workroom.WorkRoomMapper;
 import com.mochat.mochat.model.WorkRoomIndexRespModel;
+import com.mochat.mochat.model.workroom.*;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.emp.IWorkEmployeeDepartmentService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
@@ -26,7 +27,6 @@ import com.mochat.mochat.service.impl.IWorkContactRoomService;
 import com.mochat.mochat.service.impl.IWorkContactService;
 import com.mochat.mochat.service.workroom.IWorkRoomGroupService;
 import com.mochat.mochat.service.workroom.IWorkRoomService;
-import com.mochat.mochat.model.workroom.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,19 +45,19 @@ import java.util.stream.Collectors;
 public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEntity> implements IWorkRoomService {
 
     @Autowired
-    private IWorkEmployeeService workEmployeeServiceImpl;
+    private IWorkEmployeeService employeeService;
 
     @Autowired
     private IWorkRoomGroupService roomGroupService;
 
     @Autowired
-    private IWorkContactRoomService workContactRoomServiceImpl;
+    private IWorkContactRoomService contactRoomService;
 
     @Autowired
-    private IWorkContactService workContactServiceImpl;
+    private IWorkContactService contactService;
 
     @Autowired
-    private ICorpService corpServiceImpl;
+    private ICorpService corpService;
 
     @Autowired
     private IWorkEmployeeDepartmentService employeeDepartmentService;
@@ -115,12 +115,12 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
         //处理列表数据
         for (WorkRoomEntity entity : workRoomEntityList) {
             //群主信息
-            WorkEmployeeEntity workEmployee = workEmployeeServiceImpl.getById(entity.getOwnerId());
+            WorkEmployeeEntity workEmployee = employeeService.getById(entity.getOwnerId());
 
             WorkRoomIndexRespModel workRoomIndexRespModel = new WorkRoomIndexRespModel();
             workRoomIndexRespModel.setOwnerName(workEmployee.getName());
             // 群成员数量统计
-            List<WorkContactRoomEntity> contactRoomEntityList = workContactRoomServiceImpl.getWorkContactRoomsByRoomId(entity.getId());
+            List<WorkContactRoomEntity> contactRoomEntityList = contactRoomService.getWorkContactRoomsByRoomId(entity.getId());
             // 群成员数量
             Integer memberNum = 0;
             // 今日入群数量
@@ -251,9 +251,9 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
             //是否存在成员名称的模糊搜索
             hadName = "1";
             //企业通讯录成员模糊匹配
-            workEmployeeEntityList = workEmployeeServiceImpl.getWorkEmployeesByCorpIdName(workRoomEntity.getCorpId(), workContactRoomIndexReq.getName(), "id,name,avatar");
+            workEmployeeEntityList = employeeService.getWorkEmployeesByCorpIdName(workRoomEntity.getCorpId(), workContactRoomIndexReq.getName(), "id,name,avatar");
             //企业外部联系人模糊匹配
-            workContactEntityList = workContactServiceImpl.getWorkContactsByCorpIdName(workRoomEntity.getCorpId(), workContactRoomIndexReq.getName(), "id,name,avatar");
+            workContactEntityList = contactService.getWorkContactsByCorpIdName(workRoomEntity.getCorpId(), workContactRoomIndexReq.getName(), "id,name,avatar");
             if (workEmployeeEntityList.size() == 0 && workContactEntityList.size() == 0) {
                 workContactRoomIndexReq = null;
             } else {
@@ -308,7 +308,7 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
      */
     @Override
     public boolean syncWorkRoomIndex(Integer corpIds, List<WXWorkRoomModel> WXWorkRoomModelList, Integer isFlag) {
-        CorpEntity corpEntity = corpServiceImpl.getCorpInfoById(corpIds);
+        CorpEntity corpEntity = corpService.getCorpInfoById(corpIds);
         if (isFlag.equals(0)) {
             String result = WxApiUtils.getWorkRoomIndexData(corpEntity, null);
             if (result == null) {
@@ -390,7 +390,7 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
                     }
                     if (currentRoomModel.getWXWorkContactRoomInfoModelListMap().get(WXWorkRoomInfoModel1.getUserid()) != null) {
                         WorkContactRoomEntity workContactRoomEntity = new WorkContactRoomEntity();
-                        List<WorkContactRoomEntity> workContactRoomEntityList = workContactRoomServiceImpl.getWorkContactRoomsByRoomId(currentRoomModel.getId());
+                        List<WorkContactRoomEntity> workContactRoomEntityList = contactRoomService.getWorkContactRoomsByRoomId(currentRoomModel.getId());
                         Integer id = workContactRoomEntityList.get(0).getId();
                         workContactRoomEntity.setId(id);
                         workContactRoomEntity.setContactId(contactId);
@@ -403,11 +403,13 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
                         workContactRoomEntity.setOutTime("");
                         workContactRoomEntityUpdateList.add(workContactRoomEntity);
                         //删除wxuserid的key
-                        currentRoomModel.getWXWorkContactRoomInfoModelListMap().remove(WXWorkRoomInfoModel1.getUserid().toString());
+                        currentRoomModel.getWXWorkContactRoomInfoModelListMap().remove(WXWorkRoomInfoModel1.getUserid());
                     } else {
                         WorkContactRoomEntity workContactRoomEntity = new WorkContactRoomEntity();
                         workContactRoomEntity.setWxUserId(WXWorkRoomInfoModel1.getUserid());
                         workContactRoomEntity.setContactId(contactId);
+                        //WXWorkContactRoomModel.setId(workRoomEntity.getId());
+                        //新增
                         workContactRoomEntity.setRoomId(currentRoomModel.getId());
                         workContactRoomEntity.setEmployeeId(employeeId);
                         workContactRoomEntity.setRoomCase(WXWorkRoomModel.getChatId());
@@ -539,6 +541,7 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
                 }
             }
             //客户成员新增数据
+            //新增
             if (workContactRoomEntityCreateList.size() > 0) {
                 if (flag) {
                     if (workRoomEntityCreateList.size() > 0) {
@@ -551,23 +554,23 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
                                 workContactRoomEntityCreateList) {
                             if (map.get(workContactRoomEntity.getRoomCase()) != null) {
                                 workContactRoomEntity.setRoomId(map.get(workContactRoomEntity.getRoomCase()));
-                                workContactRoomServiceImpl.createWorkContactRoom(workContactRoomEntity);
+                                contactRoomService.createWorkContactRoom(workContactRoomEntity);
                             }
                         }
                     } else {
-                        workContactRoomServiceImpl.createWorkContactRooms(workContactRoomEntityCreateList);
+                        contactRoomService.createWorkContactRooms(workContactRoomEntityCreateList);
                     }
                 }
             }
             //客户成员更新数据
             if (workContactRoomEntityUpdateList.size() > 0) {
-                workContactRoomServiceImpl.batchUpdateByIds(workContactRoomEntityUpdateList);
+                contactRoomService.batchUpdateByIds(workContactRoomEntityUpdateList);
             }
             //客户成员删除数据
             if (deleteContactRoomIdArr != null && deleteContactRoomIdArr.length() > 0) {
                 Integer status = 2;
                 Date date = new Date();
-                workContactRoomServiceImpl.updateWorkContactRoomByIds(deleteContactRoomIdArr, date.getTime(), status);
+                contactRoomService.updateWorkContactRoomByIds(deleteContactRoomIdArr, date.getTime(), status);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -596,11 +599,11 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
         Map<String, Object> workContactRoomMap = new HashMap<String, Object>();
         for (WorkRoomEntity workRoomEntity :
                 workRoomEntityList) {
-            List<WorkContactRoomEntity> workContactRoomEntityList = workContactRoomServiceImpl.getWorkContactRoomsInfoByRoomId(workRoomEntity.getId());
+            List<WorkContactRoomEntity> workContactRoomEntityList = contactRoomService.getWorkContactRoomsInfoByRoomId(workRoomEntity.getId());
             if (workContactRoomEntityList.size() > 0) {
                 Map<String, Object> workContactRoomInfoMap = new HashMap<String, Object>();
                 WXWorkContactRoomModel WXWorkContactRoomModel = new WXWorkContactRoomModel();
-                for (WorkContactRoomEntity workContactRoomEntity:
+                for (WorkContactRoomEntity workContactRoomEntity :
                         workContactRoomEntityList) {
                     if (workContactRoomEntity.getStatus().equals(2)) {
                         continue;
@@ -620,9 +623,9 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
             }
         }
         //企业通讯录列表
-        List<WorkEmployeeEntity> workEmployeeEntityList = workEmployeeServiceImpl.getWorkEmployeesByCorpId(corpId, "id,wx_user_id");
+        List<WorkEmployeeEntity> workEmployeeEntityList = employeeService.getWorkEmployeesByCorpId(corpId, "id,wx_user_id");
         //企业客户列表
-        List<WorkContactEntity> workContactList = workContactServiceImpl.getWorkContactsByCorpId(corpId, "id,wx_external_userid");
+        List<WorkContactEntity> workContactList = contactService.getWorkContactsByCorpId(corpId, "id,wx_external_userid");
         Map<String, Object> workEmployeeMap = new HashMap<String, Object>();
         for (WorkEmployeeEntity workEmployeeEntity :
                 workEmployeeEntityList) {
@@ -653,7 +656,7 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
         WorkContactRoomIndexResp workContactRoomIndexResp = new WorkContactRoomIndexResp();
         SimpleDateFormat sdf = new SimpleDateFormat();
         //群成员数量统计
-        List<WorkContactRoomEntity> workContactRoomEntityList = workContactRoomServiceImpl.getWorkContactRoomsByRoomId(workContactRoomIndexReq.getWorkRoomId());
+        List<WorkContactRoomEntity> workContactRoomEntityList = contactRoomService.getWorkContactRoomsByRoomId(workContactRoomIndexReq.getWorkRoomId());
         if (workContactRoomEntityList.size() != 0) {
             for (WorkContactRoomEntity workContactRoom :
                     workContactRoomEntityList) {
@@ -669,8 +672,8 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
         workContactRoomIndexResp.setMemberNum(memberNum);
         workContactRoomIndexResp.setOutRoomNum(outRoomNum);
         //分页查询数据表
-        List<WorkContactRoomEntity> workContactRoomEntityList1 = workContactRoomServiceImpl.getWorkContactRoomIndex(workContactRoomIndexReq, workEmployeeIds, workContactIds);
-        List<WorkContactRoomIndex> workContactRoomIndexList = new ArrayList<WorkContactRoomIndex>();
+        List<WorkContactRoomEntity> workContactRoomEntityList1 = contactRoomService.getWorkContactRoomIndex(workContactRoomIndexReq, workEmployeeIds, workContactIds);
+        List<WorkContactRoomIndex> workContactRoomIndexList = new ArrayList<>();
         if (workContactRoomEntityList1 != null && workContactRoomEntityList1.size() > 0) {
             //获取客户群成员的基本信息
             if (hadName.equals("0")) {
@@ -681,12 +684,12 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
                         workContactRoomEntityList1) {
                     if (workContactRoom.getEmployeeId() != 0) {
                         //企业通讯录成员信息
-                        WorkEmployeeEntity workEmployee = workEmployeeServiceImpl.getWorkEmployeeInfo(workContactRoom.getEmployeeId());
+                        WorkEmployeeEntity workEmployee = employeeService.getById(workContactRoom.getEmployeeId());
                         workEmployeeEntityList.add(workEmployee);
                     }
                     if (workContactRoom.getContactId() != 0) {
                         // 外部联系人
-                        WorkContactEntity workContact = workContactServiceImpl.getWorkContactsById(workContactRoom.getContactId(), clStr);
+                        WorkContactEntity workContact = contactService.getWorkContactsById(workContactRoom.getContactId(), clStr);
                         workContactEntityList.add(workContact);
                     }
 
@@ -718,7 +721,7 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
                 workContactRoomIndex.setJoinTime(sdf.format(workContactRoom.getJoinTime()));
                 workContactRoomIndex.setOutRoomTime(workContactRoom.getOutTime());
                 //otherRoom
-                List<WorkContactRoomEntity> workContactRoomIdsList = workContactRoomServiceImpl.getWorkContactRoomsByWxUserId(workContactRoom.getWxUserId(), "room_id");
+                List<WorkContactRoomEntity> workContactRoomIdsList = contactRoomService.getWorkContactRoomsByWxUserId(workContactRoom.getWxUserId(), "room_id");
                 String workContactRoomIds = null;
                 List<WorkRoomEntity> workRoomNamesList = null;
                 if (workContactRoomIdsList.size() > 0) {
@@ -783,7 +786,7 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
         List<WorkRoomEntity> roomList = this.list(workRoomWrapper);
         if (roomList != null && roomList.size() > 0) {
             List<Integer> roomIds = roomList.stream().map(WorkRoomEntity::getId).collect(Collectors.toList());
-            Map<Integer, Long> roomCurrentNumMap = workContactRoomServiceImpl.getContactRoomSum(roomIds);
+            Map<Integer, Long> roomCurrentNumMap = contactRoomService.getContactRoomSum(roomIds);
             JSONArray list = new JSONArray();
             roomList.forEach(item -> {
                 JSONObject listItem = new JSONObject();
@@ -806,14 +809,14 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
     @Override
     public List<WorkRoomEntity> getWorkRoomsByChatId(List<String> wxRoomIdArr, String s) {
         StringBuilder sb = new StringBuilder();
-        for (String str:
-        wxRoomIdArr) {
+        for (String str :
+                wxRoomIdArr) {
             sb.append(str).append(",");
         }
-        String wxRoomIdStr = sb.substring(0,sb.length()-1);
+        String wxRoomIdStr = sb.substring(0, sb.length() - 1);
         QueryWrapper<WorkRoomEntity> workRoomWrapper = new QueryWrapper<>();
         workRoomWrapper.select(s);
-        workRoomWrapper.in("wx_room_id",wxRoomIdStr);
+        workRoomWrapper.in("wx_room_id", wxRoomIdStr);
         return this.baseMapper.selectList(workRoomWrapper);
     }
 
@@ -821,7 +824,7 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
     public List<WorkRoomEntity> countWorkRoomByCorpIds(Integer corpId) {
         QueryWrapper<WorkRoomEntity> workRoomWrapper = new QueryWrapper<>();
         workRoomWrapper.getSqlSelect();
-        workRoomWrapper.eq("corp_id",corpId);
+        workRoomWrapper.eq("corp_id", corpId);
         return this.baseMapper.selectList(workRoomWrapper);
 
     }
@@ -830,12 +833,11 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
     public List<WorkRoomEntity> countAddWorkRoomsByCorpIdTime(Integer corpId, Date startTime, Date endTime) {
         QueryWrapper<WorkRoomEntity> workRoomWrapper = new QueryWrapper<>();
         workRoomWrapper.getSqlSelect();
-        workRoomWrapper.eq("corp_id",corpId);
-        workRoomWrapper.ge("create_time",startTime);
-        workRoomWrapper.lt("create_time",endTime);
+        workRoomWrapper.eq("corp_id", corpId);
+        workRoomWrapper.ge("create_time", startTime);
+        workRoomWrapper.lt("create_time", endTime);
         return this.baseMapper.selectList(workRoomWrapper);
     }
-
 }
 
 

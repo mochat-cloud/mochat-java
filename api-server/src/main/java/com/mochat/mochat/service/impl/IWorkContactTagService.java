@@ -24,7 +24,7 @@ public interface IWorkContactTagService extends IService<WorkContactTagEntity> {
 
     List<GetEmployeeTagModel> getEmployeeTapName(List<Integer> empIds);
 
-    List<String> getWXContactTagId(List<Integer> tagIds);
+    List<String> getWxContactTagId(List<Integer> tagIds);
 
     Map<String, Integer> getContactTagId(List<String> wx_tagId);
 
@@ -40,8 +40,6 @@ public interface IWorkContactTagService extends IService<WorkContactTagEntity> {
     /**
      * 同步标签
      */
-    void synContactTag();
-
     void synContactTag(int corpId);
 
     /**

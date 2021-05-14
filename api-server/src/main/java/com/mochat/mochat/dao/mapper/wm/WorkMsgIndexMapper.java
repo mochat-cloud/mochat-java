@@ -1,6 +1,6 @@
 package com.mochat.mochat.dao.mapper.wm;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mochat.mochat.dao.entity.wm.WorkMsgIndexEntity;
 
 import java.util.List;

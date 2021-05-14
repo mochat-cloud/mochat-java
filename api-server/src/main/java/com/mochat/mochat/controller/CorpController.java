@@ -12,17 +12,16 @@ import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
 import com.mochat.mochat.dao.entity.wm.WorkMsgConfigEntity;
 import com.mochat.mochat.job.sync.WorkEmpServiceSyncLogic;
 import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.model.properties.ChatToolProperties;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import com.mochat.mochat.service.impl.ICorpService;
-import com.mochat.mochat.service.impl.ITenantService;
 import com.mochat.mochat.service.impl.IWorkMsgConfigService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +41,9 @@ import java.util.*;
 public class CorpController {
 
     @Autowired
+    private ChatToolProperties chatToolProperties;
+
+    @Autowired
     private IWorkEmployeeService workEmployeeServiceImpl;
 
     @Autowired
@@ -51,24 +53,16 @@ public class CorpController {
     private IWorkMsgConfigService msgConfigService;
 
     @Autowired
-    private ITenantService tenantServiceImpl;
-
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
-
-    @Autowired
     private WorkEmpServiceSyncLogic workEmpServiceSyncLogic;
 
     private final static Logger logger = LoggerFactory.getLogger(CorpController.class);
 
 
     /**
+     * @param corpName 企业名称
      * @description: 列表
      * @author: Huayu
      * @time: 2020/11/23 19:26
-     *
-     * @param corpName 企业名称
-     *
      * @info 因二期权限管理需求, 本人只能查看本公司的信息, 所属其他公司信息查看需要切换公司
      */
     @GetMapping(value = "/corp/index")
@@ -119,7 +113,7 @@ public class CorpController {
         }
 
         //事件回调地址
-        String callBackUrl = tenantServiceImpl.getTenantByStatus().get(0).get("url") + File.separator + "weWork" + File.separator + "callback";
+        String callBackUrl = chatToolProperties.getApiUrl() + File.separator + "weWork" + File.separator + "callback";
 
         String token = "" + System.currentTimeMillis() + new Random().nextInt(999999999);
         MessageDigest md = MessageDigest.getInstance("md5");
@@ -244,30 +238,32 @@ public class CorpController {
 
 
     /**
-     *企业首页数据统计
+     * 企业首页数据统计
+     *
      * @description:
      * @return:
      * @author: Huayu
      */
     @GetMapping(value = "/corpData/index")
-    public ApiRespVO index() throws Exception{
-        if(AccountService.getCorpId() == null){
+    public ApiRespVO index() throws Exception {
+        if (AccountService.getCorpId() == null) {
             throw new CommonException("请先选择企业");
         }
-        Map<String,Object> map = corpServiceImpl.handleCorpDta();
+        Map<String, Object> map = corpServiceImpl.handleCorpDta();
         return ApiRespUtils.getApiRespOfOk(map);
     }
 
 
     /**
-     *首页数据统计折线图
+     * 首页数据统计折线图
+     *
      * @description:
      * @return:
      * @author: Huayu
      */
     @GetMapping(value = "/corpData/lineChat")
-    public ApiRespVO lineChat(){
-        if(AccountService.getCorpId() == null){
+    public ApiRespVO lineChat() {
+        if (AccountService.getCorpId() == null) {
             throw new CommonException("请先选择企业");
         }
         List<CorpDataEntity> corpDataEntityList = corpServiceImpl.handleLineChatDta();

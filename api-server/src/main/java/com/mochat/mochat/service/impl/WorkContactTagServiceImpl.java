@@ -129,7 +129,7 @@ public class WorkContactTagServiceImpl extends ServiceImpl<WorkContactTagMapper,
     }
 
     @Override
-    public List<String> getWXContactTagId(List<Integer> tagIds) {
+    public List<String> getWxContactTagId(List<Integer> tagIds) {
         List<WorkContactTagEntity> list = this.baseMapper.selectBatchIds(tagIds);
         if (list.isEmpty()) {
             return null;
@@ -276,12 +276,6 @@ public class WorkContactTagServiceImpl extends ServiceImpl<WorkContactTagMapper,
                 .list().stream().map(WorkContactTagPivotEntity::getId)
                 .collect(Collectors.toList());
         contactTagPivotService.removeByIds(contactTagPivotIdList);
-    }
-
-    @Override
-    public void synContactTag() {
-        int corpId = AccountService.getCorpId();
-        synContactTag(corpId);
     }
 
     /**

@@ -118,39 +118,39 @@ public class SubsystemServiceImpl extends ServiceImpl<SubSystemMapper, UserEntit
         WorkEmployeeDepartmentEntity wWorkEmployeeDepartmentEntity = null;
         //region 给list集合赋值
         List<GetSubSystemPage.UserList> userList = new ArrayList<>();
-        Map<String,Object> map = null;
+        Map<String, Object> map = null;
         for (UserEntity item : list) {
-            List<Map<String,Object>> mapList = new ArrayList();
+            List<Map<String, Object>> mapList = new ArrayList();
             GetSubSystemPage.UserList userItem = result.new UserList();
             userItem.setCreatedAt(DateUtils.formatS1(item.getCreatedAt().getTime()));
             userItem.setPhone(item.getPhone());
             WorkEmployeeEntity workEmployeeEntity = workEmployeeServiceImpl.getWorkEmployeeInfoByLogId(item.getId());
             String sbStr = null;
-            if(workEmployeeEntity!= null){
+            if (workEmployeeEntity != null) {
                 List<WorkEmployeeDepartmentEntity> workEmployeeDepartmentEntityList = workEmployeeDepartmentServiceImpl.getDeptIdByEmpId(workEmployeeEntity.getId());
-                if(workEmployeeDepartmentEntityList != null && workEmployeeDepartmentEntityList.size() > 0){
+                if (workEmployeeDepartmentEntityList != null && workEmployeeDepartmentEntityList.size() > 0) {
                     StringBuilder sb = new StringBuilder();
-                    for (WorkEmployeeDepartmentEntity workEmployeeDepartmentEntity:
+                    for (WorkEmployeeDepartmentEntity workEmployeeDepartmentEntity :
                             workEmployeeDepartmentEntityList) {
                         String str = workEmployeeDepartmentEntity.getDepartmentId().toString();
                         sb.append(str).append(",");
                     }
-                    sbStr = sb.substring(0,sb.length()-1);
+                    sbStr = sb.substring(0, sb.length() - 1);
                 }
 
             }
-            if(sbStr != null && sbStr.length() > 0){
-                List<WorkDeptEntity> workDeptEntityList = workDeptServiceImpl.getNameById(sbStr,"id,name");
-                if(workDeptEntityList != null && workDeptEntityList.size() > 0){
-                    for (WorkDeptEntity workDeptEntity:
-                    workDeptEntityList) {
+            if (sbStr != null && sbStr.length() > 0) {
+                List<WorkDeptEntity> workDeptEntityList = workDeptServiceImpl.getNameById(sbStr, "id,name");
+                if (workDeptEntityList != null && workDeptEntityList.size() > 0) {
+                    for (WorkDeptEntity workDeptEntity :
+                            workDeptEntityList) {
                         map = new HashMap();
-                        map.put("departmentId",workDeptEntity.getId());
-                        map.put("departmentName",workDeptEntity.getName());
+                        map.put("departmentId", workDeptEntity.getId());
+                        map.put("departmentName", workDeptEntity.getName());
                         mapList.add(map);
                     }
                     userItem.setDepartment(mapList);
-                }else{
+                } else {
                     userItem.setDepartment(null);
                 }
             }
@@ -367,7 +367,7 @@ public class SubsystemServiceImpl extends ServiceImpl<SubSystemMapper, UserEntit
     public LoginShowRresponse getLoginShowInfo(int userId, int empId) {
         if (userId > 0) {
             UserEntity userEntity = this.baseMapper.selectById(userId);
-            WorkEmployeeEntity employeeEntity = employeeService.getWorkEmployeeInfo(empId);
+            WorkEmployeeEntity employeeEntity = employeeService.getById(empId);
             CorpEntity corpEntity = null;
             Integer corpId = AccountService.getCorpId();
             if (corpId == null) {

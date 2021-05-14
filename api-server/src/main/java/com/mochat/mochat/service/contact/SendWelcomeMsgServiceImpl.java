@@ -6,27 +6,21 @@ import com.mochat.mochat.common.constant.Const;
 import com.mochat.mochat.common.util.HttpClientUtil;
 import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.common.util.ali.AliyunOssUtils;
-import com.mochat.mochat.dao.entity.CorpEntity;
-import com.mochat.mochat.dao.entity.WorkContactEntity;
-import com.mochat.mochat.dao.entity.medium.MediumEnyity;
-import com.mochat.mochat.service.AccountService;
-import com.mochat.mochat.service.impl.ICorpService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 /**
  * @author zhaojinjian
  * @ClassName SendWelcomeMsgImpl.java
- * @Description TODO
+ * @Description 发送欢迎语
  * @createTime 2020/12/19 17:15
  */
 @Slf4j
@@ -34,38 +28,61 @@ import java.util.Objects;
 @EnableAsync
 public class SendWelcomeMsgServiceImpl implements ISendWelcomeMsgService {
 
-    private final String charset = "utf-8";
+    @Override
+    public void sendMsg(int corpId, String welcomeCode, String leadingWords) {
+        String accessToken = WxApiUtils.getAccessTokenContact(corpId);
+        String requestUrl = Const.URL_REQUEST_ADDRESS + "/externalcontact/send_welcome_msg?access_token=" + accessToken;
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("welcome_code", welcomeCode);
 
-    @Autowired
-    private ICorpService corpService;
+        JSONObject text = new JSONObject();
+        text.put("content", leadingWords);
+        requestBody.put("text", text);
+        String requestBodyStr = requestBody.toJSONString();
 
+        String result = HttpClientUtil.doPost(requestUrl, requestBodyStr);
+        log.debug(" >>>>>>> 发送欢迎语: requestUrl" + requestUrl);
+        log.debug(" >>>>>>> 发送欢迎语: requestBody" + requestBodyStr);
+        log.debug(" >>>>>>> 发送欢迎语: requestResult" + result);
+    }
 
     @Override
     @Async
-    public void send(int corpId, String welcomeCode, String leadingWords, String imageUrl) {
+    public void sendMsgOfRoomAutoPull(int corpId, String welcomeCode, String leadingWords, String imageUrl) {
         String accessToken = WxApiUtils.getAccessTokenContact(corpId);
         String requestUrl = Const.URL_REQUEST_ADDRESS + "/externalcontact/send_welcome_msg?access_token=" + accessToken;
-        Map<String, String> paramMap = new HashMap<>();
+
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("welcome_code", welcomeCode);
+
         JSONObject text = new JSONObject();
         text.put("content", leadingWords);
+        requestBody.put("text", text);
+
         JSONObject image = new JSONObject();
         image.put("media_id", imageUrl);
-        paramMap.put("welcome_code", welcomeCode);
-        paramMap.put("text", text.toJSONString());
-        paramMap.put("image", image.toJSONString());
-        String requestBody = JSON.toJSONString(paramMap);
-        String result = HttpClientUtil.doPost(requestUrl, requestBody);
-        log.debug(" >>>>>>> 自动拉群发送欢迎语: requestUrl" + requestUrl);
-        log.debug(" >>>>>>> 自动拉群发送欢迎语: requestBody" + requestBody);
-        log.debug(" >>>>>>> 自动拉群发送欢迎语: requestResult" + result);
+
+        JSONObject attachment = new JSONObject();
+        attachment.put("msgtype", "image");
+        attachment.put("image", image);
+
+        List<JSONObject> attachments = new ArrayList<>();
+        attachments.add(attachment);
+
+        requestBody.put("attachments", attachments);
+
+        String requestBodyStr = requestBody.toJSONString();
+
+        String result = HttpClientUtil.doPost(requestUrl, requestBodyStr);
+        log.debug(" >>>>>>> 发送欢迎语: requestUrl" + requestUrl);
+        log.debug(" >>>>>>> 发送欢迎语: requestBody" + requestBodyStr);
+        log.debug(" >>>>>>> 发送欢迎语: requestResult" + result);
     }
 
     @Async
     @Override
-    public void send(int corpId, String welcomeCode, Map<String, String> map) {
+    public void sendMsgOfChannelCode(int corpId, String welcomeCode, Map<String, String> map) {
         if (Objects.isNull(map)) {
             log.error("渠道码 - 发送欢迎语出错");
             return;
@@ -73,89 +90,65 @@ public class SendWelcomeMsgServiceImpl implements ISendWelcomeMsgService {
 
         String accessToken = WxApiUtils.getAccessTokenContact(corpId);
         String requestUrl = Const.URL_REQUEST_ADDRESS + "/externalcontact/send_welcome_msg?access_token=" + accessToken;
-        Map<String, String> paramMap = new HashMap<>();
+
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("welcome_code", welcomeCode);
+
+        String contactName = map.get("contactName");
+        String leadingWords = map.get("welcomeContent").replaceAll("##客户名称##", contactName);
         JSONObject text = new JSONObject();
-        text.put("content", map.get("welcomeContent"));
-        paramMap.put("text", text.toJSONString());
+        text.put("content", leadingWords);
+        requestBody.put("text", text);
 
         String contentJson = map.get("content");
-        JSONObject jsonObject = new JSONObject();
         JSONObject content = JSON.parseObject(contentJson);
-        if (content.containsKey("appid")) {
-            String imagePath = jsonObject.getString("imagePath");
-            File imageFile = AliyunOssUtils.getFile(imagePath);
-            String mediaId = WxApiUtils.uploadImageToTemp(corpId, imageFile);
+        if (null != content) {
+            JSONObject attachment = new JSONObject();
+            JSONObject jsonObject = new JSONObject();
 
-            jsonObject.put("title", content.get("title"));
-            jsonObject.put("pic_media_id", mediaId);
-            jsonObject.put("appid", content.get("appid"));
-            jsonObject.put("page", content.get("page"));
-            paramMap.put("miniprogram", jsonObject.toJSONString());
-        } else if (content.containsKey("imageLink")) {
-            jsonObject.put("title", content.get("title"));
-            jsonObject.put("picurl", content.get("imageFullPath"));
-            jsonObject.put("desc", content.get("description"));
-            jsonObject.put("url", content.get("imageLink"));
-            paramMap.put("link", jsonObject.toJSONString());
-        } else {
-            String imagePath = jsonObject.getString("imagePath");
-            File imageFile = AliyunOssUtils.getFile(imagePath);
-            String mediaId = WxApiUtils.uploadImageToTemp(corpId, imageFile);
+            if (content.containsKey("appid")) {
+                String imagePath = content.getString("imagePath");
+                File imageFile = AliyunOssUtils.getFile(imagePath);
+                String mediaId = WxApiUtils.uploadImageToTemp(corpId, imageFile);
 
-            jsonObject.put("media_id", mediaId);
-            paramMap.put("image", jsonObject.toJSONString());
-        }
+                jsonObject.put("title", content.get("title"));
+                jsonObject.put("pic_media_id", mediaId);
+                jsonObject.put("appid", content.get("appid"));
+                jsonObject.put("page", content.get("page"));
 
-        paramMap.put("welcome_code", welcomeCode);
-        HttpClientUtil.doPost(requestUrl, paramMap, charset);
-    }
+                attachment.put("msgtype", "miniprogram");
+                attachment.put("miniprogram", jsonObject);
+            } else if (content.containsKey("imageLink")) {
+                jsonObject.put("title", content.get("title"));
+                jsonObject.put("picurl", AliyunOssUtils.getUrl(content.getString("imagePath")));
+                jsonObject.put("desc", content.get("description"));
+                jsonObject.put("url", content.get("imageLink"));
 
+                attachment.put("msgtype", "link");
+                attachment.put("link", jsonObject);
+            } else {
+                String imagePath = content.getString("imagePath");
+                File imageFile = AliyunOssUtils.getFile(imagePath);
+                String mediaId = WxApiUtils.uploadImageToTemp(corpId, imageFile);
 
+                jsonObject.put("media_id", mediaId);
 
-    @Override
-    public void send(String welcomeCode, Map<String,Object> map, WorkContactEntity workContactEntity) {
-        Map<String,String> paramMap = new HashMap<>();
-        JSONObject jsonObject = new JSONObject();
-        //微信消息体 - 文本
-        if(((Map)(map.get("content"))).get("text")!= null){
-            String content = (String)map.get("text");
-            String contentStr = content.replace("##客户名称##",workContactEntity.getName());
-            jsonObject.put("content",contentStr);
-            paramMap.put("text",jsonObject.toJSONString());
-        }
-        //微信消息体 - 媒体文件
-        if(((Map)(map.get("content"))).get("medium") != null){
-            //组织推送消息数据
-            MediumEnyity mediumEnyity = (MediumEnyity)((Map)(map.get("content"))).get("medium");
-            switch (mediumEnyity.getType()){
-                case 2:
-                    jsonObject.put("media_id",mediumEnyity.getMediaId());
-                    paramMap.put("image",jsonObject.toJSONString());
-                    break;
-                case 3:
-                    jsonObject.put("title",JSONObject.parseObject(mediumEnyity.getContent()).get("title"));
-                    jsonObject.put("picurl",JSONObject.parseObject(mediumEnyity.getContent()).get("imagePath"));
-                    jsonObject.put("desc",JSONObject.parseObject(mediumEnyity.getContent()).get("description"));
-                    jsonObject.put("url",JSONObject.parseObject(mediumEnyity.getContent()).get("imageLink"));
-                    paramMap.put("link",jsonObject.toJSONString());
-                    break;
-                case 6:
-                    jsonObject.put("title",JSONObject.parseObject(mediumEnyity.getContent()).get("title"));
-                    jsonObject.put("pic_media_id",mediumEnyity.getMediaId());
-                    jsonObject.put("appid",JSONObject.parseObject(mediumEnyity.getContent()).get("description"));
-                    jsonObject.put("page",JSONObject.parseObject(mediumEnyity.getContent()).get("imageLink"));
-                    paramMap.put("miniprogram",jsonObject.toJSONString());
-                    break;
+                attachment.put("msgtype", "image");
+                attachment.put("image", jsonObject);
             }
+
+            List<JSONObject> attachments = new ArrayList<>();
+            attachments.add(attachment);
+
+            requestBody.put("attachments", attachments);
         }
 
-//        String accessToken = WxApiUtils.getAccessTokenContact(corpId);
-//        String requestUrl = Const.URL_REQUEST_ADDRESS + "/externalcontact/send_welcome_msg?access_token=" + accessToken;
-        Integer corpId = AccountService.getCorpId();
-        CorpEntity corpEntity = corpService.getCorpInfoById(corpId);
-        Object mapValue = redisTemplate.opsForHash().get(corpEntity.getWxCorpId(), "acccess_token");
-        String requestUrl = Const.URL_REQUEST_ADDRESS + "/externalcontact/send_welcome_msg?access_token=" + mapValue.toString();
-        paramMap.put("welcome_code", welcomeCode);
-        HttpClientUtil.doPost(requestUrl, paramMap, charset);
+        String requestBodyStr = requestBody.toJSONString();
+
+        String result = HttpClientUtil.doPost(requestUrl, requestBodyStr);
+        log.debug(" >>>>>>> 发送欢迎语: requestUrl" + requestUrl);
+        log.debug(" >>>>>>> 发送欢迎语: requestBody" + requestBodyStr);
+        log.debug(" >>>>>>> 发送欢迎语: requestResult" + result);
     }
+
 }

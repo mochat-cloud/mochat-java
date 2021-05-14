@@ -58,7 +58,7 @@ public interface IChannelCodeService extends IService<ChannelCodeEntity> {
      * map["welcomeContent"] = 文本内容
      * map["content"] = json 内容: appid小程序, imageLink 图文, 没有前两者的是图片
      */
-    Map<String, String> getWelcomeMsgMap(Integer channelCodeId);
+    Map<String, String> getWelcomeMessageMap(ChannelCodeEntity entity);
 
     /**
      * @author: yangpengwei

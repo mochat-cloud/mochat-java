@@ -15,13 +15,10 @@ import com.mochat.mochat.common.em.permission.ReqPerEnum;
 import com.mochat.mochat.common.model.PageModel;
 import com.mochat.mochat.common.model.RequestPage;
 import com.mochat.mochat.common.util.DateUtils;
-import com.mochat.mochat.common.util.FileUtils;
 import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.common.util.ali.AliyunOssUtils;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.dao.entity.BusinessLogEntity;
-import com.mochat.mochat.dao.entity.CorpEntity;
-import com.mochat.mochat.dao.entity.WorkContactEntity;
 import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
 import com.mochat.mochat.dao.entity.greeting.GreetingEntity;
 import com.mochat.mochat.dao.entity.medium.MediumEnyity;
@@ -31,8 +28,8 @@ import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.businessLog.IBusinessLogService;
 import com.mochat.mochat.service.emp.IWorkEmployeeDepartmentService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
-import com.mochat.mochat.service.impl.ICorpService;
 import com.mochat.mochat.service.greeting.IGreetingService;
+import com.mochat.mochat.service.impl.ICorpService;
 import com.mochat.mochat.service.impl.medium.IMediumService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,79 +71,69 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
 
 
     @Override
-    public Map<String,Object> handle(RequestPage page, ReqPerEnum permission) {
-        //处理请求参数
-        return handleParams(page, permission);
-    }
-
-    @Override
-    public Map<String,Object> getGreeting(String userId) {
+    public Map<String, Object> getGreeting(String userId) {
         //查询客户跟进人信息[企业通讯录]
         WorkEmployeeEntity workEmployeeEntity = workEmployeeServiceImpl.getWorkEmployeeByWxUserId(userId, "id,corp_id");
         //查询员工欢迎语
         List<GreetingEntity> greetingEntityList = getGreetingsByCorpId(workEmployeeEntity.getCorpId(), "id,medium_id,words,range_type,employees");
         String employees = null;
         int count = 0;
-        Map<String,Object> commonMap = new HashMap();;
-        Map<String,Object> contentMap = new HashMap();
-        Map<String,Object> contentMapOuter =new HashMap();
+        Map<String, Object> commonMap = new HashMap();
+        ;
+        Map<String, Object> contentMap = new HashMap();
+        Map<String, Object> contentMapOuter = new HashMap();
         String[] empArr = null;
-        for (GreetingEntity greetingEntity:
+        for (GreetingEntity greetingEntity :
                 greetingEntityList) {
             //检索通用欢迎语
-            if(greetingEntity.getRangeType().equals(RangeTypeEnum.ALL.getCode())){
-                commonMap.put("text",greetingEntity.getWords());
-                commonMap.put("mediumId",greetingEntity.getMediumId());
+            if (greetingEntity.getRangeType().equals(RangeTypeEnum.ALL.getCode())) {
+                commonMap.put("text", greetingEntity.getWords());
+                commonMap.put("mediumId", greetingEntity.getMediumId());
             }
             //检索指定成员欢迎语
-            if(JSONObject.parseArray(greetingEntity.getEmployees()).size() > 0){
+            if (JSONObject.parseArray(greetingEntity.getEmployees()).size() > 0) {
                 JSONArray jsonArray = JSONObject.parseArray(greetingEntity.getEmployees());
-                if(jsonArray.size() != 0){
-                    for (Object json:
+                if (jsonArray.size() != 0) {
+                    for (Object json :
                             jsonArray) {
                         employees = json.toString() + ",";
                     }
                 }
-                employees = employees.substring(0,employees.length() - 1);
+                employees = employees.substring(0, employees.length() - 1);
                 empArr = employees.split(",");
             }
-            if(employees != null){
-                count  = employees.indexOf(workEmployeeEntity.getId());
+            if (employees != null) {
+                count = employees.indexOf(workEmployeeEntity.getId());
             }
-            if(empArr == null || count != -1){
+            if (empArr == null || count != -1) {
                 continue;
             }
-            contentMap.put("text",greetingEntity.getWords());
-            contentMap.put("mediumId",greetingEntity.getMediumId());
-            contentMapOuter.put("content",contentMap);
+            contentMap.put("text", greetingEntity.getWords());
+            contentMap.put("mediumId", greetingEntity.getMediumId());
+            contentMapOuter.put("content", contentMap);
         }
-        if (contentMapOuter.size()  == 0 && commonMap.size() > 0) {
-            contentMapOuter = (Map<String, Object>) contentMapOuter.put("content",commonMap);;
+        if (contentMapOuter.size() == 0 && commonMap.size() > 0) {
+            contentMapOuter = (Map<String, Object>) contentMapOuter.put("content", commonMap);
+            ;
         }
-        if(!((Map<String, Object>) contentMapOuter.get("content")).get("mediumId").equals("")){
-            Map<String,Map<String, Object>> mediumMap = getMediumData((Integer)((Map<String, Object>)contentMapOuter.get("content")).get("mediumId"));
-            contentMapOuter.put("content",mediumMap);
+        if (!((Map<String, Object>) contentMapOuter.get("content")).get("mediumId").equals("")) {
+            Map<String, Map<String, Object>> mediumMap = getMediumData((Integer) ((Map<String, Object>) contentMapOuter.get("content")).get("mediumId"));
+            contentMapOuter.put("content", mediumMap);
         }
         return contentMapOuter;
     }
 
 
     /**
-     *
-     *
      * @description: 发送欢迎语
      * @author: Huayu
      * @time: 2021/3/30 18:36
      */
     @Override
-    public void applyWxSendContactMessage(String wxCorpId, String welcomeCode, Map<String, JSONObject> contactInfo, Map<String, Object> content) {
-        LambdaQueryChainWrapper<CorpEntity> corpEntityWrapper = corpService.lambdaQuery();
-        corpEntityWrapper.eq(CorpEntity::getWxCorpId,wxCorpId);
-        corpEntityWrapper.select(CorpEntity::getCorpId);
-        CorpEntity corpEntity = corpEntityWrapper.one();
-        Map<String,Object> sendWelcomeDataMap = new HashMap();
+    public void applyWxSendContactMessage(int corpId, String welcomeCode, Map<String, JSONObject> contactInfo, Map<String, Object> content) {
+        Map<String, Object> sendWelcomeDataMap = new HashMap();
         //微信消息体 - 文本
-        if(content.get("text") != null){
+        if (content.get("text") != null) {
             String contentStr = content.get("text").toString();
             String name = null;
             for (Map.Entry<String, JSONObject> mapEntry : contactInfo.entrySet()) {
@@ -156,62 +143,66 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
                     name = contactJson.getString("name");
                 }
             }
-            contentStr = contentStr.replace("##客户名称##",name);
-            sendWelcomeDataMap.put("text",new HashMap<String,Object>().put("content",contentStr));
+            contentStr = contentStr.replace("##客户名称##", name);
+            sendWelcomeDataMap.put("text", new HashMap<String, Object>().put("content", contentStr));
         }
         //微信消息体 - 媒体文件
-        if(content.get("medium") != null){
-            Integer type = (Integer)(((Map<String,Object>)content.get("medium")).get("mediumType"));
-            switch (type){
-                case  2:
-                    String jsonStr = (String)((Map<String, Object>) content.get("medium")).get("mediumContent");
+        if (content.get("medium") != null) {
+            Integer type = (Integer) (((Map<String, Object>) content.get("medium")).get("mediumType"));
+            switch (type) {
+                case 2:
+                    String jsonStr = (String) ((Map<String, Object>) content.get("medium")).get("mediumContent");
                     String imagePath = JSON.parseObject(jsonStr).getString("imagePath");
                     File imageFile = AliyunOssUtils.getFile(imagePath);
-                    String mediaId = WxApiUtils.uploadImageToTemp(corpEntity.getCorpId(), imageFile);
-                    Map mediaMap = new HashMap<String,Object>();
-                    mediaMap.put("media_id",mediaId);
-                    sendWelcomeDataMap.put("image",mediaMap);
+                    String mediaId = WxApiUtils.uploadImageToTemp(AccountService.getCorpId(), imageFile);
+                    sendWelcomeDataMap.put("image", new HashMap<String, Object>().put("media_id", mediaId));
                     break;
                 case 3:
-                    Map<String,Object> linkMap = new HashMap();
-                    JSONObject jsonObject = (JSONObject)((Map<String, Object>) content.get("medium")).get("mediumContent");
-                    linkMap.put("title",jsonObject.get("title"));
-                    linkMap.put("picurl",mediumServiceImpl.addFullPath((String) jsonObject.get("imagePath"),3));
-                    linkMap.put("desc",jsonObject.get("title"));
-                    linkMap.put("url",jsonObject.get("imageLink"));
-                    sendWelcomeDataMap.put("link",linkMap);
+                    Map<String, Object> linkMap = new HashMap();
+                    JSONObject jsonObject = (JSONObject) ((Map<String, Object>) content.get("medium")).get("mediumContent");
+                    linkMap.put("title", jsonObject.get("title"));
+                    linkMap.put("picurl", mediumServiceImpl.addFullPath((String) jsonObject.get("imagePath"), 3));
+                    linkMap.put("desc", jsonObject.get("title"));
+                    linkMap.put("url", jsonObject.get("imageLink"));
+                    sendWelcomeDataMap.put("link", linkMap);
                     break;
                 case 6:
-                    Map<String,Object> miniMap = new HashMap();
-                    JSONObject jsonMiniObject = (JSONObject)((Map<String, Object>) content.get("medium")).get("mediumContent");
+                    Map<String, Object> miniMap = new HashMap();
+                    JSONObject jsonMiniObject = (JSONObject) ((Map<String, Object>) content.get("medium")).get("mediumContent");
                     String imagePathMini = jsonMiniObject.getString("imagePath");
                     File imageFileMini = AliyunOssUtils.getFile(imagePathMini);
-                    String mediaIdMini = WxApiUtils.uploadImageToTemp(corpEntity.getCorpId(), imageFileMini);
-                    miniMap.put("title",jsonMiniObject.getString("title"));
-                    miniMap.put("pic_media_id",mediaIdMini);
-                    miniMap.put("appid",jsonMiniObject.getString("appid"));
-                    miniMap.put("page",jsonMiniObject.getString("page"));
-                    sendWelcomeDataMap.put("miniprogram",miniMap);
+                    String mediaIdMini = WxApiUtils.uploadImageToTemp(AccountService.getCorpId(), imageFileMini);
+                    miniMap.put("title", jsonMiniObject.getString("title"));
+                    miniMap.put("pic_media_id", mediaIdMini);
+                    miniMap.put("appid", jsonMiniObject.getString("appid"));
+                    miniMap.put("page", jsonMiniObject.getString("page"));
+                    sendWelcomeDataMap.put("miniprogram", miniMap);
             }
         }
         //发送欢迎语
-        String respStr = WxApiUtils.sendWelcomeCode(corpEntity.getCorpId(),sendWelcomeDataMap);
-        if(respStr == null){
+        String respStr = WxApiUtils.sendWelcomeCode(corpId, sendWelcomeDataMap);
+        if (respStr == null) {
             System.out.println("请求微信上推送新增客户信息失败>>>>>>>");
         }
     }
 
-    private Map<String,Map<String,Object>> getMediumData(Integer mediumId) {
-        Map<String,Object> map = null;
-        Map<String,Map<String,Object>> mapData = new HashMap();
-        MediumEnyity mediumEntity= mediumServiceImpl.getMediumById(mediumId);
-        if(mediumEntity != null){
+    private Map<String, Map<String, Object>> getMediumData(Integer mediumId) {
+        Map<String, Object> map = null;
+        Map<String, Map<String, Object>> mapData = new HashMap();
+        MediumEnyity mediumEntity = mediumServiceImpl.getMediumById(mediumId);
+        if (mediumEntity != null) {
             map = new HashMap();
-            map.put("mediumType",mediumEntity.getType());
+            map.put("mediumType", mediumEntity.getType());
             map.put("mediumContent", mediumEntity.getContent());
         }
-        mapData.put("medium",map);
+        mapData.put("medium", map);
         return mapData;
+    }
+
+    @Override
+    public Map<String, Object> handle(RequestPage page, ReqPerEnum permission) {
+        //处理请求参数
+        return handleParams(page, permission);
     }
 
     /**
@@ -251,8 +242,6 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
 
 
     /**
-     *
-     *
      * @description:创建欢迎语
      * @author: Huayu
      * @time: 2021/2/2 16:27
@@ -264,8 +253,6 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
 
 
     /**
-     *
-     *
      * @description:更新欢迎语
      * @author: Huayu
      * @time: 2021/2/3 15:30
@@ -273,31 +260,31 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
     @Override
     public Integer updateGreetingById(String greetingId, Map<String, Object> mapData) {
         UpdateWrapper<GreetingEntity> updateWrapper = new UpdateWrapper();
-        updateWrapper.eq("id",greetingId);
-        updateWrapper.set("range_type",Integer.valueOf(mapData.get("rangeType").toString()));
+        updateWrapper.eq("id", greetingId);
+        updateWrapper.set("range_type", Integer.valueOf(mapData.get("rangeType").toString()));
         JSONArray jsonArray = new JSONArray();
         String employees = mapData.get("employees").toString();
-        if(employees != null && !employees.equals("")){
-            String[]  employeesArr = employees.split(",");
-            for (String employee:
-            employeesArr) {
+        if (employees != null && !employees.equals("")) {
+            String[] employeesArr = employees.split(",");
+            for (String employee :
+                    employeesArr) {
                 jsonArray.add(employee);
             }
             employees = jsonArray.toJSONString();
-            updateWrapper.set("employees",employees);
+            updateWrapper.set("employees", employees);
         }
-        updateWrapper.set("type",mapData.get("type").toString());
-        updateWrapper.set("words",mapData.get("words").toString());
-        updateWrapper.set("medium_id",Integer.valueOf(mapData.get("mediumId").toString()));
-        updateWrapper.set("corp_id",AccountService.getCorpId());
+        updateWrapper.set("type", mapData.get("type").toString());
+        updateWrapper.set("words", mapData.get("words").toString());
+        updateWrapper.set("medium_id", Integer.valueOf(mapData.get("mediumId").toString()));
+        updateWrapper.set("corp_id", AccountService.getCorpId());
         GreetingEntity greetingEntity = new GreetingEntity();
         greetingEntity.setRangeType(Integer.valueOf(mapData.get("rangeType").toString()));
-        greetingEntity.setEmployees(mapData.get("employees").equals("")?new JSONArray().toJSONString():JSONObject.toJSONString(mapData.get("employees")));
+        greetingEntity.setEmployees(mapData.get("employees").equals("") ? new JSONArray().toJSONString() : JSONObject.toJSONString(mapData.get("employees")));
         greetingEntity.setType(mapData.get("type").toString());
         greetingEntity.setWords(mapData.get("words").toString());
         greetingEntity.setMediumId(Integer.valueOf(mapData.get("mediumId").toString()));
         greetingEntity.setCorpId(AccountService.getCorpId());
-        Integer i = this.baseMapper.update(greetingEntity,updateWrapper);
+        Integer i = this.baseMapper.update(greetingEntity, updateWrapper);
         return i;
     }
 
@@ -308,14 +295,14 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
      * @time: 2021/2/3 16:10
      */
     @Override
-    public GreetingEntity getGreetingById(Integer greetingId,String clStr) {
+    public GreetingEntity getGreetingById(Integer greetingId, String clStr) {
         QueryWrapper<GreetingEntity> greetingEntityQueryWrapper = new QueryWrapper();
-        if(clStr == null){
+        if (clStr == null) {
             greetingEntityQueryWrapper.getSqlSelect();
-        }else{
+        } else {
             greetingEntityQueryWrapper.select(clStr);
         }
-        greetingEntityQueryWrapper.eq("id",greetingId);
+        greetingEntityQueryWrapper.eq("id", greetingId);
         return this.baseMapper.selectOne(greetingEntityQueryWrapper);
     }
 
@@ -333,7 +320,7 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
     public List<GreetingEntity> getGreetingsByCorpId(Integer corpId, String s) {
         QueryWrapper<GreetingEntity> greetingEntityQueryWrapper = new QueryWrapper();
         greetingEntityQueryWrapper.select(s);
-        greetingEntityQueryWrapper.eq("corp_id",corpId);
+        greetingEntityQueryWrapper.eq("corp_id", corpId);
         return this.baseMapper.selectList(greetingEntityQueryWrapper);
     }
 
@@ -346,7 +333,7 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
         setWrapperPermission(wrapper, permission);
 
         Page<GreetingEntity> page = ApiRespUtils.initPage(req);
-        wrapper.orderByDesc(GreetingEntity ::getCreatedAt);
+        wrapper.orderByDesc(GreetingEntity::getCreatedAt);
         wrapper.page(page);
 
         List<Map<String, Object>> listMapList = new ArrayList<Map<String, Object>>();
@@ -372,26 +359,26 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
             //欢迎语类型
             String typeTextArr = greetingEntity.getType();
             //typeTextArr = typeTextArr.substring(0,typeTextArr.length()-1);
-            String[] typeTextList = StringUtils.split(typeTextArr,"-");
+            String[] typeTextList = StringUtils.split(typeTextArr, "-");
             String typeText = null;
-            if(typeTextList.length > 1){
-                for (String arr:
+            if (typeTextList.length > 1) {
+                for (String arr :
                         typeTextList) {
                     typeText = TypeEnum.getTypeByCode(Integer.valueOf(arr));
                     typeText = typeText + "+";
                 }
-                typeText = typeText.substring(0,typeText.length()-1);
-            }else{
+                typeText = typeText.substring(0, typeText.length() - 1);
+            } else {
                 typeText = TypeEnum.getTypeByCode(Integer.valueOf(typeTextList[0]));
             }
-            listMap.put("greetingId",greetingEntity.getId());
-            listMap.put("typeText",typeText);
-            listMap.put("rangeType",greetingEntity.getRangeType());
-            listMap.put("rangeTypeText",RangeTypeEnum.getTypeByCode(greetingEntity.getRangeType()));
-            listMap.put("employees", getEmployees(greetingEntity.getRangeType(),greetingEntity.getEmployees()));
-            listMap.put("words",greetingEntity.getWords());
-            listMap.put("mediumId",greetingEntity.getMediumId());
-            listMap.put("mediumContent",mediumContent);
+            listMap.put("greetingId", greetingEntity.getId());
+            listMap.put("typeText", typeText);
+            listMap.put("rangeType", greetingEntity.getRangeType());
+            listMap.put("rangeTypeText", RangeTypeEnum.getTypeByCode(greetingEntity.getRangeType()));
+            listMap.put("employees", getEmployees(greetingEntity.getRangeType(), greetingEntity.getEmployees()));
+            listMap.put("words", greetingEntity.getWords());
+            listMap.put("mediumId", greetingEntity.getMediumId());
+            listMap.put("mediumContent", mediumContent);
             listMap.put("createdAt", DateUtils.formatS1(greetingEntity.getCreatedAt().getTime()));
             listMapList.add(listMap);
         }
@@ -401,19 +388,19 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
 
     private List<String> getEmployees(Integer rangeType, String employees) {
         List<String> listStr = new ArrayList<String>();
-        if(rangeType.equals(1)){
+        if (rangeType.equals(1)) {
             String msg = RangeTypeEnum.getTypeByCode(rangeType);
             listStr.add(msg);
             return listStr;
-        }else{
+        } else {
             JSONArray jsonArray = JSONObject.parseArray(employees);
-            if(jsonArray.size() != 0){
-                for (Object json:
+            if (jsonArray.size() != 0) {
+                for (Object json :
                         jsonArray) {
                     employees = json.toString() + ",";
                 }
             }
-            employees = employees.substring(0,employees.length() - 1);
+            employees = employees.substring(0, employees.length() - 1);
             List<WorkEmployeeEntity> workEmployeeEntityList = workEmployeeServiceImpl.getWorkEmployeesById(employees);
             String name = null;
             for (WorkEmployeeEntity workEmployeeEntity :
@@ -432,7 +419,7 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
     private MediumEnyity getMedium(Integer mediumId) {
         QueryWrapper<MediumEnyity> mediumQueryWrapper = new QueryWrapper();
         mediumQueryWrapper.select("id", "type", "content");
-        mediumQueryWrapper.eq("id",mediumId);
+        mediumQueryWrapper.eq("id", mediumId);
         return this.mediumMapper.selectOne(mediumQueryWrapper);
     }
 
@@ -447,9 +434,9 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
                 }
                 employeesArr = greetingEntity.getEmployees();
                 JSONArray jsonArray = JSONObject.parseArray(employeesArr);
-                if(jsonArray.size() != 0){
-                    for (Object json:
-                    jsonArray) {
+                if (jsonArray.size() != 0) {
+                    for (Object json :
+                            jsonArray) {
                         employeesArr = json.toString() + ",";
                     }
                 }
@@ -459,13 +446,13 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
             } else {
                 mapData.put("hadGeneral", 0);
             }
-           if(employeesArr != null && employeesArr.length() > 0){
-                employeesArr = employeesArr.substring(0,employeesArr.length() - 1);
-                mapData.put("hadEmployees",employeesArr.split(","));
-           }else{
-                mapData.put("hadEmployees",JSONObject.parseArray(employeesArr));
-           }
+            if (employeesArr != null && employeesArr.length() > 0) {
+                employeesArr = employeesArr.substring(0, employeesArr.length() - 1);
+                mapData.put("hadEmployees", employeesArr.split(","));
+            } else {
+                mapData.put("hadEmployees", JSONObject.parseArray(employeesArr));
+            }
         }
-        return  mapData;
+        return mapData;
     }
 }

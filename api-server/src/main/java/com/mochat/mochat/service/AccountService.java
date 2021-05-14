@@ -7,8 +7,8 @@ import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.UserEntity;
 import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
-import com.mochat.mochat.service.impl.ISubSystemService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
+import com.mochat.mochat.service.impl.ISubSystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
@@ -58,14 +58,41 @@ public class AccountService {
      * @description 获取当前企业的id
      * @author zhaojinjian
      * @createTime 2020/12/25 15:14
+     * <p>
+     * 异步服务不能通过此方法获取企业 id, 因为异步服务无法 http 请求获取用户 token,
+     * 无法确定用户身份, 可参考如下方法
+     * @see #getCorpIdByUserId(int)
+     * @see #getCorpIdByEmpId(int)
      */
     public static Integer getCorpId() {
         int userId = getUserId();
+        return getCorpIdByUserId(userId);
+    }
+
+    /**
+     * @author: yangpengwei
+     * @time: 2021/5/7 3:27 下午
+     * @description 通过用户 id 获取用户关联企业 id
+     */
+    public static Integer getCorpIdByUserId(int userId) {
         Integer corpId = (Integer) RedisUtil.get(String.format(REDIS_PREFIX_CORP, userId));
         if (corpId == null || corpId < 1) {
             corpId = getNewId(userId, TYPE_CORP_ID);
         }
         return corpId;
+    }
+
+    /**
+     * @author: yangpengwei
+     * @time: 2021/5/7 3:27 下午
+     * @description 通过员工 id 获取员工所属企业 id
+     */
+    public static int getCorpIdByEmpId(int empId) {
+        WorkEmployeeEntity entity = employeeService.getById(empId);
+        if (entity != null) {
+            return entity.getCorpId();
+        }
+        return -1;
     }
 
     /**

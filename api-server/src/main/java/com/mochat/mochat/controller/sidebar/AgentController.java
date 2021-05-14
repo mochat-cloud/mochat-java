@@ -24,8 +24,6 @@ import com.mochat.mochat.service.sidebar.IWorkAgentService;
 import com.mochat.mochat.service.sidebar.StorageService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -68,12 +66,10 @@ public class AgentController {
     @GetMapping("/{filename:.+}")
     @ResponseBody
     @LoginToken
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-        Resource file = storageService.loadAsResource(filename);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + file.getFilename() + "\"")
-                .body(file);
+    public ResponseEntity<String> serveFile(@PathVariable String filename) {
+        String key = filename.replaceAll("WW_verify_", "");
+        key = key.replaceAll(".txt", "");
+        return ResponseEntity.ok().body(key);
     }
 
     @PostMapping("/agent/txtVerifyUpload")
