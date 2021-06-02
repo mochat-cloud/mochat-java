@@ -18,11 +18,26 @@ import java.util.Map;
  */
 public interface ICorpService extends IService<CorpEntity> {
 
-    List<CorpEntity> getCorpInfoByIdName(String corpIds,String corpName);
+    /**
+     * @author: yangpengwei
+     * @time: 2021/5/19 4:05 下午
+     * @description 根据登录用户 id 获取用户关联企业列表
+     */
+    List<CorpEntity> listByLoginUserId(Integer loginUserId);
 
-    CorpEntity getCorpInfoById(Integer corpId);
+    /**
+     * @author: yangpengwei
+     * @time: 2021/5/19 4:05 下午
+     * @description 根据登录用户 id 和企业名获取用户关联企业列表
+     */
+    List<CorpEntity> listByLoginUserIdAndCorpName(Integer loginUserId, String corpName);
 
-    List<CorpEntity> getCorpListById(String userId);
+    /**
+     * @author: yangpengwei
+     * @time: 2021/5/19 4:42 下午
+     * @description 根据企业 id 获取企业微信 id
+     */
+    String getWxCorpIdById(Integer corpId);
 
     boolean createCorp(CorpEntity corpEntity);
 
@@ -36,7 +51,7 @@ public interface ICorpService extends IService<CorpEntity> {
 
     Page<CorpPageItemVO> getCorpPageList(String corpName, RequestPage requestPage, ReqPerEnum permission);
 
-    Map<String,Object> handleCorpDta() throws Exception;
+    Map<String, Object> handleCorpDta() throws Exception;
 
     List<CorpEntity> getCorps(String id);
 

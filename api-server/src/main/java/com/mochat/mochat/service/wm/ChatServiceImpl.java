@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author: yangpengwei
@@ -127,11 +128,10 @@ public class ChatServiceImpl implements IChatService {
                             .eq("corp_id", corpId)
                             .like("name", name)
             );
-            List<Integer> employeeIds = new ArrayList<>();
-            for (int i = 0; i < employeeEntityList.size(); i++) {
-                employeeIds.add(employeeEntityList.get(i).getId());
-            }
-            if (employeeIds.size() < 1) {
+            List<Integer> employeeIds = employeeEntityList.stream()
+                    .map(WorkEmployeeEntity::getId)
+                    .collect(Collectors.toList());
+            if (employeeIds.isEmpty()) {
                 // 没有符合的数据
                 return page;
             } else {
@@ -147,16 +147,14 @@ public class ChatServiceImpl implements IChatService {
             return page;
         }
 
-        List<Integer> toUserIds = new ArrayList<>();
-        for (int i = 0; i < workMsgIndexEntityList.size(); i++) {
-            toUserIds.add(workMsgIndexEntityList.get(i).getToId());
-        }
+        List<Integer> toUserIds = workMsgIndexEntityList.stream()
+                .map(WorkMsgIndexEntity::getToId)
+                .collect(Collectors.toList());
         List<WorkEmployeeEntity> workEmployeeEntities = workEmployeeMapper.selectList(
                 new QueryWrapper<WorkEmployeeEntity>()
                         .select("id", "wx_user_id", "name", "alias", "avatar")
                         .in("id", toUserIds)
         );
-
         if (workEmployeeEntities.isEmpty()) {
             return page;
         }

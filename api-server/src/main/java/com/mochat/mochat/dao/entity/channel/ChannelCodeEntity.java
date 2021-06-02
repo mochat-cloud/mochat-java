@@ -1,9 +1,6 @@
 package com.mochat.mochat.dao.entity.channel;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
 
@@ -34,7 +31,9 @@ public class ChannelCodeEntity extends Model<ChannelCodeEntity> {
   private Integer type;
   private String drainageEmployee;
   private String welcomeMessage;
+  @TableField(fill = FieldFill.INSERT)
   private Date createdAt;
+  @TableField(fill = FieldFill.UPDATE)
   private Date updatedAt;
   @TableLogic
   private Date deletedAt;

@@ -20,27 +20,22 @@ public class ContactFieldPivotEntity {
 	/**
 	 * 客户表ID（work_contact.id）
 	 */
-
 	private Integer contactId;
 
 	/**
 	 * 高级属性表ID(contact_field.id）
 	 */
-
 	private Integer contactFieldId;
 
 	/**
 	 * 高级属性值
 	 */
-
 	private String value;
 
-
+	@TableField(fill = FieldFill.INSERT)
 	private Date createdAt;
-
-
+	@TableField(fill = FieldFill.UPDATE)
 	private Date updatedAt;
-
 
 	@TableLogic
 	private Date deletedAt;

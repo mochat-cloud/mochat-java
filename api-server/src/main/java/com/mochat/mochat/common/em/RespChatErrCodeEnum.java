@@ -5,7 +5,8 @@ import com.mochat.mochat.config.ex.IHttpCode;
 public enum RespChatErrCodeEnum implements IHttpCode {
 
     CHAT_NO_CORP(400001,"企业信息不存在"),
-    AUTH_LOGIN_FAILED1(400001,"用户或密码错误");
+    AUTH_LOGIN_FAILED(400002,"用户或密码错误"),
+    NO_FIND_TENANT(400003,"未查询到租户信息");
 
     private int code;
     private String msg;

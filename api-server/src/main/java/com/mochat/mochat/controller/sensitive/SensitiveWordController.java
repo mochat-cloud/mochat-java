@@ -10,7 +10,7 @@ import com.mochat.mochat.dao.entity.sensitive.SensitiveWordEntity;
 import com.mochat.mochat.model.ApiRespVO;
 import com.mochat.mochat.model.sensitiveword.ReqSensitiveWordIndex;
 import com.mochat.mochat.service.AccountService;
-import com.mochat.mochat.service.businessLog.IBusinessLogService;
+import com.mochat.mochat.service.businesslog.IBusinessLogService;
 import com.mochat.mochat.service.sensitiveword.ISensitiveWordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

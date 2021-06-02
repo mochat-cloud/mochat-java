@@ -133,7 +133,7 @@ public class WorkMsgBackUpUtil {
                         }
 
                         // 反向
-                        reverseWorkMsgIndex(workMsgIndexEntity);
+                        workMsgIndexEntity = reverseWorkMsgIndex(workMsgIndexEntity);
                         msgIndexEntities.add(workMsgIndexEntity);
                         if (!msgIndexEntityMap.containsKey(workMsgIndexEntity.getFlag())) {
                             msgIndexEntityMap.put(workMsgIndexEntity.getFlag(), workMsgIndexEntity);
@@ -162,9 +162,7 @@ public class WorkMsgBackUpUtil {
                                 .in("flag", flags)
                 );
                 for (WorkMsgIndexEntity existIndex : existFlags) {
-                    if (msgIndexEntityMap.containsKey(existIndex.getFlag())) {
-                        msgIndexEntityMap.remove(existIndex.getFlag());
-                    }
+                    msgIndexEntityMap.remove(existIndex.getFlag());
                 }
 
                 List<WorkMsgIndexEntity> list = new ArrayList<>(msgIndexEntityMap.values());
@@ -333,13 +331,19 @@ public class WorkMsgBackUpUtil {
      * @return WorkMsgIndexEntity 索引对象
      */
     private static WorkMsgIndexEntity reverseWorkMsgIndex(WorkMsgIndexEntity workMsgEntity) {
+        int corpId = workMsgEntity.getCorpId();
         int fromId = workMsgEntity.getToId();
         int toId = workMsgEntity.getFromId();
         int toType = workMsgEntity.getToType();
-        workMsgEntity.setFromId(fromId);
-        workMsgEntity.setToType(toType);
-        workMsgEntity.setFlag(fromId + "-" + toType + "-" + toId);
-        return workMsgEntity;
+        String flag = fromId + "-" + toType + "-" + toId;
+
+        WorkMsgIndexEntity entity = new WorkMsgIndexEntity();
+        entity.setCorpId(corpId);
+        entity.setFromId(fromId);
+        entity.setToId(toId);
+        entity.setToType(toType);
+        entity.setFlag(flag);
+        return entity;
     }
 
     public static boolean isContact(String wxUserID) {

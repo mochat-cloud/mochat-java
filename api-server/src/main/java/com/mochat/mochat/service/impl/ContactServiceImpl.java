@@ -670,7 +670,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
         //region 通讯录 企业
         if (empIds != null && empIds.size() > 0) {
             String[] empName = workEmployeeService.getEmployeeName(empIds);
-            CorpEntity corpEntity = corpService.getCorpInfoById(corpId);
+            CorpEntity corpEntity = corpService.getById(corpId);
             empName = Arrays.stream(empName).map(value -> corpEntity.getCorpName() + "--" + value).toArray(String[]::new);
             contactInfoResponse.setEmployeeName(empName);
         } else {
@@ -990,7 +990,6 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
                                 continue;
                             }
                             WorkContactTagPivotEntity contactTagPivot = new WorkContactTagPivotEntity();
-                            contactTagPivot.setCreatedAt(new Date());
                             contactTagPivot.setType(tag.getInteger("type"));
                             //contactTagPivot.setEmployeeId(empId);
                             // contactTagPivot.setContactId(contactId);

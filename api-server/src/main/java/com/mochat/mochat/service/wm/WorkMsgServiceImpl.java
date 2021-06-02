@@ -86,11 +86,11 @@ public class WorkMsgServiceImpl extends ServiceImpl<WorkMsgMapper, WorkMsgEntity
 
     @Override
     public List<WorkMsgEntity> getWorkMessagesByMsgId(List<WorkMsgEntity> workMsgEntityList) {
-        List<WorkMsgEntity> workMsgEntities = new ArrayList();
-        QueryWrapper<WorkMsgEntity> workMsgEntityWrapper = new QueryWrapper();
+        List<WorkMsgEntity> workMsgEntities = new ArrayList<>();
+        QueryWrapper<WorkMsgEntity> workMsgEntityWrapper = new QueryWrapper<>();
         for (WorkMsgEntity workMsgEntity:
                 workMsgEntityList) {
-            workMsgEntityWrapper.eq("msg_id",workMsgEntity.getMsgId());
+            workMsgEntityWrapper.eq("msg_id", workMsgEntity.getMsgId());
             workMsgEntities.add(this.baseMapper.selectOne(workMsgEntityWrapper));
         }
         return workMsgEntities;

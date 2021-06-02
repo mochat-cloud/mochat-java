@@ -17,7 +17,9 @@ public class WorkRoomGroupEntity {
     private Integer id;
     private Integer corpId;//企业表ID（mc_corp.id）
     private String name;//分组名称
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
     @TableLogic
     private Date deletedAt;

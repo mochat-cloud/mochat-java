@@ -1,5 +1,6 @@
 package com.mochat.mochat.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,6 +23,7 @@ import com.mochat.mochat.service.workroom.IWorkRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -56,38 +58,35 @@ public class CorpServiceImpl extends ServiceImpl<CorpMapper, CorpEntity> impleme
     @Autowired
     private IWorkEmployeeService employeeServiceImpl;
 
-    /**
-     * @description: 根据corpId找对象
-     * @return:
-     * @author: Huayu
-     * @time: 2020/11/25 9:25
-     */
     @Override
-    public List<CorpEntity> getCorpInfoByIdName(String corpIds, String name) {
-        List<String> cIds = Arrays.asList(corpIds.split(","));
-        QueryWrapper<CorpEntity> QueryWrapper = new QueryWrapper<>();
-        QueryWrapper.select("id as corpId", "name as corpName", "wx_corpid as wxCorpId", "created_at as createdAt");
-        QueryWrapper.in("id", cIds);
-        if (!name.equals("")) {
-            QueryWrapper.eq("name", name);
+    public List<CorpEntity> listByLoginUserIdAndCorpName(Integer loginUserId, String corpName) {
+        List<Integer> corpIdList = employeeServiceImpl.listCorpIdByLoginUserId(loginUserId);
+        if (corpIdList.isEmpty()) {
+            return Collections.emptyList();
         }
-        return this.baseMapper.selectList(QueryWrapper);
+
+        if (StringUtils.hasLength(corpName)) {
+            return lambdaQuery()
+                    .like(CorpEntity::getCorpName, corpName)
+                    .in(CorpEntity::getCorpId, corpIdList)
+                    .list();
+        } else {
+            return listByIds(corpIdList);
+        }
     }
 
     @Override
-    public CorpEntity getCorpInfoById(Integer corpId) {
-        return this.baseMapper.selectById(corpId);
+    public List<CorpEntity> listByLoginUserId(Integer loginUserId) {
+        return listByLoginUserIdAndCorpName(loginUserId, null);
     }
 
     @Override
-    public List<CorpEntity> getCorpListById(String userId) {
-        // Page<CorpEntity> indexDataPage = new Page<CorpEntity>;
-        QueryWrapper<CorpEntity> QueryWrapper = new QueryWrapper<>();
-        QueryWrapper.select("id as corpId", "name as corpName");
-        //QueryWrapper.setEntity(new CorpEntity());
-        QueryWrapper.in("id", userId);
-        List<CorpEntity> corpList = this.baseMapper.selectList(QueryWrapper);
-        return corpList;
+    public String getWxCorpIdById(Integer corpId) {
+        CorpEntity entity = getById(corpId);
+        if (null != entity) {
+            return entity.getWxCorpId();
+        }
+        return null;
     }
 
     @Override
@@ -194,9 +193,12 @@ public class CorpServiceImpl extends ServiceImpl<CorpMapper, CorpEntity> impleme
 
     @Override
     public List<CorpDataEntity> handleLineChatDta() {
-        Date now = new Date();
-        Date startDate = org.apache.commons.lang3.time.DateUtils.addDays(now, -31);
-        Date endDate = new Date();
+        Calendar c = Calendar.getInstance();
+        Date endDate = c.getTime();
+
+        c.add(Calendar.DATE, -31);
+        Date startDate = c.getTime();
+
         //获取近31天数据
         return getData(startDate, endDate);
     }
@@ -213,21 +215,16 @@ public class CorpServiceImpl extends ServiceImpl<CorpMapper, CorpEntity> impleme
      * @return:
      * @author: Huayu
      */
-    private Map<String, Object> getCorpDayData(Integer corpId) throws Exception {
+    private Map<String, Object> getCorpDayData(Integer corpId) {
+        // 查询今日数据
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        //查询今日数据
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = sdf.parse(sdf.format(calendar.getTime()));
-        CorpDataEntity corpDataEntityDay = corpDataServiceImpl.getCorpDayDataByCorpIdDate(corpId, date);
-        calendar.add(Calendar.DATE, -1);
+        CorpDataEntity corpDataEntityDay = corpDataServiceImpl.getCorpDayDataByCorpIdDate(corpId, calendar.getTime());
+
         //查询昨日数据
-        Date date1 = sdf.parse(sdf.format(calendar.getTime()));
-        CorpDataEntity corpDataEntityLastDay = corpDataServiceImpl.getCorpDayDataByCorpIdDate(corpId, date1);
-        Map<String, Object> map = new HashMap<String, Object>();
+        calendar.add(Calendar.DATE, -1);
+        CorpDataEntity corpDataEntityLastDay = corpDataServiceImpl.getCorpDayDataByCorpIdDate(corpId, calendar.getTime());
+
+        Map<String, Object> map = new HashMap<>();
         //今日新增客户数
         map.put("addContactNum", corpDataEntityDay.getAddContactNum() == null ? 0 : corpDataEntityDay.getAddContactNum());
         //昨日新增客户数
@@ -243,7 +240,7 @@ public class CorpServiceImpl extends ServiceImpl<CorpMapper, CorpEntity> impleme
         //今日退群数
         map.put("quitRoomNum", corpDataEntityDay.getLossContactNum() == null ? 0 : corpDataEntityLastDay.getLossContactNum());
         //昨日退群数
-        map.put("quitRoomNum", corpDataEntityLastDay.getLossContactNum() == null ? 0 : corpDataEntityLastDay.getLossContactNum());
+        map.put("lastQuitRoomNum", corpDataEntityLastDay.getLossContactNum() == null ? 0 : corpDataEntityLastDay.getLossContactNum());
         return map;
     }
 

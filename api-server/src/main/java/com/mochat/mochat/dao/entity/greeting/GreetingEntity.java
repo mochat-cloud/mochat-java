@@ -1,14 +1,12 @@
 package com.mochat.mochat.dao.entity.greeting;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * @description:好犹豫欢迎语
+ * @description:好友欢迎语
  * @author: Huayu
  * @time: 2021/2/1 15:26
  */
@@ -23,8 +21,11 @@ public class GreetingEntity {
     private Integer mediumId;//欢迎语素材
     private Integer rangeType;//适用成员类型【1-全部成员(默认)】
     private String employees; //适用成员
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
+    @TableLogic
     private Date deletedAt;
 
 }

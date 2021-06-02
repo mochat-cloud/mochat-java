@@ -25,12 +25,13 @@ import com.mochat.mochat.dao.entity.medium.MediumEnyity;
 import com.mochat.mochat.dao.mapper.greeting.GreetingMapper;
 import com.mochat.mochat.dao.mapper.medium.MediumMapper;
 import com.mochat.mochat.service.AccountService;
-import com.mochat.mochat.service.businessLog.IBusinessLogService;
+import com.mochat.mochat.service.businesslog.IBusinessLogService;
 import com.mochat.mochat.service.emp.IWorkEmployeeDepartmentService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import com.mochat.mochat.service.greeting.IGreetingService;
 import com.mochat.mochat.service.impl.ICorpService;
 import com.mochat.mochat.service.impl.medium.IMediumService;
+import io.jsonwebtoken.lang.Strings;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -248,7 +249,11 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
      */
     @Override
     public Integer createGreeting(GreetingEntity greetingEntity) {
-        return this.baseMapper.insert(greetingEntity);
+        int result = this.baseMapper.insert(greetingEntity);
+
+        // 记录业务日志
+        businessLogService.createBusinessLog(greetingEntity.getId(),greetingEntity,EventEnum.GREETING_CREATE);
+        return result;
     }
 
 
@@ -285,6 +290,9 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
         greetingEntity.setMediumId(Integer.valueOf(mapData.get("mediumId").toString()));
         greetingEntity.setCorpId(AccountService.getCorpId());
         Integer i = this.baseMapper.update(greetingEntity, updateWrapper);
+
+        // 记录业务日志
+        businessLogService.createBusinessLog(Integer.parseInt(greetingId), greetingEntity,EventEnum.GREETING_UPDATE);
         return i;
     }
 

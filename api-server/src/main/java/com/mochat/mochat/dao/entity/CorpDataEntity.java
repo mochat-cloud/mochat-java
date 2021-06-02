@@ -1,8 +1,6 @@
 package com.mochat.mochat.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -23,6 +21,8 @@ public class CorpDataEntity {
     private Integer lossContactNum;//流失客户数
     private Integer quitRoomNum;//退群数
     private Date date;//日期
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
 }

@@ -36,10 +36,15 @@ public class CorpEntity {
     private String contactSecret;//企业外部联系人secret
     private String token;//回调token
     private String encodingAesKey;//回调消息加密串
+
     @JSONField(name = "time", format = "yyyy/MM/dd HH:mm:ss")
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
+
     @JSONField(name = "time", format = "yyyy/MM/dd HH:mm:ss")
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
+
     @JSONField(name = "time", format = "yyyy/MM/dd HH:mm:ss")
     @TableLogic
     private Date deletedAt;

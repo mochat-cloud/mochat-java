@@ -67,7 +67,9 @@ public class WorkRoomEntity {
 
     private Integer roomGroupId;
 
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
     @TableLogic
 	private Date deletedAt;

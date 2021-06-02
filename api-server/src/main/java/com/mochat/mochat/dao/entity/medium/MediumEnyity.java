@@ -29,7 +29,10 @@ public class MediumEnyity {
     private Integer mediumGroupId;//素材分组ID
     private Integer userId;//上传者ID
     private String userName;//上传者名称
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
+    @TableLogic
     private Date deletedAt;
 }

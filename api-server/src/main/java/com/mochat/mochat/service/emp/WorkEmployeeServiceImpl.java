@@ -67,6 +67,11 @@ public class WorkEmployeeServiceImpl extends ServiceImpl<WorkEmployeeMapper, Wor
 
     private static Map<Integer, List<String>> followUserMap = new HashMap<>();
 
+    @Override
+    public WorkEmployeeEntity getByWxEmpId(String wxEmpId) {
+        return lambdaQuery().eq(WorkEmployeeEntity::getWxUserId, wxEmpId).one();
+    }
+
     /**
      * 同步部门和成员
      *
@@ -684,7 +689,7 @@ public class WorkEmployeeServiceImpl extends ServiceImpl<WorkEmployeeMapper, Wor
      */
     @Override
     public Map<Integer, String> getCorpEmployeeName(Integer corpId, List<Integer> empIds) {
-        CorpEntity corpEntity = corpService.getCorpInfoById(corpId);
+        CorpEntity corpEntity = corpService.getById(corpId);
         QueryWrapper<WorkEmployeeEntity> employeeWrapper = new QueryWrapper<>();
         employeeWrapper.select("name,id");
         employeeWrapper.eq("corp_id", corpId);
@@ -867,5 +872,21 @@ public class WorkEmployeeServiceImpl extends ServiceImpl<WorkEmployeeMapper, Wor
         }
 
         return listByIds(empIdList).stream().map(WorkEmployeeEntity::getWxUserId).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Integer> listCorpIdByLoginUserId(Integer loginUserId) {
+        List<WorkEmployeeEntity> entityList = lambdaQuery()
+                .select(WorkEmployeeEntity::getCorpId)
+                .eq(WorkEmployeeEntity::getLogUserId, loginUserId)
+                .groupBy(WorkEmployeeEntity::getCorpId)
+                .list();
+        if (entityList.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            return entityList.stream()
+                    .map(WorkEmployeeEntity::getCorpId)
+                    .collect(Collectors.toList());
+        }
     }
 }

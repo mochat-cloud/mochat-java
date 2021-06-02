@@ -34,7 +34,7 @@ public class CommandUtil {
     }
 
     public static void amrToMp3(String amrPath, String outMp3Path) {
-        exeCmd(CommandUtil.Helper.getAmrToMp3Cmd(amrPath, outMp3Path));
+        exeCmd(Helper.getAmrToMp3Cmd(amrPath, outMp3Path));
     }
 
     /**

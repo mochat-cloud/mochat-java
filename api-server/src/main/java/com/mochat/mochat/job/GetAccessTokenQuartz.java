@@ -37,7 +37,7 @@ public class GetAccessTokenQuartz {
     //@Scheduled(initialDelay = 1000, fixedDelay = 100*60*1000)
     public void  get_access_token() {
         Integer corpId = AccountService.getCorpId();
-        CorpEntity corpEntity = corpService.getCorpInfoById(corpId);
+        CorpEntity corpEntity = corpService.getById(corpId);
         String appid = corpEntity.getWxCorpId();
         String appsecret =  corpEntity.getEmployeeSecret();
         String requestUrl = Const.URL_REQUEST_ADDRESS+"/gettoken?corpid=APPID&corpsecret=APPSECRET";

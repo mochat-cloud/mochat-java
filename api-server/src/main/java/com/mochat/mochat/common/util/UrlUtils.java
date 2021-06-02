@@ -35,9 +35,4 @@ public class UrlUtils {
         return mapRequest;
     }
 
-    public static void main(String... args) {
-        String url = "/codeAuth?agentId=1&pageFlag=customer";
-        Map map = UrlUtils.urlSplit(url);
-        System.out.println(map);
-    }
 }

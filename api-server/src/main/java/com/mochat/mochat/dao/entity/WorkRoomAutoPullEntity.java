@@ -66,8 +66,9 @@ public class WorkRoomAutoPullEntity extends Model<WorkRoomAutoPullEntity> {
 	 */
 	private String rooms;
 
+	@TableField(fill = FieldFill.INSERT)
 	private Date createdAt;
-
+	@TableField(fill = FieldFill.UPDATE)
 	private Date updatedAt;
 
 	@TableLogic

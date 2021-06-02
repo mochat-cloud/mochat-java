@@ -2,7 +2,7 @@ package com.mochat.mochat.controller.sidebar;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.aliyun.oss.ServiceException;
 import com.mochat.mochat.common.annotion.LoginToken;
 import com.mochat.mochat.common.util.JwtUtil;
 import com.mochat.mochat.common.util.RSAUtils;
@@ -11,23 +11,21 @@ import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
-import com.mochat.mochat.dao.entity.CorpEntity;
 import com.mochat.mochat.dao.entity.UserEntity;
 import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
-import com.mochat.mochat.dao.mapper.SubSystemMapper;
-import com.mochat.mochat.dao.mapper.WorkEmployeeMapper;
 import com.mochat.mochat.model.ApiRespVO;
 import com.mochat.mochat.model.properties.ChatToolProperties;
 import com.mochat.mochat.service.AccountService;
+import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import com.mochat.mochat.service.impl.ICorpService;
+import com.mochat.mochat.service.impl.ISubSystemService;
 import com.mochat.mochat.service.sidebar.IWorkAgentService;
-import com.mochat.mochat.service.sidebar.StorageService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
@@ -42,14 +40,12 @@ import java.util.Map;
  * @time: 2021/1/27 2:16 下午
  * @description 企业微信侧边栏应用域名校验
  */
+@Slf4j
 @RestController
 public class AgentController {
 
     @Autowired
     private ChatToolProperties chatToolProperties;
-
-    @Autowired
-    private StorageService storageService;
 
     @Autowired
     private IWorkAgentService workAgentService;
@@ -58,26 +54,23 @@ public class AgentController {
     private ICorpService corpService;
 
     @Autowired
-    private WorkEmployeeMapper workEmployeeMapper;
+    private IWorkEmployeeService employeeService;
 
     @Autowired
-    private SubSystemMapper subSystemMapper;
+    private ISubSystemService subSystemService;
 
+    /**
+     * @author: yangpengwei
+     * @time: 2021/5/19 3:55 下午
+     * @description 企业微信应用域名校验文件验证
+     */
     @GetMapping("/{filename:.+}")
     @ResponseBody
     @LoginToken
-    public ResponseEntity<String> serveFile(@PathVariable String filename) {
+    public ResponseEntity<String> getContentByVerifyFileName(@PathVariable String filename) {
         String key = filename.replaceAll("WW_verify_", "");
         key = key.replaceAll(".txt", "");
         return ResponseEntity.ok().body(key);
-    }
-
-    @PostMapping("/agent/txtVerifyUpload")
-    @ResponseBody
-    @LoginToken
-    public ApiRespVO handleFileUpload(@RequestParam("file") MultipartFile file) {
-        storageService.store(file);
-        return ApiRespUtils.getApiRespOfOk("");
     }
 
     /**
@@ -93,8 +86,15 @@ public class AgentController {
             @RequestParam(defaultValue = "") String act
     ) {
         // 获取企业微信 id
-        CorpEntity corpEntity = workAgentService.getCorp(agentId);
-        String wxCorpId = corpEntity.getWxCorpId();
+        Integer corpId = workAgentService.getCorpIdById(agentId);
+        if (null == corpId || corpId < 1) {
+            throw new CommonException("应用 id 未关联企业");
+        }
+
+        String wxCorpId = corpService.getWxCorpIdById(corpId);
+        if (null == wxCorpId) {
+            throw new ServiceException("企业微信 id 获取失败, 未查到对应企业");
+        }
 
         String redirectUrl = chatToolProperties.getApiUrl() + "/agent/oauth/callback"
                 + "?agentId=" + agentId
@@ -131,17 +131,17 @@ public class AgentController {
     ) throws IOException {
 
         // 获取企业微信 id
-        CorpEntity corpEntity = workAgentService.getCorp(agentId);
+        Integer corpId = workAgentService.getCorpIdById(agentId);
+        if (null == corpId || corpId < 1) {
+            throw new CommonException("应用 id 未关联企业");
+        }
 
         // 根据 code 查询员工信息
-        String wxUserId = WxApiUtils.requestWxUserIdApi(corpEntity.getCorpId(), agentId, code);
-        WorkEmployeeEntity workEmployeeEntity = workEmployeeMapper.selectOne(
-                new QueryWrapper<WorkEmployeeEntity>()
-                        .eq("wx_user_id", wxUserId)
-        );
+        String wxUserId = WxApiUtils.requestWxUserIdApi(corpId, agentId, code);
+        WorkEmployeeEntity workEmployeeEntity = employeeService.getByWxEmpId(wxUserId);
 
         // 根据员工信息登录
-        UserEntity userEntityList = subSystemMapper.selectById(workEmployeeEntity.getLogUserId());
+        UserEntity userEntityList = subSystemService.getById(workEmployeeEntity.getLogUserId());
         if (userEntityList == null) {
             throw new CommonException(100013, "登录失败,用户不存在");
         }
@@ -149,7 +149,7 @@ public class AgentController {
         RedisUtil.set("mc:user.token" + token, "1");
         AccountService.updateCorpIdAndEmployeeId(workEmployeeEntity.getLogUserId(), workEmployeeEntity.getCorpId(), workEmployeeEntity.getId());
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("corpId", corpEntity.getCorpId());
+        jsonObject.put("corpId", corpId);
         jsonObject.put("token", token);
         jsonObject.put("expire", 36000000);
         jsonObject.put("agentId", agentId);
@@ -188,7 +188,11 @@ public class AgentController {
                 "&url=" + chatToolProperties.getWebUrl() + uriPath;
         String sign = DigestUtils.sha1Hex(str1);
 
-        String wxCorpId = corpService.getCorpInfoById(corpId).getWxCorpId();
+        String wxCorpId = corpService.getById(corpId).getWxCorpId();
+
+        if (agentId < 1) {
+            agentId = workAgentService.getFirstAgentId(corpId);
+        }
         String wxAgentId = workAgentService.getWxAgentById(agentId);
 
         HashMap<String, String> map = new HashMap<>(6);

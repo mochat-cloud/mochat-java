@@ -154,20 +154,27 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         //response.setContentType("application/json;charset=utf-8");
     }
 
+    /**
+     * @author: yangpengwei
+     * @time: 2021/5/21 11:21 上午
+     * @description 验证用户是否拥有当前接口访问权限
+     */
     private boolean permissionLogic(HttpServletRequest request, String urlAndMethod) {
         int userId = AccountService.getUserId();
         UserEntity userEntity = subSystemService.getById(userId);
+
+        // 超级管理员拥有所有访问权限
         if (1 == userEntity.getIsSuperAdmin()) {
             request.setAttribute("permission", ReqPerEnum.ALL);
             return true;
         }
 
+        // 查询用户对应角色, 根据角色判断权限
         List<McRbacUserRoleEntity> userRoleEntityList = userRoleService.lambdaQuery()
                 .select(McRbacUserRoleEntity::getRoleId)
                 .eq(McRbacUserRoleEntity::getUserId, userId)
                 .list();
-
-        if (userRoleEntityList.size() < 1) {
+        if (userRoleEntityList.isEmpty()) {
             return false;
         }
 
@@ -177,35 +184,40 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             Map<String, Integer> map = new HashMap<>(2);
 
             McRbacRoleEntity roleEntity = roleService.getById(userRoleEntity.getRoleId());
+            // 角色对应企业的数据权限
             String dataJsonStr = roleEntity.getDataPermission();
             JSONArray jsonArray = JSON.parseArray(dataJsonStr);
             for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
+                // 角色本企业的数据权限
                 if (corpId == jsonObject.getIntValue("corpId")) {
+                    // 角色是否启用数据权限
                     map.put("dp", jsonObject.getIntValue("permissionType"));
                     break;
                 }
             }
 
+            // 角色与菜单关联数据
             List<McRbacRoleMenuEntity> roleMenuEntityList = roleMenuService.lambdaQuery()
                     .select(McRbacRoleMenuEntity::getMenuId)
                     .eq(McRbacRoleMenuEntity::getRoleId, userRoleEntity.getRoleId())
                     .orderByAsc(McRbacRoleMenuEntity::getMenuId)
                     .list();
 
+            // 角色对应菜单 id 列表
             List<Integer> menuIdList = roleMenuEntityList.stream()
                     .map(McRbacRoleMenuEntity::getMenuId)
                     .collect(Collectors.toList());
-
-            List<McRbacMenuEntity> menuEntityList = menuService.lambdaQuery()
-                    .in(McRbacMenuEntity::getId, menuIdList)
-                    .eq(McRbacMenuEntity::getLinkUrl, urlAndMethod)
-                    .list();
-
-            if (menuEntityList.size() > 0) {
-                map.put("mp", menuEntityList.get(0).getDataPermission());
+            if (!menuIdList.isEmpty()) {
+                List<McRbacMenuEntity> menuEntityList = menuService.lambdaQuery()
+                        .in(McRbacMenuEntity::getId, menuIdList)
+                        .eq(McRbacMenuEntity::getLinkUrl, urlAndMethod)
+                        .list();
+                if (menuEntityList.size() > 0) {
+                    // 菜单是否启用菜单权限
+                    map.put("mp", menuEntityList.get(0).getDataPermission());
+                }
             }
-
             mapList.add(map);
         }
 
@@ -219,19 +231,22 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 return false;
             }
 
+            // 菜单不启用数据权限, 可查看全部数据
             if (menuPermission == 2) {
                 request.setAttribute("permission", ReqPerEnum.ALL);
             } else {
+                // 菜单启用数据权限, 判断用户数据查询范围
                 // 1-是(所选择企业)本用户部门 2-否 （本用户)
                 departmentPermission = map.getOrDefault("dp", 0);
                 if (departmentPermission == 1) {
+                    // 所属部门
                     request.setAttribute("permission", ReqPerEnum.DEPARTMENT);
                 } else {
+                    // 个人
                     request.setAttribute("permission", ReqPerEnum.EMPLOYEE);
                 }
             }
         }
-
 
         return true;
     }

@@ -21,11 +21,9 @@ public class UpdateContactFieldModel extends AddContactFieldModel {
     }
 
     @Override
-    public void verifyParam()
-    {
+    public void verifyParam() {
         super.verifyParam();
-        if(this.id==null)
-        {
+        if (this.id == null) {
             throw new ParamException(RespErrCodeEnum.INVALID_PARAMS.getCode(), RespErrCodeEnum.INVALID_PARAMS.getMsg());
         }
     }

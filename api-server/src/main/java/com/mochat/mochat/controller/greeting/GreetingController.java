@@ -20,7 +20,7 @@ import com.mochat.mochat.dao.entity.greeting.GreetingEntity;
 import com.mochat.mochat.dao.entity.medium.MediumEnyity;
 import com.mochat.mochat.model.ApiRespVO;
 import com.mochat.mochat.service.AccountService;
-import com.mochat.mochat.service.businessLog.IBusinessLogService;
+import com.mochat.mochat.service.businesslog.IBusinessLogService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import com.mochat.mochat.service.greeting.IGreetingService;
 import com.mochat.mochat.service.impl.medium.IMediumService;
@@ -91,10 +91,10 @@ public class GreetingController {
         greetingEntity.setCorpId(AccountService.getCorpId());
         greetingEntity.setCreatedAt(new Date());
         greetingServiceImpl.createGreeting(greetingEntity);
-        //记录业务日志
+        // 记录业务日志
         businessLogServiceImpl.createBusinessLog(
                 greetingEntity.getId(),
-                JSON.toJSONString(greetingEntity),
+                greetingEntity,
                 EventEnum.GREETING_CREATE
         );
         return ApiRespUtils.getApiRespOfOk("");
@@ -142,10 +142,10 @@ public class GreetingController {
             throw new CommonException(100014, "系统错误,欢迎语更新失败");
         }
 
-        //记录业务日志
+        // 记录业务日志
         boolean result = businessLogServiceImpl.createBusinessLog(
                 Integer.valueOf(mapData.get("greetingId").toString()),
-                JSON.toJSONString(mapData),
+                mapData,
                 EventEnum.GREETING_UPDATE
         );
 

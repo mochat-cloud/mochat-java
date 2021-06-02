@@ -372,10 +372,10 @@ public class SubsystemServiceImpl extends ServiceImpl<SubSystemMapper, UserEntit
             Integer corpId = AccountService.getCorpId();
             if (corpId == null) {
                 if (!employeeEntity.getCorpId().equals("") && employeeEntity.getCorpId() != null) {
-                    corpEntity = corpService.getCorpInfoById(employeeEntity.getCorpId());
+                    corpEntity = corpService.getById(employeeEntity.getCorpId());
                 }
             } else {
-                corpEntity = corpService.getCorpInfoById(corpId);
+                corpEntity = corpService.getById(corpId);
             }
             LoginShowRresponse loginInfo = new LoginShowRresponse();
             loginInfo.setUserId(userEntity.getId());

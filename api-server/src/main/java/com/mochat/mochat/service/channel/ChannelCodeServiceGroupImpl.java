@@ -26,16 +26,22 @@ public class ChannelCodeServiceGroupImpl extends ServiceImpl<ChannelCodeGroupMap
 
     @Override
     public void saveByNames(List<String> nameList) {
-        QueryWrapper<ChannelCodeGroupEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("name", nameList);
-        int count = count(queryWrapper);
+        if (null == nameList || nameList.isEmpty()) {
+            return;
+        }
+
+        int corpId = AccountService.getCorpId();
+        int count = lambdaQuery()
+                .eq(ChannelCodeGroupEntity::getCorpId, corpId)
+                .in(ChannelCodeGroupEntity::getName, nameList)
+                .count();
         if (count > 0) {
             throw new ParamException("分组名已存在");
         }
 
         List<ChannelCodeGroupEntity> codeGroupEntityList = new ArrayList<>();
         for (String name : nameList) {
-            codeGroupEntityList.add(new ChannelCodeGroupEntity(name, AccountService.getCorpId()));
+            codeGroupEntityList.add(ChannelCodeGroupEntity.getInstance(name, corpId));
         }
         saveBatch(codeGroupEntityList);
     }

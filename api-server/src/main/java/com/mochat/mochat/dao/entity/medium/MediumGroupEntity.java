@@ -19,7 +19,9 @@ public class MediumGroupEntity {
     private String name;//名称
     @TableField("`order`")
     private Integer order;//排序
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
     @TableLogic
     private Date deletedAt;

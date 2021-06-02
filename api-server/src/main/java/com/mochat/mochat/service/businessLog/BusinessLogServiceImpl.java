@@ -1,11 +1,11 @@
-package com.mochat.mochat.service.impl;
+package com.mochat.mochat.service.businesslog;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mochat.mochat.common.em.businesslog.EventEnum;
 import com.mochat.mochat.dao.entity.BusinessLogEntity;
 import com.mochat.mochat.dao.mapper.BusinessLogMapper;
 import com.mochat.mochat.service.AccountService;
-import com.mochat.mochat.service.businessLog.IBusinessLogService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,14 +25,14 @@ public class BusinessLogServiceImpl extends ServiceImpl<BusinessLogMapper, Busin
      * @description 业务日志保存
      *
      * @param businessId 业务 id
-     * @param paramJson 业务参数
+     * @param param 业务参数
      * @param eventEnum 业务类型
      */
     @Override
-    public boolean createBusinessLog(Integer businessId, String paramJson, EventEnum eventEnum) {
+    public boolean createBusinessLog(Integer businessId, Object param, EventEnum eventEnum) {
         BusinessLogEntity entity = new BusinessLogEntity();
         entity.setBusinessId(businessId);
-        entity.setParams(paramJson);
+        entity.setParams(JSON.toJSONString(param));
         entity.setEvent(eventEnum.getCode());
         entity.setOperationId(AccountService.getEmpId());
         return entity.insert();

@@ -35,46 +35,8 @@ public class WorkMsgIndexEntity {
      */
     private String flag;
 
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
-
-    public Integer getCorpId() {
-        return corpId;
-    }
-
-    public void setCorpId(Integer corpId) {
-        this.corpId = corpId;
-    }
-
-    public Integer getToId() {
-        return toId;
-    }
-
-    public void setToId(Integer toId) {
-        this.toId = toId;
-    }
-
-    public Integer getToType() {
-        return toType;
-    }
-
-    public void setToType(Integer toType) {
-        this.toType = toType;
-    }
-
-    public Integer getFromId() {
-        return fromId;
-    }
-
-    public void setFromId(Integer fromId) {
-        this.fromId = fromId;
-    }
-
-    public String getFlag() {
-        return flag;
-    }
-
-    public void setFlag(String flag) {
-        this.flag = flag;
-    }
 }

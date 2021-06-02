@@ -27,7 +27,9 @@ public class WorkEmployeeStatisticEntity {
     private Integer avgReplyTime;
     private Integer negativeFeedbackCnt;
     private Date synTime;
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
     @TableLogic
     private Date deletedAt;

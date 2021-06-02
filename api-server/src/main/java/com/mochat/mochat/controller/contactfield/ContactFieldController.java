@@ -17,7 +17,9 @@ import java.util.Map;
 /**
  * @author zhaojinjian
  * @ClassName ContactFieldController.java
- * @Description TODO
+ * @Description 客户高级属性控制器, 编辑所有客户共用的属性
+ * @see com.mochat.mochat.controller.contactfieldpivot.ContactFieldPivotController 设置单个客户高级属性的属性值
+ *
  * @createTime 2020/12/16 11:58
  */
 @RestController

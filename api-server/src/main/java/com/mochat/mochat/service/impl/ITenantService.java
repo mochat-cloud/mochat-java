@@ -1,13 +1,11 @@
 package com.mochat.mochat.service.impl;
 
-import java.util.List;
-import java.util.Map;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.mochat.mochat.dao.entity.TenantEntity;
 
 /**
  * 租户业务
  */
-public interface ITenantService {
-
-    List<Map<String,Object>>  getTenantByStatus();
+public interface ITenantService extends IService<TenantEntity> {
 
 }

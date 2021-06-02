@@ -94,10 +94,10 @@ public class ChannelCodeGroupController {
      * @description 编辑渠道码分组
      */
     @GetMapping("/detail")
-    public ApiRespVO showCodeGroupDetail(@NotNull(message = "渠道码分组 id 不能为空") Integer groupId) {
+    public ApiRespVO showCodeGroupDetail(@NotNull(message = "id 不能为空") Integer groupId) {
         ChannelCodeGroupEntity entity = channelCodeGroupService.getById(groupId);
         if (Objects.isNull(entity)) {
-            throw new ParamException("渠道码分组 id 不存在");
+            throw new ParamException("渠道码分组不存在");
         }
 
         Map<String, Object> map = new HashMap<>(2);

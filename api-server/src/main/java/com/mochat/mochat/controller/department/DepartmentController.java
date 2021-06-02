@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * @author zhaojinjian
  * @ClassName DepartmentController.java
- * @Description TODO
+ * @Description 企业部门管理控制器
  * @createTime 2021/1/7 11:41
  */
 @RestController
@@ -69,9 +69,6 @@ public class DepartmentController {
     @GetMapping("/workEmployeeDepartment/memberIndex")
     public ApiRespVO getDeptMemberList(String departmentIds) {
         Integer corpId = AccountService.getCorpId();
-        if (corpId == null) {
-            throw new CommonException(100013, "未选择登录企业，不可操作");
-        }
         String[] deptIds = departmentIds.split(",");
         List<Integer> deptIdList = new ArrayList<>();
         for (int i = 0; i < deptIds.length; i++) {

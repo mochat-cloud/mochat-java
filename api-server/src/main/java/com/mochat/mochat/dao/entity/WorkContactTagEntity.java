@@ -46,8 +46,9 @@ public class WorkContactTagEntity {
 	 */
 	private int contactTagGroupId;
 
+	@TableField(fill = FieldFill.INSERT)
 	private Date createdAt;
-
+	@TableField(fill = FieldFill.UPDATE)
 	private Date updatedAt;
 
 	@TableLogic

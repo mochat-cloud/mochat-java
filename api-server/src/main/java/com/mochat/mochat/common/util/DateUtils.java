@@ -168,14 +168,4 @@ public class DateUtils {
         return calendar.get(Calendar.DAY_OF_WEEK) - 1;
     }
 
-    public static void main(String... args) {
-        long millis = getMillsByS3("2021-03-06");
-
-        System.out.println(format(S6, millis));
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(millis);
-        System.out.println(calendar.get(Calendar.DAY_OF_WEEK));
-    }
-
 }

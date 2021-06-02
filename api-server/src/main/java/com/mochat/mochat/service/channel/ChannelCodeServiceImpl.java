@@ -24,7 +24,7 @@ import com.mochat.mochat.dao.mapper.channel.ChannelCodeMapper;
 import com.mochat.mochat.job.sync.WorkChannelCodeSyncLogic;
 import com.mochat.mochat.model.channel.*;
 import com.mochat.mochat.service.AccountService;
-import com.mochat.mochat.service.businessLog.IBusinessLogService;
+import com.mochat.mochat.service.businesslog.IBusinessLogService;
 import com.mochat.mochat.service.contact.IWorkContactTagGroupService;
 import com.mochat.mochat.service.emp.IWorkDeptService;
 import com.mochat.mochat.service.emp.IWorkEmployeeDepartmentService;
@@ -125,15 +125,22 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
         entity.setDrainageEmployee(JSON.toJSONString(req.getDrainageEmployee()));
         entity.setWelcomeMessage(JSON.toJSONString(req.getWelcomeMessage()));
 
-        if (Objects.nonNull(req.getChannelCodeId())) {
+        boolean isUpdate = Objects.nonNull(req.getChannelCodeId());
+        if (isUpdate) {
             entity.setId(req.getChannelCodeId());
         }
         boolean result = entity.insertOrUpdate();
+
         if (result) {
             workChannelCodeSyncLogic.onCreateWxAddContactWayQrcode(entity, map);
         } else {
-            throw new CommonException("渠道活码创建失败");
+            String msg = isUpdate ? "渠道活码创建失败" : "渠道活码更新失败";
+            throw new CommonException(msg);
         }
+
+        // 记录业务日志
+        businessLogService.createBusinessLog(entity.getId(), entity,
+                isUpdate ? EventEnum.CHANNEL_CODE_CREATE : EventEnum.CHANNEL_CODE_UPDATE);
     }
 
     private Map<String, List<?>> checkSpecialDate(DrainageEmployeeDTO.SpecialPeriodDTO employeeDTO) {
@@ -243,6 +250,11 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
     private void setAddMaxVO(DrainageEmployeeVO drainageEmployeeVO) {
         DrainageEmployeeVO.AddMaxVO addMaxVO = drainageEmployeeVO.getAddMax();
         List<Integer> empIdList = addMaxVO.getSpareEmployeeIds();
+        if (empIdList.isEmpty()) {
+            addMaxVO.setSpareEmployeeName(Collections.emptyList());
+            return;
+        }
+
         List<String> empNameList = workEmployeeService.lambdaQuery()
                 .select(WorkEmployeeEntity::getName)
                 .in(WorkEmployeeEntity::getId, empIdList)

@@ -80,16 +80,8 @@ public class CorpController {
     @GetMapping(value = "/corp/select")
     @ResponseBody
     public ApiRespVO getCorpOptions(String corpName) {
-        //获取当前登录用户所归属的所有企业通讯录信息
-        Integer user_id = AccountService.getUserId();
-        List<WorkEmployeeEntity> mcWorkEmployeeEntityList = workEmployeeServiceImpl.getWorkEmployeeByUserId(String.valueOf(user_id));
-        List<CorpEntity> corpIdList = new ArrayList<CorpEntity>();
-        //通过corpId找到用户的所属企业
-        for (WorkEmployeeEntity workEmployeeEntity :
-                mcWorkEmployeeEntityList) {
-            corpIdList.add(corpServiceImpl.getCorpListById(workEmployeeEntity.getCorpId().toString()).get(0));
-        }
-        return ApiRespUtils.getApiRespOfOk(corpIdList);
+        Integer loginUserId = AccountService.getUserId();
+        return ApiRespUtils.getApiRespOfOk(corpServiceImpl.listByLoginUserIdAndCorpName(loginUserId, corpName));
     }
 
 
@@ -127,6 +119,7 @@ public class CorpController {
         corpEntity.setCreatedAt(new Date());
         corpEntity.setEncodingAesKey(encodingAesKey);
         corpEntity.setEventCallback(callBackUrl);
+
         //企业授信
         corpServiceImpl.createCorp(corpEntity);
 
@@ -138,16 +131,13 @@ public class CorpController {
 
         List<CorpEntity> corpEntityList = corpServiceImpl.getCorpInfoByCorpName(corpEntity.getCorpName());
         String corpId = corpEntityList.get(0).getCorpId().toString();
-        //会话存档-配置
+        // 会话存档-配置
         WorkMsgConfigEntity workMsgConfigEntity = new WorkMsgConfigEntity();
         workMsgConfigEntity.setCorpId(Integer.parseInt(corpId));
         workMsgConfigEntity.setChatApplyStatus(3);
         workMsgConfigEntity.setCreatedAt(new Date());
         msgConfigService.createWorkMessageConfig(workMsgConfigEntity);
-        //绑定用户与企业的关系
-        //String tokenStr = request.getHeader("Authorization");
-        //redisTemplate.opsForValue().set("mc:user." + tokenStr, corpId);
-        //同步企业通讯录信息
+        // 同步企业通讯录信息
         logger.info("创建企业成功>>>>>>>>>corpId" + corpId);
         workEmpServiceSyncLogic.onSyncWxEmp(Integer.parseInt(corpId));
         return ApiRespUtils.getApiRespOfOk("");
@@ -161,7 +151,7 @@ public class CorpController {
      */
     @PutMapping(value = "/corp/update")
     public ApiRespVO updateCorp(@Validated() @RequestBody CorpEntity corpEntity) {
-        CorpEntity corpInfo = corpServiceImpl.getCorpInfoById(corpEntity.getCorpId());
+        CorpEntity corpInfo = corpServiceImpl.getById(corpEntity.getCorpId());
         if (corpInfo == null) {
             throw new CommonException(100013, "非法参数");
         }
@@ -216,7 +206,7 @@ public class CorpController {
     @GetMapping(value = "/corp/show")
     public ApiRespVO showCorp(@NotBlank(message = "企业ID不能为空") String corpId) {
         ApiRespVO apiRespVO = null;
-        CorpEntity corpEntity = corpServiceImpl.getCorpInfoById(Integer.valueOf(corpId));
+        CorpEntity corpEntity = corpServiceImpl.getById(Integer.valueOf(corpId));
         if (corpEntity == null) {
             apiRespVO = new ApiRespVO(RespErrCodeEnum.INVALID_PARAMS, null);
             //return JSONObject.toJSONString(apiRespCodeResp);
@@ -268,38 +258,6 @@ public class CorpController {
         }
         List<CorpDataEntity> corpDataEntityList = corpServiceImpl.handleLineChatDta();
         return ApiRespUtils.getApiRespOfOk(corpDataEntityList);
-    }
-
-    public static String getRandomString(int length) {
-
-        //1. 定义一个字符串（A-Z，a-z，0-9）即62个数字字母；
-
-        String str = "zxcvbnmlkjhgfdsaqwertyuiopQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
-
-        //2. 由Random生成随机数
-
-        Random random = new Random();
-
-        StringBuffer sb = new StringBuffer();
-
-        //3. 长度为几就循环几次
-
-        for (int i = 0; i < length; ++i) {
-
-            //从62个的数字或字母中选择
-
-            int number = random.nextInt(62);
-
-            //将产生的数字通过length次承载到sb中
-
-            sb.append(str.charAt(number));
-
-        }
-
-        //将承载的字符转换成字符串
-
-        return sb.toString();
-
     }
 
 }

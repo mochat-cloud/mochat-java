@@ -5,7 +5,7 @@ package com.mochat.mochat.common.util.wm;
  * @time: 2020/11/19 6:04 下午
  * @description 会话内容存档辅助类
  */
-public final class WorkMsgHelper {
+public class WorkMsgHelper {
 
     /**
      * 通过 corpId 取模获取数据库表名
@@ -14,7 +14,7 @@ public final class WorkMsgHelper {
      * @param corpId 企业 id
      * @return 表名
      */
-    public static final String getTableName(long corpId) {
+    public static String getTableName(long corpId) {
         return "mc_work_message_" + (corpId % 10);
     }
 }

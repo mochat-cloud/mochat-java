@@ -17,7 +17,7 @@ public interface IChannelCodeGroupService extends IService<ChannelCodeGroupEntit
      * @time: 2021/2/22 5:19 下午
      * @description 创建渠道码分组，通过 names
      *
-     * @param names [分组 1，分组 2]
+     * @param nameList [分组 1，分组 2]
      */
     void saveByNames(List<String> nameList);
 

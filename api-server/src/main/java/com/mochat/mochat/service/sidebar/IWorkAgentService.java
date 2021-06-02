@@ -9,7 +9,12 @@ import java.util.Map;
 
 public interface IWorkAgentService extends IService<WorkAgentEntity> {
 
-    CorpEntity getCorp(Integer agentId);
+    /**
+     * @author: yangpengwei
+     * @time: 2021/5/19 4:35 下午
+     * @description 根据应用 id 获取企业 id
+     */
+    Integer getCorpIdById(Integer agentId);
 
     int getFirstAgentId(Integer corpId);
 

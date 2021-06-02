@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mochat.mochat.common.em.workupdatetime.TypeEnum;
+import com.mochat.mochat.common.util.DateUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.dao.entity.*;
 import com.mochat.mochat.dao.mapper.CorpDataMapper;
@@ -59,12 +60,19 @@ public class CorpDataServiceImpl extends ServiceImpl<CorpDataMapper, CorpDataEnt
     }
 
     @Override
-    public CorpDataEntity getCorpDayDataByCorpIdDate(Integer corpId, Date time) {
-        QueryWrapper<CorpDataEntity> corpDataEntityWrapper = new QueryWrapper();
-        corpDataEntityWrapper.getSqlSelect();
+    public CorpDataEntity getCorpDayDataByCorpIdDate(Integer corpId, Date date) {
+        String dateStr = DateUtils.formatS3(date.getTime());
+        String startTime = DateUtils.getDateOfDayStartByS3(dateStr);
+        String endTime = DateUtils.getDateOfDayEndByS3(dateStr);
+        QueryWrapper<CorpDataEntity> corpDataEntityWrapper = new QueryWrapper<>();
         corpDataEntityWrapper.eq("corp_id", corpId);
-        corpDataEntityWrapper.eq("date", time);
-        return this.baseMapper.selectOne(corpDataEntityWrapper);
+        corpDataEntityWrapper.between("date", startTime, endTime);
+        List<CorpDataEntity> entityList = list(corpDataEntityWrapper);
+        if (entityList.isEmpty()) {
+            return new CorpDataEntity();
+        } else {
+            return entityList.get(0);
+        }
     }
 
     @Override

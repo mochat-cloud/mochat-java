@@ -32,7 +32,9 @@ public class UserEntity extends Model<UserEntity> {
     private Integer tenantId;
     @TableField(value = "isSuperAdmin")
     private Integer isSuperAdmin;
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
     @TableLogic
     private Date deletedAt;

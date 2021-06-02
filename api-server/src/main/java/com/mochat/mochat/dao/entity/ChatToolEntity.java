@@ -1,9 +1,6 @@
 package com.mochat.mochat.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
 
@@ -23,7 +20,9 @@ public class ChatToolEntity extends Model<ChatToolEntity> {
   private String pageFlag;
   private Integer status;
 
+  @TableField(fill = FieldFill.INSERT)
   private Date createdAt;
+  @TableField(fill = FieldFill.UPDATE)
   private Date updatedAt;
 
   @TableLogic

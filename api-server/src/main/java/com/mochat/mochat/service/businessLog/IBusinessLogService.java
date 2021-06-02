@@ -1,4 +1,4 @@
-package com.mochat.mochat.service.businessLog;
+package com.mochat.mochat.service.businesslog;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mochat.mochat.common.em.businesslog.EventEnum;
@@ -19,10 +19,10 @@ public interface IBusinessLogService extends IService<BusinessLogEntity> {
      * @description 业务日志保存
      *
      * @param businessId 业务 id
-     * @param paramJson 业务参数
+     * @param param 业务参数
      * @param eventEnum 业务类型
      */
-    boolean createBusinessLog(Integer businessId, String paramJson, EventEnum eventEnum);
+    boolean createBusinessLog(Integer businessId, Object param, EventEnum eventEnum);
 
     /**
      * @author: yangpengwei

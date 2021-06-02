@@ -37,7 +37,8 @@ public class WorkUpdateTimeEntity {
 	 */
 	private String errorMsg;
 
+	@TableField(fill = FieldFill.INSERT)
 	private Date createdAt;
-
+	@TableField(fill = FieldFill.UPDATE)
 	private Date updatedAt;
 }

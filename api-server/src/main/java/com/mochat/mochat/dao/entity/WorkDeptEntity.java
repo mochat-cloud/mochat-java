@@ -60,8 +60,10 @@ public class WorkDeptEntity {
      * 部门父 id 路径
      */
     private String path;
-    
+
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
     @TableLogic
 	private Date deletedAt;

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.config.ex.CommonException;
+import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.ChatToolEntity;
 import com.mochat.mochat.dao.entity.CorpEntity;
 import com.mochat.mochat.dao.entity.WorkAgentEntity;
@@ -37,12 +38,12 @@ public class WorkAgentServiceImpl extends ServiceImpl<WorkAgentMapper, WorkAgent
     private ChatToolProperties chatToolProperties;
 
     @Override
-    public CorpEntity getCorp(Integer agentId) {
-        WorkAgentEntity workAgentEntity = getById(agentId);
-        if (workAgentEntity == null) {
-            throw new CommonException("应用不存在");
+    public Integer getCorpIdById(Integer agentId) {
+        WorkAgentEntity entity = getById(agentId);
+        if (null == entity) {
+            throw new ParamException("应用不存在");
         }
-        return corpService.getById(workAgentEntity.getCorpId());
+        return entity.getCorpId();
     }
 
     @Override

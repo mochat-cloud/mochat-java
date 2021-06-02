@@ -1,9 +1,8 @@
 package com.mochat.mochat.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
+import lombok.*;
 
 import java.util.Date;
 
@@ -12,8 +11,13 @@ import java.util.Date;
  * @Author zhaojinjian
  * @Date 2020-11-26
  */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @TableName("mc_work_contact")
-public class WorkContactEntity {
+public class WorkContactEntity extends Model<WorkContactEntity> {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
@@ -88,153 +92,11 @@ public class WorkContactEntity {
      */
     private String businessNo;
 
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
 
     @TableLogic
     private Date deletedAt;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getCorpId() {
-        return corpId;
-    }
-
-    public void setCorpId(Integer corpId) {
-        this.corpId = corpId;
-    }
-
-    public String getWxExternalUserid() {
-        return wxExternalUserid;
-    }
-
-    public void setWxExternalUserid(String wxExternalUserid) {
-        this.wxExternalUserid = wxExternalUserid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name == null ? "" : name;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName == null ? "" : nickName;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar == null ? "" : avatar;
-    }
-
-    public Integer getFollowUpStatus() {
-        return followUpStatus == null ? 0 : followUpStatus;
-    }
-
-    public void setFollowUpStatus(Integer followUpStatus) {
-        this.followUpStatus = followUpStatus;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public Integer getGender() {
-        return gender;
-    }
-
-    public void setGender(Integer gender) {
-        this.gender = gender;
-    }
-
-    public String getUnionid() {
-        return unionid;
-    }
-
-    public void setUnionid(String unionid) {
-        this.unionid = unionid == null ? "" : unionid;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position == null ? "" : position;
-    }
-
-    public String getCorpName() {
-        return corpName;
-    }
-
-    public void setCorpName(String corpName) {
-        this.corpName = corpName == null ? "" : corpName;
-    }
-
-    public String getCorpFullName() {
-        return corpFullName;
-    }
-
-    public void setCorpFullName(String corpFullName) {
-        this.corpFullName = corpFullName == null ? "" : corpFullName;
-    }
-
-    public String getExternalProfile() {
-        return externalProfile;
-    }
-
-    public void setExternalProfile(String externalProfile) {
-        this.externalProfile = externalProfile == null ? "[]" : externalProfile;
-    }
-
-    public String getBusinessNo() {
-        return businessNo;
-    }
-
-    public void setBusinessNo(String businessNo) {
-        this.businessNo = businessNo == null ? "" : businessNo;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Date getDeletedAt() {
-        return deletedAt;
-    }
-
-    public void setDeletedAt(Date deletedAt) {
-        this.deletedAt = deletedAt;
-    }
 }

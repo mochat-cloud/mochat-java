@@ -105,8 +105,9 @@ public class WorkContactEmployeeEntity {
      */
     private Date createTime;
 
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
-
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
 
     @TableLogic
@@ -117,8 +118,4 @@ public class WorkContactEmployeeEntity {
      */
     @TableField(exist = false)
     private WorkContactEntity workContact;
-
-    public Integer getStatus() {
-        return status == null ? 1 : status;
-    }
 }

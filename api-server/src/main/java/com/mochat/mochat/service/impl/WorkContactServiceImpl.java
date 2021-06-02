@@ -239,13 +239,6 @@ public class WorkContactServiceImpl extends ServiceImpl<ContactMapper, WorkConta
             contactEntity.setCorpFullName(contactJson.getString("corp_full_name"));
             contactEntity.setExternalProfile(contactJson.getString("external_profile"));
             contactEntity.setBusinessNo(contactEntity.getBusinessNo());
-
-            if (contactEntity.getId() != null && contactEntity.getId() > 0) {
-                contactEntity.setUpdatedAt(new Date());
-            } else {
-                contactEntity.setCreatedAt(new Date());
-            }
-
             saveOrUpdate(contactEntity);
 
             JSONArray followUser = jsonObject.getJSONArray("follow_user");
@@ -274,13 +267,6 @@ public class WorkContactServiceImpl extends ServiceImpl<ContactMapper, WorkConta
                         contactEmployeeEntity.setContactId(contactEntity.getId());
                         contactEmployeeEntity.setCorpId(corpId);
                         contactEmployeeEntity.setStatus(contactEmployeeEntity.getStatus());
-
-                        if (contactEmployeeEntity.getId() != null && contactEmployeeEntity.getId() > 0) {
-                            contactEmployeeEntity.setUpdatedAt(new Date());
-                        } else {
-                            contactEmployeeEntity.setCreatedAt(new Date());
-                        }
-
                         contactEmployeeService.saveOrUpdate(contactEmployeeEntity);
 
                         JSONArray tags = followUserItem.getJSONArray("tags");
@@ -335,7 +321,6 @@ public class WorkContactServiceImpl extends ServiceImpl<ContactMapper, WorkConta
                                 contactTagPivotEntity.setEmployeeId(empId);
                                 contactTagPivotEntity.setContactTagId(tagId);
                                 contactTagPivotEntity.setType(1);
-                                contactTagPivotEntity.setCreatedAt(new Date());
                                 addContactTagPivotEntityList.add(contactTagPivotEntity);
                             }
                             contactTagPivotService.saveBatch(addContactTagPivotEntityList);
@@ -383,7 +368,6 @@ public class WorkContactServiceImpl extends ServiceImpl<ContactMapper, WorkConta
                 contactTagPivotEntity.setEmployeeId(empId);
                 contactTagPivotEntity.setContactTagId(tagId);
                 contactTagPivotEntity.setType(1);
-                contactTagPivotEntity.setCreatedAt(new Date());
                 addContactTagPivotEntityList.add(contactTagPivotEntity);
             }
             contactTagPivotService.saveBatch(addContactTagPivotEntityList);

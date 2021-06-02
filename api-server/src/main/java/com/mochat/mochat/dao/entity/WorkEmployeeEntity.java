@@ -131,7 +131,9 @@ public class WorkEmployeeEntity {
 	 * 是否配置外部联系人权限（1.是 2.否）
 	 */
 	private Integer contactAuth;
+	@TableField(fill = FieldFill.INSERT)
 	private Date createdAt;
+	@TableField(fill = FieldFill.UPDATE)
 	private Date updatedAt;
 	@TableLogic
 	private Date deletedAt;

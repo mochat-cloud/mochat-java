@@ -31,7 +31,7 @@ public class WorkMsgConfigEntity extends Model<WorkMsgConfigEntity> {
      * updated_at : 5/11/2020 19:30:19
      * deleted_at :
      */
-    @TableId(value = "id",type = IdType.AUTO)
+    @TableId(type = IdType.AUTO)
     private Integer id;
     private Integer corpId;
     private String chatAdmin;
@@ -41,7 +41,9 @@ public class WorkMsgConfigEntity extends Model<WorkMsgConfigEntity> {
     private String chatRsaKey;
     private String chatSecret;
     private Integer chatStatus;
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
     @TableLogic
 	private Date deletedAt;

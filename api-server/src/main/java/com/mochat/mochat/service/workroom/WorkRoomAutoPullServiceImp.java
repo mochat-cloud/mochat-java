@@ -22,7 +22,7 @@ import com.mochat.mochat.model.workroom.ReqRoomAutoPullUpdateDTO;
 import com.mochat.mochat.model.workroom.WorkRoomAutoPullDetailVO;
 import com.mochat.mochat.model.workroom.WorkRoomAutoPullVO;
 import com.mochat.mochat.service.AccountService;
-import com.mochat.mochat.service.businessLog.IBusinessLogService;
+import com.mochat.mochat.service.businesslog.IBusinessLogService;
 import com.mochat.mochat.service.contact.IWorkContactTagGroupService;
 import com.mochat.mochat.service.emp.IWorkEmployeeDepartmentService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
@@ -235,6 +235,8 @@ public class WorkRoomAutoPullServiceImp extends ServiceImpl<WorkRoomAutoPullMapp
         } else {
             throw new CommonException("自动拉群创建失败");
         }
+
+        businessLogService.createBusinessLog(entity.getId(), entity, EventEnum.ROOM_AUTO_PULL_CREATE);
     }
 
     /**
@@ -266,6 +268,7 @@ public class WorkRoomAutoPullServiceImp extends ServiceImpl<WorkRoomAutoPullMapp
         }
         WxApiUtils.requestUpdateContactWay(corpId, wxConfigId, empIdList);
 
+        businessLogService.createBusinessLog(entity.getId(),entity,EventEnum.ROOM_AUTO_PULL_UPDATE);
     }
 
     /**

@@ -53,8 +53,9 @@ public class ContactEmployeeProcessEntity {
 	 */
 	private String contactProcessDescription;
 
+	@TableField(fill = FieldFill.INSERT)
 	private Date createdAt;
-
+	@TableField(fill = FieldFill.UPDATE)
 	private Date updatedAt;
 
 	@TableLogic

@@ -1,19 +1,18 @@
 package com.mochat.mochat.service.wm;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mochat.mochat.common.em.RespChatErrCodeEnum;
 import com.mochat.mochat.common.util.RSAUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.dao.entity.CorpEntity;
 import com.mochat.mochat.dao.entity.TenantEntity;
 import com.mochat.mochat.dao.entity.wm.WorkMsgConfigEntity;
-import com.mochat.mochat.dao.mapper.TenantMapper;
-import com.mochat.mochat.dao.mapper.corp.CorpMapper;
 import com.mochat.mochat.model.wm.CorpShowBO;
 import com.mochat.mochat.model.wm.ReqCorpStoreDTO;
 import com.mochat.mochat.model.wm.ReqStepUpdateDTO;
 import com.mochat.mochat.model.wm.StepCreateBO;
 import com.mochat.mochat.service.AccountService;
+import com.mochat.mochat.service.impl.ICorpService;
+import com.mochat.mochat.service.impl.ITenantService;
 import com.mochat.mochat.service.impl.IWorkMsgConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,10 +34,10 @@ public class ChatConfigServiceImpl implements IChatConfigService {
     private IWorkMsgConfigService msgConfigService;
 
     @Autowired
-    private CorpMapper corpMapper;
+    private ICorpService corpService;
 
     @Autowired
-    private TenantMapper tenantMapper;
+    private ITenantService tenantService;
 
     @Value("${mochat.serviceUrl}")
     private String serviceUrl;
@@ -50,7 +49,7 @@ public class ChatConfigServiceImpl implements IChatConfigService {
     public CorpShowBO getCorpShowInfo(int corpId) {
         CorpShowBO corpShowBO = new CorpShowBO();
 
-        CorpEntity corpEntity = corpMapper.selectById(corpId);
+        CorpEntity corpEntity = corpService.getById(corpId);
         if (corpEntity == null) {
             throw new CommonException(RespChatErrCodeEnum.CHAT_NO_CORP);
         }
@@ -81,17 +80,17 @@ public class ChatConfigServiceImpl implements IChatConfigService {
             corpId = AccountService.getCorpId();
         }
 
-        CorpEntity corpEntity = new CorpEntity();
-        corpEntity.setCorpId(corpId);
-        corpEntity = corpMapper.selectOne(new QueryWrapper<>(corpEntity));
+        CorpEntity corpEntity = corpService.getById(corpId);
+        if (corpEntity == null) {
+            throw new CommonException(RespChatErrCodeEnum.CHAT_NO_CORP);
+        }
         corpEntity.setSocialCode(req.getSocialCode());
-        corpMapper.updateById(corpEntity);
+        corpService.updateById(corpEntity);
 
         WorkMsgConfigEntity workMsgConfigEntity = msgConfigService.getByCorpId(corpId);
         workMsgConfigEntity.setChatAdmin(req.getChatAdmin());
         workMsgConfigEntity.setChatAdminPhone(req.getChatAdminPhone());
         workMsgConfigEntity.setChatAdminIdcard(req.getChatAdminIdcard());
-        // TODO 验证是否手动将状态更新
         workMsgConfigEntity.setChatApplyStatus(req.getChatApplyStatus());
         msgConfigService.updateById(workMsgConfigEntity);
 
@@ -114,9 +113,10 @@ public class ChatConfigServiceImpl implements IChatConfigService {
         int chatApplyStatus = entity.getChatApplyStatus();
         if (chatApplyStatus == 1) {
             // 未申请 返回企业名, 企业微信 id
-            CorpEntity corpEntity = new CorpEntity();
-            corpEntity.setCorpId(corpId);
-            corpEntity = corpMapper.selectOne(new QueryWrapper<>(corpEntity));
+            CorpEntity corpEntity = corpService.getById(corpId);
+            if (corpEntity == null) {
+                throw new CommonException(RespChatErrCodeEnum.CHAT_NO_CORP);
+            }
 
             stepCreateBO.setCorpName(corpEntity.getCorpName());
             stepCreateBO.setWxCorpId(corpEntity.getWxCorpId());
@@ -129,9 +129,10 @@ public class ChatConfigServiceImpl implements IChatConfigService {
         if (chatApplyStatus == 3) {
             // 添加客户提交资料 客服后台修改
             // 读取租户信息, 暂时默认读取第一条租户信息
-            TenantEntity tenantEntity = new TenantEntity();
-            tenantEntity.setId(1);
-            tenantEntity = tenantMapper.selectOne(new QueryWrapper<>(tenantEntity));
+            TenantEntity tenantEntity = tenantService.getById(1);
+            if (tenantEntity == null) {
+                throw new CommonException(RespChatErrCodeEnum.NO_FIND_TENANT);
+            }
 
             stepCreateBO.setChatWhitelistIpJson(tenantEntity.getServerIps());
 

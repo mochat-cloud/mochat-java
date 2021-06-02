@@ -183,7 +183,6 @@ public class WorkDeptServiceImpl extends ServiceImpl<WorkDeptMapper, WorkDeptEnt
     @Override
     public JSONArray getDeptMemberList(List<Integer> deptIds, Integer corpId) {
         //region 获取成员和成员部门中间表信息
-
         List<WorkEmployeeDepartmentEntity> employeeDepartmentList = workEmployeeDepartmentService.getDeptEmployeeList(deptIds);
         List<Integer> empIds = employeeDepartmentList.stream().map(WorkEmployeeDepartmentEntity::getEmployeeId).collect(Collectors.toList());
         //endregion
@@ -192,7 +191,6 @@ public class WorkDeptServiceImpl extends ServiceImpl<WorkDeptMapper, WorkDeptEnt
         QueryWrapper<WorkDeptEntity> workDeptWrapper = new QueryWrapper<>();
         workDeptWrapper.select("id,name");
         workDeptWrapper.in("id", deptIds);
-        workDeptWrapper.isNull("deleted_at");
         List<WorkDeptEntity> deptList = this.list(workDeptWrapper);
         //endregion
 

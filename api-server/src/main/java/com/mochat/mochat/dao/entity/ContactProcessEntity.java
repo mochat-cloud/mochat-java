@@ -39,8 +39,9 @@ public class ContactProcessEntity {
 	@TableField("`order`")
 	private Integer order;
 
+	@TableField(fill = FieldFill.INSERT)
 	private Date createdAt;
-
+	@TableField(fill = FieldFill.UPDATE)
 	private Date updatedAt;
 
 	@TableLogic

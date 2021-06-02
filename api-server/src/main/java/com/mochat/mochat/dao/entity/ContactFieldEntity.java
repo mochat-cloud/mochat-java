@@ -67,8 +67,9 @@ public class ContactFieldEntity {
 	 */
 	private Integer isSys;
 
+	@TableField(fill = FieldFill.INSERT)
 	private Date createdAt;
-
+	@TableField(fill = FieldFill.UPDATE)
 	private Date updatedAt;
 
 	private Date deletedAt;

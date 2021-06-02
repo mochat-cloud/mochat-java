@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * @author zhaojinjian
  * @ClassName ContactFieldPivotController.java
- * @Description TODO
+ * @Description 单个客户的高级属性属性值控制器
  * @createTime 2020/12/24 16:41
  */
 @RestController

@@ -1,8 +1,6 @@
 package com.mochat.mochat.dao.entity.sensitive;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -23,8 +21,11 @@ public class SensitiveWordEntity {
     private Integer status; //1-开启，2-关闭）
     private Integer employeeNum;//员工触发次数
     private Integer contactNum;//客户触发次数
+    @TableField(fill = FieldFill.INSERT)
     private Date createdAt;
+    @TableField(fill = FieldFill.UPDATE)
     private Date updatedAt;
+    @TableLogic
     private Date deletedAt;
 
 }

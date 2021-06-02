@@ -308,7 +308,7 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
      */
     @Override
     public boolean syncWorkRoomIndex(Integer corpIds, List<WXWorkRoomModel> WXWorkRoomModelList, Integer isFlag) {
-        CorpEntity corpEntity = corpService.getCorpInfoById(corpIds);
+        CorpEntity corpEntity = corpService.getById(corpIds);
         if (isFlag.equals(0)) {
             String result = WxApiUtils.getWorkRoomIndexData(corpEntity, null);
             if (result == null) {
