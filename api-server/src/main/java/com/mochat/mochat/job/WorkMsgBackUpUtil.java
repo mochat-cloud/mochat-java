@@ -44,7 +44,6 @@ public class WorkMsgBackUpUtil {
     private static final String MSG_ACTION_SWITCH = "switch";
     private static final int LIMIT = 100;
     private static final long TIMEOUT = 10 * 60 * 1000;
-    private static long sdk = 0;
 
     private static WorkMsgMapper workMsgMapper;
 
@@ -60,18 +59,6 @@ public class WorkMsgBackUpUtil {
         WorkMsgBackUpUtil.workMsgIndexMapper = workMsgIndexMapper;
     }
 
-    private static void initSDK(CorpMsgTO entity) {
-        if (sdk == 0) {
-            sdk = Finance.NewSdk();
-            int result = Finance.Init(sdk, entity.getWxCorpId(), entity.getChatSecret());
-            if (result == 0) {
-                LOGGER.debug("init SDK 成功 >>>>> " + entity.toString());
-            } else {
-                LOGGER.debug("init SDK 失败 >>>>> <<<<< " + entity.toString());
-            }
-        }
-    }
-
     /**
      * 从企业微信拉取数据保存到数据库, 一次拉取 100 条
      *
@@ -80,10 +67,19 @@ public class WorkMsgBackUpUtil {
      * @return 是否拉取完成所有数据
      */
     public static boolean insertMsg(CorpMsgTO entity, int seq) {
+        long sdk = Finance.NewSdk();
+        int result = Finance.Init(sdk, entity.getWxCorpId(), entity.getChatSecret());
+        if (result == 0) {
+            LOGGER.debug("init SDK 成功 >>>>> " + entity.toString());
+        } else {
+            LOGGER.debug("init SDK 失败 >>>>> <<<<< " + entity.toString());
+            return false;
+        }
+
         ArrayList<WorkMsgEntity> msgEntities = new ArrayList<>();
         ArrayList<WorkMsgIndexEntity> msgIndexEntities = new ArrayList<>();
         Map<String, WorkMsgIndexEntity> msgIndexEntityMap = new ConcurrentHashMap<>();
-        initSDK(entity);
+
         long slice = Finance.NewSlice();
         long ret = Finance.GetChatData(sdk, seq, LIMIT, "", "", TIMEOUT, slice);
         if (ret != 0) {
@@ -116,13 +112,13 @@ public class WorkMsgBackUpUtil {
                         if (chatdataDTO.getPublickey_ver() != version) {
                             continue;
                         }
-                        String decryptDataJson = decryptData(chatdataDTO, privateKey);
+                        String decryptDataJson = decryptData(sdk, chatdataDTO, privateKey);
                         JSONObject jsonObject = JSON.parseObject(decryptDataJson);
                         String action = getStringValue(jsonObject, "action");
                         if (action.isEmpty() || MSG_ACTION_SWITCH.equals(action)) {
                             continue;
                         }
-                        workMsgEntity = transChatModelToWorkMsg(jsonObject, corpId, chatdataDTO.getSeq());
+                        workMsgEntity = transChatModelToWorkMsg(sdk, jsonObject, corpId, chatdataDTO.getSeq());
                         msgEntities.add(workMsgEntity);
 
                         // 正向
@@ -169,6 +165,10 @@ public class WorkMsgBackUpUtil {
                 workMsgIndexMapper.insertMsgIndex(list);
             }
         }
+
+        // 释放 sdk
+        Finance.DestroySdk(sdk);
+
         return msgEntities.size() == LIMIT;
     }
 
@@ -179,7 +179,7 @@ public class WorkMsgBackUpUtil {
      * @param privateKey  私钥
      * @return 解密后字符串
      */
-    private static String decryptData(DataResultModel.ChatdataDTO chatdataDTO, String privateKey) {
+    private static String decryptData(long sdk, DataResultModel.ChatdataDTO chatdataDTO, String privateKey) {
         String encryptRandomKey = chatdataDTO.getEncrypt_random_key();
         String encryptChatMsg = chatdataDTO.getEncrypt_chat_msg();
         String decryptRandomKey = RSAUtils.decryptByPriKey(encryptRandomKey, privateKey);
@@ -205,7 +205,7 @@ public class WorkMsgBackUpUtil {
      * @param corpId     企业 id
      * @param seq        seq
      */
-    private static WorkMsgEntity transChatModelToWorkMsg(JSONObject jsonObject, int corpId, int seq) {
+    private static WorkMsgEntity transChatModelToWorkMsg(long sdk, JSONObject jsonObject, int corpId, int seq) {
         String msgType = getStringValue(jsonObject, "msgtype", "text");
         int msgTypeCode = MsgTypeEnum.valueOf(msgType.toUpperCase()).getCode();
 
@@ -239,7 +239,7 @@ public class WorkMsgBackUpUtil {
             content = getStringValue(jsonObject, msgType);
         }
 
-        content = onContentMachine(msgType, content);
+        content = onContentMachine(sdk, msgType, content);
 
         JSONArray toList = jsonObject.getJSONArray("tolist");
         int toListSize = toList.size();
@@ -362,7 +362,7 @@ public class WorkMsgBackUpUtil {
      * @param content 消息体
      * @return 适配后的消息体
      */
-    private static String onContentMachine(String msgType, String content) {
+    private static String onContentMachine(long sdk, String msgType, String content) {
         JSONObject jsonObject = JSON.parseObject(content);
         LOGGER.error(">>>>>><<<<<<: " + jsonObject);
         if ("emotion".equalsIgnoreCase(msgType)) {
@@ -370,7 +370,7 @@ public class WorkMsgBackUpUtil {
             LOGGER.error(">>>>>><<<<<< emotion: " + jsonObject);
         }
         jsonObject.put("type", msgType);
-        onSaveFileOfContent(msgType, jsonObject);
+        onSaveFileOfContent(sdk, msgType, jsonObject);
         if (jsonObject.containsKey("item")) {
             JSONArray jsonArray = jsonObject.getJSONArray("item");
             for (int i = 0; i < jsonArray.size(); i++) {
@@ -380,7 +380,7 @@ public class WorkMsgBackUpUtil {
                 map.put("type", msgType);
                 jsonObject1.remove("content");
                 jsonObject1.fluentPutAll(map);
-                onSaveFileOfContent(msgType, jsonObject1);
+                onSaveFileOfContent(sdk, msgType, jsonObject1);
             }
         }
         return jsonObject.toJSONString();
@@ -392,7 +392,7 @@ public class WorkMsgBackUpUtil {
      * @param msgType
      * @param jsonObject
      */
-    private static void onSaveFileOfContent(String msgType, JSONObject jsonObject) {
+    private static void onSaveFileOfContent(long sdk, String msgType, JSONObject jsonObject) {
         if (jsonObject.containsKey("sdkfileid")) {
             String sdkFileId = jsonObject.getString("sdkfileid");
             String fileSuffix;
@@ -413,7 +413,7 @@ public class WorkMsgBackUpUtil {
             }
 
             try {
-                String filePathOss = onSaveFileAndUpload(sdkFileId, fileSuffix);
+                String filePathOss = onSaveFileAndUpload(sdk, sdkFileId, fileSuffix);
                 jsonObject.put("ossPath", filePathOss);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -427,7 +427,7 @@ public class WorkMsgBackUpUtil {
      * @param sdkFileId
      * @param fileSuffix 文件类型
      */
-    private static String onSaveFileAndUpload(String sdkFileId, String fileSuffix) throws IOException {
+    private static String onSaveFileAndUpload(long sdk, String sdkFileId, String fileSuffix) throws IOException {
         // 拼接文件名
         String fileName = DateUtils.formatS7(System.currentTimeMillis())
                 + "/"
@@ -438,7 +438,7 @@ public class WorkMsgBackUpUtil {
 
         // 将文件保存至本地
         File file = new File(Const.TEMP_FILE_DIR, fileName);
-        onWriteToFile(file, sdkFileId, "");
+        onWriteToFile(sdk, file, sdkFileId, "");
 
         // amr 格式音频转换
         if (".amr".equals(fileSuffix)) {
@@ -468,7 +468,7 @@ public class WorkMsgBackUpUtil {
      * @param sdkFileId
      * @param indexBuf  偏移量
      */
-    private static void onWriteToFile(File file, String sdkFileId, String indexBuf) {
+    private static void onWriteToFile(long sdk, File file, String sdkFileId, String indexBuf) {
         long mediaData = Finance.NewMediaData();
         int ret = Finance.GetMediaData(sdk, indexBuf, sdkFileId, "", "", TIMEOUT, mediaData);
         if (ret != 0) {
@@ -487,7 +487,7 @@ public class WorkMsgBackUpUtil {
             if (isFinish) {
                 LOGGER.debug("upload media finish " + sdkFileId);
             } else {
-                onWriteToFile(file, sdkFileId, outIndex);
+                onWriteToFile(sdk, file, sdkFileId, outIndex);
             }
         }
     }
