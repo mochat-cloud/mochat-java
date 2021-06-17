@@ -251,7 +251,7 @@ public class CorpServiceImpl extends ServiceImpl<CorpMapper, CorpEntity> impleme
      * @author: Huayu
      */
     private Map<String, Object> getCorpTotalData(Integer corpId) {
-        List<WorkContactRoomEntity> totalMember = null;
+        List<WorkContactRoomEntity> totalMember = new ArrayList<>();
         //总微信客户数
         List<WorkContactEmployeeEntity> totalContact = contactEmployeeServiceImpl.countWorkContactEmployeesByCorpId(corpId, Status.NORMAL.getCode());
         //总微信群数
@@ -266,14 +266,14 @@ public class CorpServiceImpl extends ServiceImpl<CorpMapper, CorpEntity> impleme
                 sb.append(workRoomEntity.getId()).append(",");
             }
             String roomIds = sb.substring(0, sb.length() - 1);
-            totalMember = contactRoomServiceImpl.countWorkEmployeesByRoomIds(roomIds);
+            totalMember.addAll(contactRoomServiceImpl.countWorkEmployeesByRoomIds(roomIds));
         }
         //总企业有效成员数
         List<WorkEmployeeEntity> totalEmployee = employeeServiceImpl.countWorkEmployeesByCorpId(corpId);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("weChatContactNum", totalContact.size());
         map.put("weChatRoomNum", totalRooms.size());
-        map.put("roomMemberNum", totalMember.isEmpty() ? 0 : totalMember.size());
+        map.put("roomMemberNum", totalMember.size());
         map.put("corpMemberNum", totalEmployee.size());
         return map;
     }

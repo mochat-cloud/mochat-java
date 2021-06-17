@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mochat.mochat.common.util.ali.AliyunOssUtils;
-import com.mochat.mochat.dao.entity.medium.MediumEnyity;
+import com.mochat.mochat.dao.entity.medium.MediumEntity;
 import com.mochat.mochat.dao.mapper.medium.MediumMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +19,7 @@ import java.util.Map;
  * @time: 2020/12/4 18:44
  */
 @Service
-public class MediumServiceImpl extends ServiceImpl<MediumMapper, MediumEnyity> implements IMediumService{
+public class MediumServiceImpl extends ServiceImpl<MediumMapper, MediumEntity> implements IMediumService{
     /**
      *
      *
@@ -29,8 +29,8 @@ public class MediumServiceImpl extends ServiceImpl<MediumMapper, MediumEnyity> i
      * @time: 2020/12/6 9:30
      */
     @Override
-    public MediumEnyity getMediumById(Integer id) {
-        MediumEnyity mediumEnyity = this.baseMapper.selectById(id);
+    public MediumEntity getMediumById(Integer id) {
+        MediumEntity mediumEnyity = this.baseMapper.selectById(id);
         if(mediumEnyity != null){
             mediumEnyity.setContent(addFullPath(mediumEnyity.getContent(),mediumEnyity.getType()));
         }
@@ -73,7 +73,7 @@ public class MediumServiceImpl extends ServiceImpl<MediumMapper, MediumEnyity> i
      */
     @Override
     @Transactional
-    public Integer createMedium(MediumEnyity mediumEnyity) {
+    public Integer createMedium(MediumEntity mediumEnyity) {
         Integer i = this.baseMapper.insert(mediumEnyity);
         return i;
     }
@@ -94,12 +94,12 @@ public class MediumServiceImpl extends ServiceImpl<MediumMapper, MediumEnyity> i
     }
 
     @Override
-    public List<MediumEnyity> getMediumList(String mediumGroupId, String searchStr, Integer type, Integer page, Integer pageNo){
+    public List<MediumEntity> getMediumList(String mediumGroupId, String searchStr, Integer type, Integer page, Integer pageNo){
         Map<String,Object> map = new HashMap<String, Object>();
         map.put("mediumGroupId",mediumGroupId);
         map.put("page",page);
         map.put("pageNo",pageNo);
-        List<MediumEnyity> mediumList = null;
+        List<MediumEntity> mediumList = null;
         if(type.equals(0)){
             mediumList = this.baseMapper.getAllMediumList(map);
         }else{
@@ -119,14 +119,14 @@ public class MediumServiceImpl extends ServiceImpl<MediumMapper, MediumEnyity> i
      */
     @Override
     @Transactional
-    public boolean updateMediumById(MediumEnyity mediumEnyity) {
+    public boolean updateMediumById(MediumEntity mediumEnyity) {
         boolean flag =   this.updateById(mediumEnyity);
         return flag;
     }
 
     @Override
     public Integer updateMediaByGroupId(Integer id, int mediumGroupId) {
-        MediumEnyity mediumEnyity = new MediumEnyity();
+        MediumEntity mediumEnyity = new MediumEntity();
         mediumEnyity.setId(id);
         mediumEnyity.setMediumGroupId(mediumGroupId);
         Integer i = this.baseMapper.updateMediaByGroupId(mediumEnyity);

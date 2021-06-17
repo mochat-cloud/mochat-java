@@ -14,7 +14,7 @@ import java.util.Date;
  */
 @TableName("mc_medium")
 @Data
-public class MediumEnyity {
+public class MediumEntity {
     @TableId(value = "id", type = IdType.AUTO)
     @NotNull(message = "素材ID不能为空")
     private Integer id;

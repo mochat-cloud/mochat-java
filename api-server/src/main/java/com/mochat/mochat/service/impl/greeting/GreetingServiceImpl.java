@@ -21,7 +21,7 @@ import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.dao.entity.BusinessLogEntity;
 import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
 import com.mochat.mochat.dao.entity.greeting.GreetingEntity;
-import com.mochat.mochat.dao.entity.medium.MediumEnyity;
+import com.mochat.mochat.dao.entity.medium.MediumEntity;
 import com.mochat.mochat.dao.mapper.greeting.GreetingMapper;
 import com.mochat.mochat.dao.mapper.medium.MediumMapper;
 import com.mochat.mochat.service.AccountService;
@@ -31,7 +31,6 @@ import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import com.mochat.mochat.service.greeting.IGreetingService;
 import com.mochat.mochat.service.impl.ICorpService;
 import com.mochat.mochat.service.impl.medium.IMediumService;
-import io.jsonwebtoken.lang.Strings;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -190,7 +189,7 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
     private Map<String, Map<String, Object>> getMediumData(Integer mediumId) {
         Map<String, Object> map = null;
         Map<String, Map<String, Object>> mapData = new HashMap();
-        MediumEnyity mediumEntity = mediumServiceImpl.getMediumById(mediumId);
+        MediumEntity mediumEntity = mediumServiceImpl.getMediumById(mediumId);
         if (mediumEntity != null) {
             map = new HashMap();
             map.put("mediumType", mediumEntity.getType());
@@ -360,7 +359,7 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
             listMap = new HashMap<String, Object>();
             mediumId = greetingEntity.getMediumId();
             //sb.append(mediumId).append(",");
-            MediumEnyity medium = getMedium(mediumId);
+            MediumEntity medium = getMedium(mediumId);
             if (medium != null && medium.getMediaId() != null) {
                 mediumContent = mediumServiceImpl.addFullPath(medium.getContent(), medium.getType());
             }
@@ -424,8 +423,8 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
         }
     }
 
-    private MediumEnyity getMedium(Integer mediumId) {
-        QueryWrapper<MediumEnyity> mediumQueryWrapper = new QueryWrapper();
+    private MediumEntity getMedium(Integer mediumId) {
+        QueryWrapper<MediumEntity> mediumQueryWrapper = new QueryWrapper();
         mediumQueryWrapper.select("id", "type", "content");
         mediumQueryWrapper.eq("id", mediumId);
         return this.mediumMapper.selectOne(mediumQueryWrapper);

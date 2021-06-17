@@ -8,7 +8,7 @@ import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.common.validation.ToolInterface;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
-import com.mochat.mochat.dao.entity.medium.MediumEnyity;
+import com.mochat.mochat.dao.entity.medium.MediumEntity;
 import com.mochat.mochat.dao.entity.medium.MediumGroupEntity;
 import com.mochat.mochat.model.ApiRespVO;
 import com.mochat.mochat.model.subsystem.GetSubSystemInfoResponse;
@@ -56,8 +56,8 @@ public class MediumController {
      * @time: 2020/12/6 10:59
      */
     @GetMapping(value="/show")
-    public ApiRespVO mediumShow(@Validated MediumEnyity mediumEnyity){
-        MediumEnyity medium = mediumServiceImpl.getMediumById(mediumEnyity.getId());
+    public ApiRespVO mediumShow(@Validated MediumEntity mediumEnyity){
+        MediumEntity medium = mediumServiceImpl.getMediumById(mediumEnyity.getId());
         Map<String,Object> objectMap = new HashMap<String,Object>();
         List<Map<String,Object>> listMap = new ArrayList<Map<String,Object>>();
         objectMap.put("id",medium.getId());
@@ -85,7 +85,7 @@ public class MediumController {
         }
         Integer pageNo = (page == null)?0:page-1;
         Integer pageCount = (perPage == null)?10:perPage;
-        List<MediumEnyity> mediumList= mediumServiceImpl.getMediumList(mediumGroupId,searchStr,type,pageNo,pageCount);
+        List<MediumEntity> mediumList= mediumServiceImpl.getMediumList(mediumGroupId,searchStr,type,pageNo,pageCount);
 
         //响应数据处理
         List<Map<String,Object>> listMapList = new ArrayList<Map<String,Object>>();
@@ -129,7 +129,7 @@ public class MediumController {
      * @time: 2020/12/7 14:23
      */
     @PostMapping(value="/store")
-    public ApiRespVO mediumStore(@Validated(ToolInterface.mediumStore.class) @RequestBody MediumEnyity mediumEnyity){
+    public ApiRespVO mediumStore(@Validated(ToolInterface.mediumStore.class) @RequestBody MediumEntity mediumEnyity){
         mediumEnyity.setCorpId(AccountService.getCorpId());
         mediumEnyity.setUserId(AccountService.getUserId());
         GetSubSystemInfoResponse getSubSystemInfoResponse = subsystemServiceImpl.getSubSystemInfo(AccountService.getUserId());
@@ -176,7 +176,7 @@ public class MediumController {
         if(mapData.get("mediumGroupId") == null || mapData.get("mediumGroupId").equals("")){
             throw new ParamException(100013,"素材分组ID不能为空");
         }
-        MediumEnyity mediumEnyity = new MediumEnyity();
+        MediumEntity mediumEnyity = new MediumEntity();
         mediumEnyity.setId(Integer.valueOf(mapData.get("id").toString()));
         mediumEnyity.setMediumGroupId(Integer.valueOf(mapData.get("mediumGroupId").toString()));
         boolean b = mediumServiceImpl.updateMediumById(mediumEnyity);
@@ -195,7 +195,7 @@ public class MediumController {
      * @time: 2020/12/7 15:12
      */
     @PutMapping("/update")
-    public ApiRespVO mediumUpdate(@RequestBody @Validated(ToolInterface.mediumStore.class)  MediumEnyity mediumEnyity,HttpServletRequest request){
+    public ApiRespVO mediumUpdate(@RequestBody @Validated(ToolInterface.mediumStore.class) MediumEntity mediumEnyity, HttpServletRequest request){
         Integer userId = AccountService.getUserId();
         mediumEnyity.setUserId(userId);
         GetSubSystemInfoResponse subSystemInfoResponse = subsystemServiceImpl.getSubSystemInfo(userId);

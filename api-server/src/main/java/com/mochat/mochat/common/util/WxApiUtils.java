@@ -622,13 +622,11 @@ public class WxApiUtils {
     }
 
     /**
-     *
-     *
      * @description: 发送欢迎语
      * @author: Huayu
      * @time: 2021/3/29 17:23
      */
-    public static  String sendWelcomeCode(Integer corpId,Map<String, Object> map){
+    public static String sendWelcomeCode(Integer corpId, Map<String, Object> map) {
         String reqUrl = API_ADD_WELCOME_MSG + "?access_token=" + getAccessTokenEmployee(corpId);
         JSONObject reqJson = new JSONObject(map);
         String paramJson = reqJson.toJSONString();
@@ -662,19 +660,31 @@ public class WxApiUtils {
     }
 
     /**
-     * 上传临时素材
+     * 上传图片临时素材
      *
      * @param corpId 企业 id
      * @param file   素材文件
      * @return 素材文件 id
      */
     public static String uploadImageToTemp(Integer corpId, File file) {
+        return uploadFileToTemp(corpId,"image", file);
+    }
+
+    /**
+     * 上传临时素材
+     *
+     * @param corpId 企业 id
+     * @param type 素材文件类型: 分别有图片（image）、语音（voice）、视频（video），普通文件（file）
+     * @param file   素材文件
+     * @return 素材文件 id
+     */
+    public static String uploadFileToTemp(Integer corpId, String type, File file) {
         System.out.println("=================上传文件素材========================");
-        String url = API_UPLOAD_FILE_TO_TEMP + "?type=image&access_token=" + getAccessTokenEmployee(corpId);
+        String url = API_UPLOAD_FILE_TO_TEMP + "?type=" + type + "&access_token=" + getAccessTokenEmployee(corpId);
         String key = "media_id";
         String respJson = doPostResult(url, key, file);
         if (CONST_ACCESS_TOKEN_INVALID.equals(respJson)) {
-            url = API_UPLOAD_FILE_TO_TEMP + "?type=image&access_token=" + getNewAccessTokenEmployee(corpId);
+            url = API_UPLOAD_FILE_TO_TEMP + "?type=" + type + "&access_token=" + getNewAccessTokenEmployee(corpId);
             respJson = doPostResult(url, key, file);
         }
         return respJson;

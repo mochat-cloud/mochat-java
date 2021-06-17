@@ -41,8 +41,8 @@ public enum TypeEnum {
      */
     FILE(7,"文件");
 
-    private Integer code;
-    private String msg;
+    private final Integer code;
+    private final String msg;
 
     TypeEnum(Integer code, String msg) {
         this.code = code;
@@ -65,7 +65,7 @@ public enum TypeEnum {
     public static String getTypeByCode(Integer code) {
         TypeEnum[] values = values();
         for (TypeEnum e : values) {
-            if (e.getCode() == code) {
+            if (e.getCode().equals(code)) {
                 return e.getMsg();
             }
         }

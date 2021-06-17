@@ -19,7 +19,7 @@ import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.*;
 import com.mochat.mochat.dao.entity.channel.ChannelCodeEntity;
 import com.mochat.mochat.dao.entity.channel.ChannelCodeGroupEntity;
-import com.mochat.mochat.dao.entity.medium.MediumEnyity;
+import com.mochat.mochat.dao.entity.medium.MediumEntity;
 import com.mochat.mochat.dao.mapper.channel.ChannelCodeMapper;
 import com.mochat.mochat.job.sync.WorkChannelCodeSyncLogic;
 import com.mochat.mochat.model.channel.*;
@@ -314,7 +314,7 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
 
     private String getMediumContentById(int mediumId) {
         if (mediumId > 0) {
-            MediumEnyity mediumEnyity = mediumService.getMediumById(mediumId);
+            MediumEntity mediumEnyity = mediumService.getMediumById(mediumId);
             return mediumEnyity.getContent();
         } else {
             return "{}";

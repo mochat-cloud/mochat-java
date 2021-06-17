@@ -22,7 +22,7 @@ import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.*;
 import com.mochat.mochat.dao.entity.channel.ChannelCodeEntity;
-import com.mochat.mochat.dao.entity.medium.MediumEnyity;
+import com.mochat.mochat.dao.entity.medium.MediumEntity;
 import com.mochat.mochat.dao.mapper.ContactEmployeeTrackMapper;
 import com.mochat.mochat.dao.mapper.ContactMapper;
 import com.mochat.mochat.model.contact.ContactDetailVO;
@@ -1160,7 +1160,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
         workContactService.incrementalContactTagPivot(empId, contactId, tagIdList);
     }
 
-    private MediumEnyity getMedium(String mediumId) {
+    private MediumEntity getMedium(String mediumId) {
         return mediumService.getMediumById(Integer.valueOf(mediumId));
     }
 

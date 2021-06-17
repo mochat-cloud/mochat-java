@@ -17,7 +17,7 @@ import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
 import com.mochat.mochat.dao.entity.greeting.GreetingEntity;
-import com.mochat.mochat.dao.entity.medium.MediumEnyity;
+import com.mochat.mochat.dao.entity.medium.MediumEntity;
 import com.mochat.mochat.model.ApiRespVO;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.businesslog.IBusinessLogService;
@@ -201,7 +201,7 @@ public class GreetingController {
     }
 
     private JSONObject getMediumContent(Integer mediumId) {
-        MediumEnyity mediumEnyity = mediumServiceImpl.getMediumById(mediumId);
+        MediumEntity mediumEnyity = mediumServiceImpl.getMediumById(mediumId);
         if (mediumEnyity == null) {
             return new JSONObject();
         }
