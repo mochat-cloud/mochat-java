@@ -129,7 +129,16 @@ public class Finance {
     public native static int IsMediaDataFinish(long mediaData);
 
     static {
-        loadLib("jniLibs/libWeWorkFinanceSdk_Java.so");
+        String osName = System.getProperty("os.name").toLowerCase();
+        if("win".contains(osName)) {
+            //加载顺序不要变
+            loadLib("jniLibs/win/libcrypto-1_1-x64.dll");
+            loadLib("jniLibs/win/libssl-1_1-x64.dll");
+            loadLib("jniLibs/win/libcurl-x64.dll");
+            loadLib("jniLibs/win/WeWorkFinanceSdk.dll");
+        }else {
+            loadLib("jniLibs/linux/libWeWorkFinanceSdk_Java.so");
+        }
     }
 
     public static void loadLib(String libName) {
