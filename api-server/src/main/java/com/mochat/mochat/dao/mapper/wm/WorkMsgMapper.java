@@ -2,6 +2,7 @@ package com.mochat.mochat.dao.mapper.wm;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mochat.mochat.dao.entity.wm.WorkMsgEntity;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public interface WorkMsgMapper extends BaseMapper<WorkMsgEntity> {
      * @param corpId 企业 id
      * @return seq
      */
-    Integer selectLastSeq(String tableName, long corpId);
+    Integer selectLastSeq(String tableName,long corpId);
 
     /**
      * 保存数据

@@ -130,7 +130,7 @@ public class Finance {
 
     static {
         String osName = System.getProperty("os.name").toLowerCase();
-        if("win".contains(osName)) {
+        if(osName.contains("win")) {
             //加载顺序不要变
             loadLib("jniLibs/win/libcrypto-1_1-x64.dll");
             loadLib("jniLibs/win/libssl-1_1-x64.dll");
