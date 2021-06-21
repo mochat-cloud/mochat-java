@@ -20,7 +20,7 @@ public interface WorkMsgMapper extends BaseMapper<WorkMsgEntity> {
      * @param corpId 企业 id
      * @return seq
      */
-    Integer selectLastSeq(@Param("tableName") String tableName,long corpId);
+    Integer selectLastSeq(String tableName,long corpId);
 
     /**
      * 保存数据

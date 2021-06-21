@@ -40,7 +40,7 @@
     </select>
 
     <!-- 查询 会话对象列表 - 员工 -->
-    <select id="selectEmployeeInfoOfPage" resultType="java.lang.Integer">
+    <select id="selectEmployeeInfoOfPage" resultType="_int">
         select mc_work_employee.id,
                mc_work_employee.name,
                mc_work_employee.alias,
@@ -54,7 +54,7 @@
     </select>
 
     <!-- 查询 会话对象列表 - 外部联系人 (客户) -->
-    <select id="selectContactInfoOfPage" resultType="java.lang.Integer">
+    <select id="selectContactInfoOfPage" resultType="_int">
         select mc_work_contact.id,
                mc_work_contact.name,
                mc_work_contact.avatar
@@ -67,7 +67,7 @@
     </select>
 
     <!-- 查询 会话对象列表 - 群 -->
-    <select id="selectRoomInfoOfPage" resultType="java.lang.Integer">
+    <select id="selectRoomInfoOfPage" resultType="_int">
         select mc_work_room.id,
                mc_work_room.name
         from mc_work_room, mc_work_contact_room
@@ -78,7 +78,7 @@
     </select>
 
     <!-- 查询员工 ID -->
-    <select id="selectEmployeeId" resultType="java.lang.Integer">
+    <select id="selectEmployeeId" resultType="_int">
         SELECT mc_work_employee.id
         FROM mc_work_employee
         WHERE mc_work_employee.corp_id = #{corpId}
@@ -86,7 +86,7 @@
     </select>
 
     <!-- 查询外部联系人 (客户) ID -->
-    <select id="selectContactId" resultType="java.lang.Integer">
+    <select id="selectContactId" resultType="_int">
         SELECT mc_work_contact.id
         FROM mc_work_contact
         WHERE mc_work_contact.corp_id = #{corpId}
@@ -94,7 +94,7 @@
     </select>
 
     <!-- 查询群 ID -->
-    <select id="selectRoomId" resultType="java.lang.Integer">
+    <select id="selectRoomId" resultType="_int">
         SELECT mc_work_room.id
         FROM mc_work_room
         WHERE mc_work_room.corp_id = #{corpId}
