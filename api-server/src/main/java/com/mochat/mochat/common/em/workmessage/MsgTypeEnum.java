@@ -59,7 +59,9 @@ public enum MsgTypeEnum {
 
     MEETING_VOICE_CALL(25, "音频存档消息"),
 
-    VOIP_DOC_SHARE(26, "音频共享文档消息");
+    VOIP_DOC_SHARE(26, "音频共享文档消息"),
+
+    DISAGREE(27,"不同意会话聊天内容");
 
     private int code;
     private String msg;

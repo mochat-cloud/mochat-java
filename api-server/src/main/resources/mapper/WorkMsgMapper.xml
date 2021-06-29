@@ -20,6 +20,7 @@
         `action`,
         `from`,
         `tolist`,
+        `tolist_type`,
         `msg_type`,
         `content`,
         `msg_time`,
@@ -34,6 +35,7 @@
             #{item.action},
             #{item.from},
             #{item.tolist},
+            #{item.tolistType}
             #{item.msgType},
             #{item.content},
             #{item.msgTime},
