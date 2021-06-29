@@ -61,7 +61,9 @@ public enum MsgTypeEnum {
 
     VOIP_DOC_SHARE(26, "音频共享文档消息"),
 
-    DISAGREE(27,"不同意会话聊天内容");
+    DISAGREE(27,"不同意会话聊天内容"),
+
+    EXTERNAL_REDPACKET(28,"红包消息");
 
     private int code;
     private String msg;
