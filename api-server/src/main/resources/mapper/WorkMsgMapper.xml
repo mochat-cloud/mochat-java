@@ -35,7 +35,7 @@
             #{item.action},
             #{item.from},
             #{item.tolist},
-            #{item.tolistType}
+            #{item.tolistType},
             #{item.msgType},
             #{item.content},
             #{item.msgTime},
