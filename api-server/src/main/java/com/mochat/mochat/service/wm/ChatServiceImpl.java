@@ -1,6 +1,7 @@
 package com.mochat.mochat.service.wm;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -448,7 +449,17 @@ public class ChatServiceImpl implements IChatService {
             typeCode = typeCode > 7 ? 100 : typeCode;
 
             indexMsgBO.setType(typeCode);
-            indexMsgBO.setContent(JSON.parseObject(result.getContent()));
+            JSONObject contentJson = JSON.parseObject(result.getContent());
+            replaceOssPath(contentJson);
+
+            if (contentJson.containsKey("item")) {
+                JSONArray jsonArray = contentJson.getJSONArray("item");
+                for (int j = 0; j < jsonArray.size(); j++) {
+                    JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+                    replaceOssPath(jsonObject1);
+                }
+            }
+            indexMsgBO.setContent(contentJson);
 
             String msgTime = result.getMsgTime();
             indexMsgBO.setMsgDataTime(DateUtils.formatS1(msgTime));
@@ -488,6 +499,12 @@ public class ChatServiceImpl implements IChatService {
         page.setSize(req.getPerPage());
         page.setPages(pages);
         return page;
+    }
+
+    private void replaceOssPath(JSONObject jsonObject) {
+        if (jsonObject.containsKey("ossPath")) {
+            jsonObject.replace("ossPath", AliyunOssUtils.getUrl(jsonObject.getString("ossPath")));
+        }
     }
 
 }
