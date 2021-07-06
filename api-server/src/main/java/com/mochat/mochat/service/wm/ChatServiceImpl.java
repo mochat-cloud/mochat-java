@@ -503,7 +503,7 @@ public class ChatServiceImpl implements IChatService {
 
     private void replaceOssPath(JSONObject jsonObject) {
         if (jsonObject.containsKey("ossPath")) {
-            jsonObject.replace("ossPath", AliyunOssUtils.getUrl(jsonObject.getString("ossPath")));
+            jsonObject.put("ossFullPath", AliyunOssUtils.getUrl(jsonObject.getString("ossPath")));
         }
     }
 
