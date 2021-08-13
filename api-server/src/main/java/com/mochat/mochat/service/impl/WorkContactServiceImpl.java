@@ -257,7 +257,7 @@ public class WorkContactServiceImpl extends ServiceImpl<ContactMapper, WorkConta
                     if (wxEmpId.equals(wxUserId)) {
                         contactEmployeeEntity.setRemark(followUserItem.getString("remark"));
                         contactEmployeeEntity.setDescription(followUserItem.getString("description"));
-                        contactEmployeeEntity.setCreateTime(new Date(followUserItem.getLong("createtime")));
+                        contactEmployeeEntity.setCreateTime(new Date(followUserItem.getLong("createtime")*1000));
                         contactEmployeeEntity.setRemarkCorpName(followUserItem.getString("remark_corp_name"));
                         contactEmployeeEntity.setRemarkMobiles(followUserItem.getString("remark_mobiles"));
                         contactEmployeeEntity.setAddWay(followUserItem.getInteger("add_way"));

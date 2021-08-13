@@ -25,8 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @description:
@@ -176,7 +176,7 @@ public class CorpServiceImpl extends ServiceImpl<CorpMapper, CorpEntity> impleme
         //更新时间
         Map<String, Object> corpTimeMap = getCorpTime(corpId);
         // 合并
-        Map<String, Object> combineResultMap = new HashMap();
+        Map<String, Object> combineResultMap = new HashMap<>();
         combineResultMap.putAll(map);
         combineResultMap.putAll(corpDayMap);
         combineResultMap.putAll(corpMonthMap);
@@ -219,28 +219,34 @@ public class CorpServiceImpl extends ServiceImpl<CorpMapper, CorpEntity> impleme
         // 查询今日数据
         Calendar calendar = Calendar.getInstance();
         CorpDataEntity corpDataEntityDay = corpDataServiceImpl.getCorpDayDataByCorpIdDate(corpId, calendar.getTime());
+        if (corpDataEntityDay == null) {
+            corpDataEntityDay = new CorpDataEntity();
+        }
 
-        //查询昨日数据
+        // 查询昨日数据
         calendar.add(Calendar.DATE, -1);
         CorpDataEntity corpDataEntityLastDay = corpDataServiceImpl.getCorpDayDataByCorpIdDate(corpId, calendar.getTime());
+        if (corpDataEntityLastDay == null) {
+            corpDataEntityLastDay = new CorpDataEntity();
+        }
 
         Map<String, Object> map = new HashMap<>();
-        //今日新增客户数
+        // 今日新增客户数
         map.put("addContactNum", corpDataEntityDay.getAddContactNum() == null ? 0 : corpDataEntityDay.getAddContactNum());
-        //昨日新增客户数
+        // 昨日新增客户数
         map.put("lastAddContactNum", corpDataEntityLastDay.getAddContactNum() == null ? 0 : corpDataEntityLastDay.getAddContactNum());
-        //今日新增入群数
+        // 今日新增入群数
         map.put("addIntoRoomNum", corpDataEntityDay.getAddIntoRoomNum() == null ? 0 : corpDataEntityDay.getAddIntoRoomNum());
-        //昨日新增入群数
+        // 昨日新增入群数
         map.put("lastAddIntoRoomNum", corpDataEntityLastDay.getAddIntoRoomNum() == null ? 0 : corpDataEntityLastDay.getAddIntoRoomNum());
-        //今日流失客户数
+        // 今日流失客户数
         map.put("lossContactNum", corpDataEntityDay.getLossContactNum() == null ? 0 : corpDataEntityDay.getLossContactNum());
-        //昨日流失客户数
+        // 昨日流失客户数
         map.put("lastLossContactNum", corpDataEntityLastDay.getLossContactNum() == null ? 0 : corpDataEntityLastDay.getLossContactNum());
-        //今日退群数
-        map.put("quitRoomNum", corpDataEntityDay.getLossContactNum() == null ? 0 : corpDataEntityLastDay.getLossContactNum());
-        //昨日退群数
-        map.put("lastQuitRoomNum", corpDataEntityLastDay.getLossContactNum() == null ? 0 : corpDataEntityLastDay.getLossContactNum());
+        // 今日退群数
+        map.put("quitRoomNum", corpDataEntityDay.getQuitRoomNum() == null ? 0 : corpDataEntityDay.getQuitRoomNum());
+        // 昨日退群数
+        map.put("lastQuitRoomNum", corpDataEntityLastDay.getQuitRoomNum() == null ? 0 : corpDataEntityLastDay.getQuitRoomNum());
         return map;
     }
 
@@ -288,23 +294,28 @@ public class CorpServiceImpl extends ServiceImpl<CorpMapper, CorpEntity> impleme
         //SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         //获取当前月第一天：
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.MONTH, 0);
-        c.set(Calendar.DAY_OF_MONTH, 1);//设置为1号,当前日期既为本月第一天
+        DateUtils.getMonthOfStart(c);
         Date beginDate = c.getTime();
+
         //获取当前月最后一天
         Calendar ca = Calendar.getInstance();
-        ca.set(Calendar.DAY_OF_MONTH, ca.getActualMaximum(Calendar.DAY_OF_MONTH));
+        DateUtils.getMonthOfEnd(ca);
         Date endDate = ca.getTime();
         List<CorpDataEntity> corpDataEntityMonthList = corpDataServiceImpl.getCorpDayDatasByCorpIdTime(corpId, beginDate, endDate);
+
         //获取前月的第一天
         Calendar cal_1 = Calendar.getInstance();//获取当前日期
         cal_1.add(Calendar.MONTH, -1);
         cal_1.set(Calendar.DAY_OF_MONTH, 1);//设置为1号,当前日期既为本月第一天
+        DateUtils.getDayOfStart(cal_1);
         Date lastBeginDate = cal_1.getTime();
+
         //获取前月的最后一天
         Calendar cale = Calendar.getInstance();
         cale.set(Calendar.DAY_OF_MONTH, 0);//设置为1号,当前日期既为本月第一天
+        DateUtils.getDayOfEnd(cale);
         Date lastEndDate = cale.getTime();
+
         //查询上月数据
         List<CorpDataEntity> corpDataEntityLastMonthList = corpDataServiceImpl.getCorpDayDatasByCorpIdTime(corpId, lastBeginDate, lastEndDate);
         Map<String, Object> map = new HashMap<String, Object>();
@@ -372,6 +383,16 @@ public class CorpServiceImpl extends ServiceImpl<CorpMapper, CorpEntity> impleme
         }
         map.put("updateTime", workUpdateTimeEntity.getLastUpdateTime());
         return map;
+    }
+
+    @Override
+    public List<Integer> getAllCorpId() {
+        return lambdaQuery()
+                .select(CorpEntity::getCorpId)
+                .list()
+                .stream()
+                .map(CorpEntity::getCorpId)
+                .collect(Collectors.toList());
     }
 
 }

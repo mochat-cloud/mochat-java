@@ -56,4 +56,11 @@ public interface ICorpService extends IService<CorpEntity> {
     List<CorpEntity> getCorps(String id);
 
     List<CorpDataEntity> handleLineChatDta();
+
+    /**
+     * @author: Ypw
+     * @time: 2021/8/12 16:25
+     * @description 获取所有企业的企业 id
+     */
+    List<Integer> getAllCorpId();
 }

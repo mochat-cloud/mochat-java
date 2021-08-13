@@ -145,21 +145,21 @@ public class WorkContactRoomServiceImpl extends ServiceImpl<WorkContactRoomMappe
     }
 
     @Override
-    public List<WorkContactRoomEntity> countAddWorkContactRoomsByRoomIdTime(String roomIds, Date startTime, Date endTime) {
-        QueryWrapper<WorkContactRoomEntity> workContactRoomQueryWrapper = new QueryWrapper<WorkContactRoomEntity>();
-        workContactRoomQueryWrapper.in("room_id", roomIds);
-        workContactRoomQueryWrapper.ge("join_time", startTime);
-        workContactRoomQueryWrapper.lt("join_time", endTime);
-        return this.baseMapper.selectList(workContactRoomQueryWrapper);
+    public Integer countAddWorkContactRoomsByRoomIdTime(String roomIds, String startTime, String endTime) {
+        return lambdaQuery()
+                .in(WorkContactRoomEntity::getRoomId, roomIds)
+                .ge(WorkContactRoomEntity::getJoinTime, startTime)
+                .le(WorkContactRoomEntity::getJoinTime, endTime)
+                .count();
     }
 
     @Override
-    public List<WorkContactRoomEntity> countQuitWorkContactRoomsByRoomIdTime(String roomIds, Date startTime, Date endTime) {
-        QueryWrapper<WorkContactRoomEntity> workContactRoomQueryWrapper = new QueryWrapper<WorkContactRoomEntity>();
-        workContactRoomQueryWrapper.in("room_id", roomIds);
-        workContactRoomQueryWrapper.ge("out_time", startTime);
-        workContactRoomQueryWrapper.lt("out_time", endTime);
-        return this.baseMapper.selectList(workContactRoomQueryWrapper);
+    public Integer countQuitWorkContactRoomsByRoomIdTime(String roomIds, String startTime, String endTime) {
+        return lambdaQuery()
+                .in(WorkContactRoomEntity::getRoomId, roomIds)
+                .ge(WorkContactRoomEntity::getOutTime, startTime)
+                .le(WorkContactRoomEntity::getOutTime, endTime)
+                .count();
     }
 
     @Override

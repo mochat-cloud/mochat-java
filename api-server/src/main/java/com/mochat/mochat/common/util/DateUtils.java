@@ -2,6 +2,7 @@ package com.mochat.mochat.common.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class DateUtils {
 
@@ -12,28 +13,33 @@ public class DateUtils {
     /**
      * 2018-09-18 20:20:30
      */
-    private static final String S1 = "yyyy-MM-dd HH:mm:ss";
+    public static final String S1 = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * 2018-09-18 20:20:30
      */
-    private static final String S2 = "yyyy-MM-dd+HH:mm:ss";
+    public static final String S2 = "yyyy-MM-dd+HH:mm:ss";
 
     /**
      * 2018-09-18
      */
-    private static final String S3 = "yyyy-MM-dd";
+    public static final String S3 = "yyyy-MM-dd";
 
     /**
      * 2018-09-18
      */
     private static final String S4 = "yyyy-MM";
 
-    private static final String S5 = "HH:mm";
+    public static final String S5 = "HH:mm";
 
-    private static final String S6 = "E";
+    public static final String S6 = "E";
 
-    private static final String S7 = "yyyy/MM/dd/HHmmss";
+    public static final String S7 = "yyyy/MM/dd/HHmmss";
+
+    /**
+     * 2018-9
+     */
+    private static final String S8 = "yyyy-M";
 
     public static String format(String pattern, long mills) {
         FORMAT.applyPattern(pattern);
@@ -67,6 +73,18 @@ public class DateUtils {
 
     public static String formatS7(long mills) {
         return format(S7, mills);
+    }
+
+    public static String formatS8(long mills) {
+        return format(S8, mills);
+    }
+
+    public static Date getDate(String pattern, String date) {
+        try {
+            FORMAT.applyPattern(pattern);
+            return FORMAT.parse(date);
+        } catch (Exception e) {}
+        return new Date();
     }
 
     public static long getMills(String pattern, String date) {
@@ -167,5 +185,33 @@ public class DateUtils {
         calendar.setTimeInMillis(millis);
         return calendar.get(Calendar.DAY_OF_WEEK) - 1;
     }
+
+    public static Calendar getDayOfStart(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar;
+    }
+
+    public static Calendar getDayOfEnd(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+        return calendar;
+    }
+
+    public static Calendar getMonthOfStart(Calendar calendar) {
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        return getDayOfStart(calendar);
+    }
+
+    public static Calendar getMonthOfEnd(Calendar calendar) {
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        return getDayOfEnd(calendar);
+    }
+
+
 
 }

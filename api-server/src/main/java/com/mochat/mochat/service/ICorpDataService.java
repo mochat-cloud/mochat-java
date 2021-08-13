@@ -6,7 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 public interface ICorpDataService {
-    void handle();
+
+    void updateCorpDate();
 
     CorpDataEntity getCorpDayDataByCorpIdDate(Integer corpId, Date time);
 

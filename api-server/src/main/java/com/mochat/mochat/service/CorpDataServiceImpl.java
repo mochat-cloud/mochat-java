@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -46,16 +45,15 @@ public class CorpDataServiceImpl extends ServiceImpl<CorpDataMapper, CorpDataEnt
     private final static Logger logger = LoggerFactory.getLogger(CorpDataServiceImpl.class);
 
     @Override
-    public void handle() {
-        //查询所有企业
-        List<CorpEntity> corpEntityList = corpServiceImpl.getCorps("id");
-        //处理企业数据
-        for (CorpEntity corpEntity :
-                corpEntityList) {
-            //计算企业当日新增数据 并插入日数据表
-            handleDayData(corpEntity.getCorpId());
-            //记录更新时间
-            updateTime(corpEntity.getCorpId());
+    public void updateCorpDate() {
+        // 查询所有企业
+        List<Integer> corpIdList = corpServiceImpl.getAllCorpId();
+        // 处理企业数据
+        for (Integer id : corpIdList) {
+            // 计算企业当日新增数据 并插入日数据表
+            handleDayData(id);
+            // 记录更新时间
+            updateTime(id);
         }
     }
 
@@ -69,7 +67,7 @@ public class CorpDataServiceImpl extends ServiceImpl<CorpDataMapper, CorpDataEnt
         corpDataEntityWrapper.between("date", startTime, endTime);
         List<CorpDataEntity> entityList = list(corpDataEntityWrapper);
         if (entityList.isEmpty()) {
-            return new CorpDataEntity();
+            return null;
         } else {
             return entityList.get(0);
         }
@@ -103,28 +101,21 @@ public class CorpDataServiceImpl extends ServiceImpl<CorpDataMapper, CorpDataEnt
      * @author: Huayu
      */
     private void handleDayData(Integer corpId) {
-        Calendar calendar1 = Calendar.getInstance();
-        calendar1.setTime(new Date());
-        calendar1.set(Calendar.HOUR_OF_DAY, 0);
-        calendar1.set(Calendar.MINUTE, 0);
-        calendar1.set(Calendar.SECOND, 0);
-        calendar1.set(Calendar.MILLISECOND, 0);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
-        //当日新增客户数
-        Date startTime = calendar1.getTime();
-        Date endTime = calendar.getTime();
-        List<WorkContactEmployeeEntity> contact = workContactEmployeeServiceImpl.countWorkContactEmployeesByCorpIdTime(corpId, startTime, endTime);
-        //今日新增社群数
-        List<WorkRoomEntity> room = workRoomServiceImpl.countAddWorkRoomsByCorpIdTime(corpId, startTime, endTime);
-        //查询企业下所有的群
+        String currentDateStr = DateUtils.getDateByS3();
+        String startTime = DateUtils.getDateOfDayStartByS3(currentDateStr);
+        String endTime = DateUtils.getDateOfDayEndByS3(currentDateStr);
+
+        // 今日新增客户数
+        Integer contactCount = workContactEmployeeServiceImpl.getCountOfContactByCorpIdStartTimeEndTime(corpId, startTime, endTime);
+
+        // 今日新增社群数
+        Integer roomCount = workRoomServiceImpl.getCountOfRoomByCorpIdStartTimeEndTime(corpId, startTime, endTime);
+
+        // 查询企业下所有的群
         List<WorkRoomEntity> WorkRoomEntityList = workRoomServiceImpl.getWorkRoomsByCorpId(corpId, "id");
-        List<WorkContactRoomEntity> intoRoom = null;
-        List<WorkContactRoomEntity> outRoom = null;
+
+        Integer intoRoom = null;
+        Integer outRoom = null;
         if (WorkRoomEntityList != null && WorkRoomEntityList.size() > 0) {
             StringBuilder sb = new StringBuilder();
             for (WorkRoomEntity workRoomEntity :
@@ -137,26 +128,28 @@ public class CorpDataServiceImpl extends ServiceImpl<CorpDataMapper, CorpDataEnt
             //今日退群人数
             outRoom = workContactRoomServiceImpl.countQuitWorkContactRoomsByRoomIdTime(roomIds, startTime, endTime);
         }
-        //今日流失客户
-        List<WorkContactEmployeeEntity> lossContact = workContactEmployeeServiceImpl.countLossWorkContactEmployeesByCorpIdTime(corpId, startTime, endTime);
+
+        // 今日流失客户
+        Integer lossContactCount = workContactEmployeeServiceImpl.getCountOfLossContactByCorpIdStartTimeEndTime(corpId, startTime, endTime);
         CorpDataEntity corpDataEntity = new CorpDataEntity();
         corpDataEntity.setCorpId(corpId);
-        corpDataEntity.setAddContactNum(contact.size());
-        corpDataEntity.setAddRoomNum(room.size());
-        corpDataEntity.setAddIntoRoomNum(intoRoom == null ? 0 : intoRoom.size());
-        corpDataEntity.setLossContactNum(lossContact.size());
-        corpDataEntity.setQuitRoomNum(outRoom == null ? 0 : outRoom.size());
-        corpDataEntity.setDate(startTime);
-        //查询日数据表中是否已有今日数据
-        CorpDataEntity corpData = getCorpDayDataByCorpIdDate(corpId, startTime);
+        corpDataEntity.setAddContactNum(contactCount);
+        corpDataEntity.setAddRoomNum(roomCount);
+        corpDataEntity.setAddIntoRoomNum(intoRoom == null ? 0 : intoRoom);
+        corpDataEntity.setLossContactNum(lossContactCount);
+        corpDataEntity.setQuitRoomNum(outRoom == null ? 0 : outRoom);
+        corpDataEntity.setDate(new Date());
+
+        // 查询日数据表中是否已有今日数据
+        CorpDataEntity corpData = getCorpDayDataByCorpIdDate(corpId, new Date());
         if (corpData != null) {
-            //更新
+            // 更新
             Integer i = updateCorpDayDataById(corpData.getId(), corpDataEntity);
             if (i < 1) {
                 logger.error("更新企业日数据失败>>>>>>>>>>>");
             }
         } else {
-            //新增
+            // 新增
             Integer i = createCorpDayData(corpDataEntity);
             if (i < 1) {
                 logger.error("新增企业日数据失败>>>>>>>>>>>");

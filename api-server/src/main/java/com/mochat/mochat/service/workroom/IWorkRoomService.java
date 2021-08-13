@@ -55,5 +55,5 @@ public interface IWorkRoomService extends IService<WorkRoomEntity> {
 
     List<WorkRoomEntity> countWorkRoomByCorpIds(Integer corpId);
 
-    List<WorkRoomEntity> countAddWorkRoomsByCorpIdTime(Integer corpId, Date startTime, Date endTime);
+    Integer getCountOfRoomByCorpIdStartTimeEndTime(Integer corpId, String startTime, String endTime);
 }

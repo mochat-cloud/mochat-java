@@ -38,7 +38,7 @@ public interface IWorkContactEmployeeService extends IService<WorkContactEmploye
 
     List<WorkContactEmployeeEntity> countWorkContactEmployeesByCorpId(Integer corpId, int code);
 
-    List<WorkContactEmployeeEntity> countWorkContactEmployeesByCorpIdTime(Integer corpId, Date startTime, Date endTime);
+    Integer getCountOfContactByCorpIdStartTimeEndTime(Integer corpId, String startTime, String endTime);
 
-    List<WorkContactEmployeeEntity> countLossWorkContactEmployeesByCorpIdTime(Integer corpId, Date startTime, Date endTime);
+    Integer getCountOfLossContactByCorpIdStartTimeEndTime(Integer corpId, String startTime, String endTime);
 }

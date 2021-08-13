@@ -3,6 +3,7 @@ package com.mochat.mochat.controller;
 import com.mochat.mochat.common.em.RespErrCodeEnum;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
 import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.util.DateUtils;
 import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
@@ -12,6 +13,7 @@ import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
 import com.mochat.mochat.dao.entity.wm.WorkMsgConfigEntity;
 import com.mochat.mochat.job.sync.WorkEmpServiceSyncLogic;
 import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.model.corp.CorpDataVO;
 import com.mochat.mochat.model.properties.ChatToolProperties;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
@@ -21,6 +23,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -257,7 +260,15 @@ public class CorpController {
             throw new CommonException("请先选择企业");
         }
         List<CorpDataEntity> corpDataEntityList = corpServiceImpl.handleLineChatDta();
-        return ApiRespUtils.getApiRespOfOk(corpDataEntityList);
+        List<CorpDataVO> voList = new ArrayList<>();
+        CorpDataVO vo;
+        for (CorpDataEntity entity : corpDataEntityList) {
+            vo = new CorpDataVO();
+            BeanUtils.copyProperties(entity, vo);
+            vo.setDate(DateUtils.formatS1(entity.getDate().getTime()));
+            voList.add(vo);
+        }
+        return ApiRespUtils.getApiRespOfOk(voList);
     }
 
 }

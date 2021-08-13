@@ -830,13 +830,12 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
     }
 
     @Override
-    public List<WorkRoomEntity> countAddWorkRoomsByCorpIdTime(Integer corpId, Date startTime, Date endTime) {
-        QueryWrapper<WorkRoomEntity> workRoomWrapper = new QueryWrapper<>();
-        workRoomWrapper.getSqlSelect();
-        workRoomWrapper.eq("corp_id", corpId);
-        workRoomWrapper.ge("create_time", startTime);
-        workRoomWrapper.lt("create_time", endTime);
-        return this.baseMapper.selectList(workRoomWrapper);
+    public Integer getCountOfRoomByCorpIdStartTimeEndTime(Integer corpId, String startTime, String endTime) {
+        return lambdaQuery()
+                .eq(WorkRoomEntity::getCorpId, corpId)
+                .ge(WorkRoomEntity::getCreateTime, startTime)
+                .le(WorkRoomEntity::getCreateTime, endTime)
+                .count();
     }
 }
 

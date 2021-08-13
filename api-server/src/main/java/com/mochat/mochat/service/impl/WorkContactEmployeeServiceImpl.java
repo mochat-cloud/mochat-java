@@ -380,7 +380,7 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
             Date date = e.getCreateTime();
             String key;
             if (req.getType().equals(ReqStatisticsIndexEnum.MONTH)) {
-                key = DateUtils.formatS4(date.getTime());
+                key = DateUtils.formatS8(date.getTime());
             } else {
                 key = DateUtils.formatS3(date.getTime());
 
@@ -459,8 +459,8 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH) + 1;
-            int lastDay = calendar.getActualMaximum(Calendar.DATE);
-            calendar.set(Calendar.DATE, lastDay);
+            int lastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+            calendar.set(Calendar.DAY_OF_MONTH, lastDay);
             calendar.set(Calendar.HOUR_OF_DAY, 23);
             calendar.set(Calendar.MINUTE, 59);
             calendar.set(Calendar.SECOND, 59);
@@ -468,7 +468,7 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
 
             calendar.set(Calendar.YEAR, year - 1);
             calendar.set(Calendar.MONTH, month);
-            calendar.set(Calendar.DATE, 1);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
@@ -501,7 +501,7 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
             Date date = e.getCreateTime();
             String key;
             if (req.getType().equals(ReqStatisticsIndexEnum.MONTH)) {
-                key = DateUtils.formatS4(date.getTime());
+                key = DateUtils.formatS8(date.getTime());
             } else {
                 key = DateUtils.formatS3(date.getTime());
 
@@ -545,22 +545,20 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
     }
 
     @Override
-    public List<WorkContactEmployeeEntity> countWorkContactEmployeesByCorpIdTime(Integer corpId, Date startTime, Date endTime) {
-        QueryWrapper<WorkContactEmployeeEntity> workContactEmployeeEntityQueryWrapper = new QueryWrapper();
-        workContactEmployeeEntityQueryWrapper.eq("corp_id", corpId);
-        workContactEmployeeEntityQueryWrapper.ge("create_time", startTime);
-        workContactEmployeeEntityQueryWrapper.lt("create_time", endTime);
-        return this.baseMapper.selectList(workContactEmployeeEntityQueryWrapper);
-
+    public Integer getCountOfContactByCorpIdStartTimeEndTime(Integer corpId, String startTime, String endTime) {
+        return lambdaQuery().eq(WorkContactEmployeeEntity::getCorpId, corpId)
+                .ge(WorkContactEmployeeEntity::getCreateTime, startTime)
+                .le(WorkContactEmployeeEntity::getCreateTime, endTime)
+                .count();
     }
 
     @Override
-    public List<WorkContactEmployeeEntity> countLossWorkContactEmployeesByCorpIdTime(Integer corpId, Date startTime, Date endTime) {
-        QueryWrapper<WorkContactEmployeeEntity> workContactEmployeeEntityQueryWrapper = new QueryWrapper();
-        workContactEmployeeEntityQueryWrapper.eq("corp_id", corpId);
-        workContactEmployeeEntityQueryWrapper.ge("create_time", startTime);
-        workContactEmployeeEntityQueryWrapper.lt("create_time", endTime);
-        return this.baseMapper.selectList(workContactEmployeeEntityQueryWrapper);
+    public Integer getCountOfLossContactByCorpIdStartTimeEndTime(Integer corpId, String startTime, String endTime) {
+        return lambdaQuery().eq(WorkContactEmployeeEntity::getCorpId, corpId)
+                .ge(WorkContactEmployeeEntity::getCreateTime, startTime)
+                .le(WorkContactEmployeeEntity::getCreateTime, endTime)
+                .gt(WorkContactEmployeeEntity::getStatus, 1)
+                .count();
     }
 
     private void setCurrentStatistics(RespChannelCodeStatisticsVO voResult, ReqChannelCodeStatisticsDTO req) {

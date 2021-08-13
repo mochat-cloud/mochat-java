@@ -26,9 +26,9 @@ public class WorkMsgAsyncTask {
     @Async
     @Scheduled(initialDelay = 1000, fixedDelay = 1 * 60 * 1000)
     public void onAsyncMsg() {
-        //String osName = System.getProperty("os.name").toLowerCase();
-        //if (OS_LINUX.equals(osName)) {
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (OS_LINUX.equals(osName)) {
             workMsgService.onAsyncMsg();
-       // }
+        }
     }
 }
