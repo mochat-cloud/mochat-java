@@ -1,3 +1,7 @@
+create database if not exists mochat;
+
+use mochat;
+
 create table if not exists mc_business_log
 (
     `id` int unsigned auto_increment

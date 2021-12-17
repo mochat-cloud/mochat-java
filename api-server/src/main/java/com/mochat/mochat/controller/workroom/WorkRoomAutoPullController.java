@@ -43,17 +43,17 @@ public class WorkRoomAutoPullController {
     @PostMapping("/store")
     public ApiRespVO createRoomAutoPull(@Validated @RequestBody ReqRoomAutoPullCreateDTO req) {
         workRoomAutoPullService.createRoomAutoPull(req);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     @PutMapping("/update")
     public ApiRespVO updateRoomAutoPullDetail(@Validated @RequestBody ReqRoomAutoPullUpdateDTO req) {
         workRoomAutoPullService.updateRoomAutoPullDetail(req);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     @GetMapping("/show")
     public ApiRespVO getRoomAutoPullDetail(@NotNull(message = "workRoomAutoPullId 不能为空") Integer workRoomAutoPullId) {
-        return ApiRespUtils.getApiRespOfOk(workRoomAutoPullService.getRoomAutoPullDetail(workRoomAutoPullId));
+        return ApiRespUtils.ok(workRoomAutoPullService.getRoomAutoPullDetail(workRoomAutoPullId));
     }
 }

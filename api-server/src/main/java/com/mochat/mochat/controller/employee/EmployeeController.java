@@ -32,7 +32,7 @@ public class EmployeeController {
     public ApiRespVO synEmployee() {
         int corpId = AccountService.getCorpId();
         workEmpServiceSyncLogic.onSyncWxEmp(corpId);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     /**
@@ -48,6 +48,6 @@ public class EmployeeController {
      */
     @GetMapping("/searchCondition")
     public ApiRespVO searchCondition() {
-        return ApiRespUtils.getApiRespOfOk(employeeService.searchCondition());
+        return ApiRespUtils.ok(employeeService.searchCondition());
     }
 }

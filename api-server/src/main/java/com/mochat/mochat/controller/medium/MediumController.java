@@ -67,7 +67,7 @@ public class MediumController {
         objectMap.put("content",jsonObject);
         objectMap.put("mediumGroupId",medium.getMediumGroupId());
         listMap.add(objectMap);
-        return ApiRespUtils.getApiRespOfOk(objectMap);
+        return ApiRespUtils.ok(objectMap);
     }
 
     /**
@@ -117,7 +117,7 @@ public class MediumController {
         }
         mapList.put("list",listMapList);
         //分页参数
-        return ApiRespUtils.getApiRespOfOk(mapList);
+        return ApiRespUtils.ok(mapList);
     }
 
     /**
@@ -139,7 +139,7 @@ public class MediumController {
         if(i <= 0){
             throw new CommonException(100014,"添加失败");
         }
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     /**
@@ -156,7 +156,7 @@ public class MediumController {
         if(i <= 0){
             throw new CommonException(100014,"添加失败");
         }
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
 
@@ -183,7 +183,7 @@ public class MediumController {
         if(!b){
             throw new CommonException(100014,"移动失败");
         }
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     /**
@@ -205,6 +205,6 @@ public class MediumController {
         if(!b){
             throw new CommonException(100014,"修改失败");
         }
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 }

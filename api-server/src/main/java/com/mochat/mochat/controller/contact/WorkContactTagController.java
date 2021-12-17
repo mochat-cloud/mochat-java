@@ -36,7 +36,7 @@ public class WorkContactTagController {
      */
     @GetMapping("/index")
     public ApiRespVO getTagList(Integer groupId, RequestPage requestPage) {
-        return ApiRespUtils.getApiRespOfOk(workContactTagService.getTagList(groupId, requestPage));
+        return ApiRespUtils.ok(workContactTagService.getTagList(groupId, requestPage));
     }
 
     /**
@@ -49,7 +49,7 @@ public class WorkContactTagController {
             throw new ParamException("标签 id 无效");
         }
         workContactTagService.deleteTag(tagIds);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     /**
@@ -58,7 +58,7 @@ public class WorkContactTagController {
     @PutMapping("/synContactTag")
     public ApiRespVO synContactTag() {
         contactTagServiceSyncLogic.onSync(AccountService.getCorpId());
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     /**
@@ -66,7 +66,7 @@ public class WorkContactTagController {
      */
     @GetMapping("/allTag")
     public ApiRespVO getAllTag(Integer groupId) {
-        return ApiRespUtils.getApiRespOfOk(workContactTagService.getAllTag(groupId));
+        return ApiRespUtils.ok(workContactTagService.getAllTag(groupId));
     }
 
     /**
@@ -83,7 +83,7 @@ public class WorkContactTagController {
             throw new ParamException("标签名不能为空");
         }
         workContactTagService.createTag(groupId, tagNames);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     /**
@@ -91,7 +91,7 @@ public class WorkContactTagController {
      */
     @GetMapping("/detail")
     public ApiRespVO getTagDetail(@NotNull(message = "标签 id 不能为 null") Integer tagId) {
-        return ApiRespUtils.getApiRespOfOk(workContactTagService.getTagDetail(tagId));
+        return ApiRespUtils.ok(workContactTagService.getTagDetail(tagId));
     }
 
     /**
@@ -108,7 +108,7 @@ public class WorkContactTagController {
             throw new ParamException("标签 id 不能为空");
         }
         workContactTagService.moveTags(tagIds, groupId);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     /**
@@ -130,9 +130,9 @@ public class WorkContactTagController {
         }
         int isUpdate = paramJson.getIntValue("isUpdate");
         if (isUpdate > 1) {
-            return ApiRespUtils.getApiRespOfOk("");
+            return ApiRespUtils.ok("");
         }
         workContactTagService.updateTag(tagId, groupId, tagName, isUpdate);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 }

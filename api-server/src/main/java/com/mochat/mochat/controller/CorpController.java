@@ -84,7 +84,7 @@ public class CorpController {
     @ResponseBody
     public ApiRespVO getCorpOptions(String corpName) {
         Integer loginUserId = AccountService.getUserId();
-        return ApiRespUtils.getApiRespOfOk(corpServiceImpl.listByLoginUserIdAndCorpName(loginUserId, corpName));
+        return ApiRespUtils.ok(corpServiceImpl.listByLoginUserIdAndCorpName(loginUserId, corpName));
     }
 
 
@@ -143,7 +143,7 @@ public class CorpController {
         // 同步企业通讯录信息
         logger.info("创建企业成功>>>>>>>>>corpId" + corpId);
         workEmpServiceSyncLogic.onSyncWxEmp(Integer.parseInt(corpId));
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     /**
@@ -162,7 +162,7 @@ public class CorpController {
         if (i > 0) {
             logger.info("企业微信授信更新成功");
         }
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
 
@@ -195,7 +195,7 @@ public class CorpController {
         Integer employeeId = mcWorkEmployeeEntityList.get(0).getId();
         //存入缓存(key:mc:user.userId   value:corpId-workEmployeeId
         AccountService.updateCorpIdAndEmployeeId(Integer.parseInt(userId), mcWorkEmployeeEntity.getCorpId(), employeeId);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
 
@@ -225,8 +225,8 @@ public class CorpController {
         listMap.put("encodingAesKey", corpEntity.getEncodingAesKey());
         listMap.put("socialCode", corpEntity.getSocialCode());
         List<Map> listPage = new ArrayList<Map>();
-        logger.info("企业微信授权 - 详情<<<<<<<<<" + ApiRespUtils.getApiRespOfOk(listMap));
-        return ApiRespUtils.getApiRespOfOk(listMap);
+        logger.info("企业微信授权 - 详情<<<<<<<<<" + ApiRespUtils.ok(listMap));
+        return ApiRespUtils.ok(listMap);
     }
 
 
@@ -243,7 +243,7 @@ public class CorpController {
             throw new CommonException("请先选择企业");
         }
         Map<String, Object> map = corpServiceImpl.handleCorpDta();
-        return ApiRespUtils.getApiRespOfOk(map);
+        return ApiRespUtils.ok(map);
     }
 
 
@@ -268,7 +268,7 @@ public class CorpController {
             vo.setDate(DateUtils.formatS1(entity.getDate().getTime()));
             voList.add(vo);
         }
-        return ApiRespUtils.getApiRespOfOk(voList);
+        return ApiRespUtils.ok(voList);
     }
 
 }

@@ -30,7 +30,7 @@ public class ChatServiceController {
      */
     @GetMapping("/fromUsers")
     public ApiRespVO fromUsers(@RequestParam(required = false) String name) {
-        return ApiRespUtils.getApiRespOfOk(chatService.getFromUserInfoList(name));
+        return ApiRespUtils.ok(chatService.getFromUserInfoList(name));
     }
 
     /**

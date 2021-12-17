@@ -13,8 +13,8 @@ import com.mochat.mochat.service.wxback.IWxCallbackTagService;
 import com.mochat.mochat.weixin.mp.WXBizMsgCrypt;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -103,10 +103,10 @@ public class WechatCalBkController {
         String sEchoStr = wxcpt.VerifyURL(msg_signature, timestamp, nonce, echostr);
 
         //必须要返回解密之后的明文
-        if (StringUtils.isBlank(sEchoStr)) {
-            log.debug("URL验证失败");
-        } else {
+        if (StringUtils.hasLength(sEchoStr)) {
             log.debug("验证成功!");
+        } else {
+            log.debug("URL验证失败");
         }
 
         log.debug(" >>>>>>>> sEchoStr: " + sEchoStr);

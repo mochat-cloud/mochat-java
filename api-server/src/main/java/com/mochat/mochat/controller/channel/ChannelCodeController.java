@@ -38,7 +38,7 @@ public class ChannelCodeController {
     @PostMapping("/store")
     public ApiRespVO storeCode(@RequestBody ReqChannelCodeDTO req) {
         channelCodeService.storeOrUpdateCode(req);
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     /**
@@ -49,7 +49,7 @@ public class ChannelCodeController {
     @PutMapping("/update")
     public ApiRespVO updateCode(@RequestBody ReqChannelCodeDTO req) {
         channelCodeService.storeOrUpdateCode(req);
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     /**
@@ -59,7 +59,7 @@ public class ChannelCodeController {
      */
     @GetMapping("/show")
     public ApiRespVO showCode(@NotNull(message = "渠道码 id 不能为空") Integer channelCodeId) {
-        return ApiRespUtils.getApiRespOfOk(channelCodeService.getChannelCodeDetail(channelCodeId));
+        return ApiRespUtils.ok(channelCodeService.getChannelCodeDetail(channelCodeId));
     }
 
     /**
@@ -100,7 +100,7 @@ public class ChannelCodeController {
      */
     @GetMapping("/statistics")
     public ApiRespVO getStatistics(ReqChannelCodeStatisticsDTO req) {
-        return ApiRespUtils.getApiRespOfOk(contactEmployeeService.getStatistics(req));
+        return ApiRespUtils.ok(contactEmployeeService.getStatistics(req));
     }
 
 

@@ -37,7 +37,7 @@ public class WorkRoomGroupController {
         Integer pageNo = (page.equals(""))?0:page-1;
         Integer pageCount = (perPage.equals(""))?10:perPage;
         Integer corpIds = AccountService.getCorpId();        //分页数据
-        return ApiRespUtils.getApiRespOfOk(workRoomGroupServiceImpl.getWorkRoomGroupList(String.valueOf(corpIds),pageNo,pageCount));
+        return ApiRespUtils.ok(workRoomGroupServiceImpl.getWorkRoomGroupList(String.valueOf(corpIds),pageNo,pageCount));
     }
 
     /**
@@ -56,7 +56,7 @@ public class WorkRoomGroupController {
         }
         //客户群分组表
         Integer i = workRoomGroupServiceImpl.deleteWorkRoomGroup(Integer.valueOf(mapData.get("workRoomGroupId").toString()));
-        return ApiRespUtils.getApiRespOfOk(null);
+        return ApiRespUtils.ok(null);
     }
 
     /**
@@ -77,7 +77,7 @@ public class WorkRoomGroupController {
         workRoomGroupEntity1.setCorpId(Integer.valueOf((mapData.get("corpId").toString())));
         workRoomGroupEntity1.setName(mapData.get("workRoomGroupName").toString());
         workRoomGroupServiceImpl.createWorkRoomGroup(workRoomGroupEntity1);
-        return ApiRespUtils.getApiRespOfOk(null);
+        return ApiRespUtils.ok(null);
     }
 
     /**
@@ -103,7 +103,7 @@ public class WorkRoomGroupController {
         }
         //数据入表
         workRoomGroupServiceImpl.updateWorkRoomGroupById(id,workRoomGroupName);
-        return ApiRespUtils.getApiRespOfOk(null);
+        return ApiRespUtils.ok(null);
     }
 
 

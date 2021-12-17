@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.ServiceException;
 import com.mochat.mochat.common.annotion.LoginToken;
-import com.mochat.mochat.common.util.JwtUtil;
+import com.mochat.mochat.common.util.JwtUtils;
 import com.mochat.mochat.common.util.RSAUtils;
 import com.mochat.mochat.common.util.RedisUtil;
 import com.mochat.mochat.common.util.WxApiUtils;
@@ -111,7 +111,7 @@ public class AgentController {
 
         HashMap<String, String> map = new HashMap<>(1);
         map.put("url", url);
-        return ApiRespUtils.getApiRespOfOk(map);
+        return ApiRespUtils.ok(map);
     }
 
     /**
@@ -145,7 +145,7 @@ public class AgentController {
         if (userEntityList == null) {
             throw new CommonException(100013, "登录失败,用户不存在");
         }
-        String token = JwtUtil.createJWT(36000000, userEntityList);
+        String token = JwtUtils.createToken(36000000, userEntityList);
         RedisUtil.set("mc:user.token" + token, "1");
         AccountService.updateCorpIdAndEmployeeId(workEmployeeEntity.getLogUserId(), workEmployeeEntity.getCorpId(), workEmployeeEntity.getId());
         JSONObject jsonObject = new JSONObject();
@@ -202,7 +202,7 @@ public class AgentController {
         map.put("nonceStr", noncestr);
         map.put("timestamp", timestamp);
         map.put("signature", sign);
-        return ApiRespUtils.getApiRespOfOk(map);
+        return ApiRespUtils.ok(map);
     }
 
     @PostMapping("/agent/store")
@@ -221,14 +221,14 @@ public class AgentController {
 
         workAgentService.storeAgent(wxAgentId, wxSecret, type);
 
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     @GetMapping("/chatTool/config")
     public ApiRespVO getChatToolConfig() {
         List<Map<String, Object>> agents = workAgentService.getChatTools();
         if (agents.isEmpty()) {
-            return ApiRespUtils.getApiRespOfOk();
+            return ApiRespUtils.ok();
         }
 
         List<String> whiteDomains = new ArrayList<>();
@@ -238,6 +238,6 @@ public class AgentController {
         Map<String, Object> result = new HashMap<>(2);
         result.put("agents", agents);
         result.put("whiteDomains", whiteDomains);
-        return ApiRespUtils.getApiRespOfOk(result);
+        return ApiRespUtils.ok(result);
     }
 }

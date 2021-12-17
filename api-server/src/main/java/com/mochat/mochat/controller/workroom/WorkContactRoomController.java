@@ -28,6 +28,6 @@ public class WorkContactRoomController {
         //查询客户群基本信息
         WorkRoomEntity workRoomEntity = workRoomServiceImpl.getWorkRoom(workRoomId);
         //处理请求参数
-        return ApiRespUtils.getApiRespOfOk(workRoomServiceImpl.handelWorkContactRoomData(workRoomEntity, workContactRoomIndexReq));
+        return ApiRespUtils.ok(workRoomServiceImpl.handelWorkContactRoomData(workRoomEntity, workContactRoomIndexReq));
     }
 }

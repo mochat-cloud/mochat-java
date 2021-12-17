@@ -6,7 +6,6 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author zhaojinjian
@@ -32,7 +31,7 @@ public  class PinyinUtil {
         // 设置字母u表示方法
         format.setVCharType(HanyuPinyinVCharType.WITH_V);
         String[] s;
-        String rs = StringUtils.EMPTY;
+        String rs = "";
         try {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < chars.length; i++) {

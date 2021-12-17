@@ -37,7 +37,7 @@ public class BusinessExceptionHandler {
     @ExceptionHandler(ParamException.class)
     @ResponseBody
     private ResponseEntity<Object> onParamEx(ParamException e) {
-        return ResponseEntity.status(e.getStatus()).body(ApiRespUtils.getApiRespByException(e));
+        return ResponseEntity.status(e.getStatus()).body(ApiRespUtils.ex(e));
     }
 
     /**
@@ -46,7 +46,7 @@ public class BusinessExceptionHandler {
     @ExceptionHandler(CommonException.class)
     @ResponseBody
     private ResponseEntity<Object> onCommonEx(CommonException e) {
-        return ResponseEntity.status(e.getStatus()).body(ApiRespUtils.getApiRespByException(e));
+        return ResponseEntity.status(e.getStatus()).body(ApiRespUtils.ex(e));
     }
 
     /**
@@ -55,7 +55,7 @@ public class BusinessExceptionHandler {
     @ExceptionHandler(AuthException.class)
     @ResponseBody
     private ResponseEntity<Object> onAuthEx(AuthException e) {
-        return ResponseEntity.status(e.getStatus()).body(ApiRespUtils.getApiRespByException(e));
+        return ResponseEntity.status(e.getStatus()).body(ApiRespUtils.ex(e));
     }
 
 }

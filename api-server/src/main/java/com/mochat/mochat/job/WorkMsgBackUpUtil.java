@@ -8,6 +8,7 @@ import com.mochat.mochat.common.constant.Const;
 import com.mochat.mochat.common.em.workmessage.MsgTypeEnum;
 import com.mochat.mochat.common.util.CommandUtil;
 import com.mochat.mochat.common.util.DateUtils;
+import com.mochat.mochat.common.util.FileUtils;
 import com.mochat.mochat.common.util.RSAUtils;
 import com.mochat.mochat.common.util.ali.AliyunOssUtils;
 import com.mochat.mochat.common.util.wm.WorkMsgHelper;
@@ -19,7 +20,6 @@ import com.mochat.mochat.model.wm.ChatRsaKeyModel;
 import com.mochat.mochat.model.wm.CorpMsgTO;
 import com.mochat.mochat.model.wm.DataResultModel;
 import com.tencent.wework.Finance;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -348,7 +348,7 @@ public class WorkMsgBackUpUtil {
 
     public static boolean isContact(String wxUserID) {
         if (StringUtils.hasLength(wxUserID) && wxUserID.length() > 2) {
-            String flag = wxUserID.substring(0,2);
+            String flag = wxUserID.substring(0, 2);
             return flag.contains("wo") || wxUserID.contains("wm");
         } else {
             return false;
@@ -478,11 +478,7 @@ public class WorkMsgBackUpUtil {
             byte[] b = Finance.GetData(mediaData);
             boolean isFinish = Finance.IsMediaDataFinish(mediaData) > 0;
             String outIndex = Finance.GetOutIndexBuf(mediaData);
-            try {
-                FileUtils.writeByteArrayToFile(file, b, true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            FileUtils.writeByteArrayToFile(file, b, true);
             Finance.FreeMediaData(mediaData);
             if (isFinish) {
                 LOGGER.debug("upload media finish " + sdkFileId);

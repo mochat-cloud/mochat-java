@@ -6,7 +6,7 @@
     <property name="PRO_FILE_PATH" value="/var/www-log/" />
 
     <!-- 开发环境 -->
-    <springProfile name="dev,ypw">
+    <springProfile name="dev">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <pattern>${PATTERN}</pattern>
@@ -20,7 +20,7 @@
 
 
     <!-- 生产环境 -->
-    <springProfile name="pro">
+    <springProfile name="prod">
         <appender name="PROD_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${PRO_FILE_PATH}</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">

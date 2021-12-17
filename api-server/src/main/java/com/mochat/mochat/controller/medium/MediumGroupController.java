@@ -49,7 +49,7 @@ public class MediumGroupController {
         mediumGroupEntity.setId(0);
         mediumGroupEntity.setName("未分组");
         mediumGroupEntityList.add(mediumGroupEntity);
-        return ApiRespUtils.getApiRespOfOk(mediumGroupEntityList);
+        return ApiRespUtils.ok(mediumGroupEntityList);
     }
 
     /**
@@ -77,7 +77,7 @@ public class MediumGroupController {
         if(i <= 0){
             throw new CommonException(100014,"添加失败");
         }
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     /**
@@ -105,7 +105,7 @@ public class MediumGroupController {
         if(i <=0 ){
             throw new ParamException(100013,"修改失败");
         }
-        return  ApiRespUtils.getApiRespOfOk("");
+        return  ApiRespUtils.ok("");
     }
 
     /**
@@ -123,7 +123,7 @@ public class MediumGroupController {
         if(i <= 0){
             throw new ParamException(100013,"删除分组失败");
         }
-        return  ApiRespUtils.getApiRespOfOk("");
+        return  ApiRespUtils.ok("");
     }
 
 

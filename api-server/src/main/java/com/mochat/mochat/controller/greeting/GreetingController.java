@@ -54,7 +54,7 @@ public class GreetingController {
     @GetMapping("/index")
     public ApiRespVO greetingIndex(RequestPage page, @RequestAttribute ReqPerEnum permission) {
         Map<String, Object> mapData = greetingServiceImpl.handle(page, permission);
-        return ApiRespUtils.getApiRespOfOk(mapData);
+        return ApiRespUtils.ok(mapData);
     }
 
 
@@ -97,7 +97,7 @@ public class GreetingController {
                 greetingEntity,
                 EventEnum.GREETING_CREATE
         );
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
 
@@ -152,7 +152,7 @@ public class GreetingController {
         if (!result) {
             throw new CommonException(100014, "系统错误,欢迎语更新失败");
         }
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
 
@@ -174,7 +174,7 @@ public class GreetingController {
         if (i < 1) {
             throw new CommonException(100014, "系统错误,欢迎语删除失败");
         }
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
 
@@ -197,7 +197,7 @@ public class GreetingController {
         mapData.put("words", greetingEntity.getWords());
         mapData.put("mediumId", greetingEntity.getMediumId());
         mapData.put("mediumContent", getMediumContent(greetingEntity.getMediumId()));
-        return ApiRespUtils.getApiRespOfOk(mapData);
+        return ApiRespUtils.ok(mapData);
     }
 
     private JSONObject getMediumContent(Integer mediumId) {

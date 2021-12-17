@@ -3,14 +3,11 @@ package com.mochat.mochat.interceptor;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.mochat.mochat.common.annotion.CheckToken;
 import com.mochat.mochat.common.annotion.LoginToken;
 import com.mochat.mochat.common.annotion.SkipPermission;
 import com.mochat.mochat.common.em.RespErrCodeEnum;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.util.JwtUtil;
+import com.mochat.mochat.common.util.JwtUtils;
 import com.mochat.mochat.config.ex.AuthException;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.dao.entity.UserEntity;
@@ -24,9 +21,9 @@ import com.mochat.mochat.service.permission.IRbacMenuService;
 import com.mochat.mochat.service.permission.IRbacRoleMenuService;
 import com.mochat.mochat.service.permission.IRbacRoleService;
 import com.mochat.mochat.service.permission.IRbacUserRoleService;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -64,9 +61,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
-        // 从 http 请求头中取出 token
-        String token = request.getHeader("Authorization");
         // 如果不是映射到方法直接通过
         if (!(handler instanceof HandlerMethod)) {
             return true;
@@ -74,54 +68,30 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
-        //检查是否有LoginToken注释，有则跳过认证
+        // 检查是否有LoginToken注释，有则跳过认证
         if (method.isAnnotationPresent(LoginToken.class)) {
             LoginToken loginToken = method.getAnnotation(LoginToken.class);
             if (loginToken.required()) {
                 return true;
             }
         }
-        //如果token为空的情况下，返回非法token，禁止访问
-        if (token == null || token.equals("")) {
+
+        // 从 http 请求头中取出 token
+        String token = request.getHeader("Authorization");
+        // 如果token为空的情况下，返回非法token，禁止访问
+        if (!StringUtils.hasLength(token)) {
             throw new AuthException(RespErrCodeEnum.AUTH_UNAUTHORIZED.getCode(), RespErrCodeEnum.AUTH_UNAUTHORIZED.getMsg());
         } else {
-            Claims claims;
             try {
-                claims = JwtUtil.parseJWT(token);
-                if (claims == null) {
+                if (JwtUtils.isVerify(token)) {
                     throw new AuthException(RespErrCodeEnum.AUTH_TOKEN_INVALID.getCode(), RespErrCodeEnum.AUTH_TOKEN_INVALID.getMsg());
                 } else {
-                    String value = AccountService.isLoginOut();
-                    if (value.equals("0")) {
+                    if (AccountService.isLogin()) {
                         throw new AuthException(RespErrCodeEnum.TOKEN_INVALID.getCode(), RespErrCodeEnum.TOKEN_INVALID.getMsg());
                     }
                 }
             } catch (ExpiredJwtException e) {
-                claims = e.getClaims();
                 throw new AuthException(RespErrCodeEnum.AUTH_SESSION_EXPIRED.getCode(), RespErrCodeEnum.AUTH_SESSION_EXPIRED.getMsg());
-            }
-        }
-
-        //检查有没有需要用户权限的注解
-        if (method.isAnnotationPresent(CheckToken.class)) {
-            CheckToken checkToken = method.getAnnotation(CheckToken.class);
-            if (checkToken.required()) {
-                // 执行认证
-                if (token == null) {
-                    throw new RuntimeException("无token，请重新登录");
-                }
-                // 获取 token 中的 user id
-                String userId;
-                try {
-                    userId = JWT.decode(token).getClaim("id").asString();
-                } catch (JWTDecodeException j) {
-                    throw new RuntimeException("访问异常！");
-                }
-                Boolean verify = JwtUtil.isVerify(token);
-                if (!verify) {
-                    throw new RuntimeException("非法访问！");
-                }
-                return true;
             }
         }
 

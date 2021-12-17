@@ -1,7 +1,7 @@
 package com.mochat.mochat.service;
 
 import com.mochat.mochat.common.em.RespErrCodeEnum;
-import com.mochat.mochat.common.util.JwtUtil;
+import com.mochat.mochat.common.util.JwtUtils;
 import com.mochat.mochat.common.util.RedisUtil;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
@@ -11,6 +11,7 @@ import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import com.mochat.mochat.service.impl.ISubSystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -115,7 +116,7 @@ public class AccountService {
      * @createTime 2020/12/28 15:39
      */
     public static Integer getUserId() {
-        Integer userId = (Integer) JwtUtil.parseJWT(getToken()).get("userId");
+        Integer userId = (Integer) JwtUtils.parseToken(getToken()).get("userId");
         if (userId == null || userId < 1) {
             throw new CommonException(RespErrCodeEnum.AUTH_TOKEN_INVALID);
         }
@@ -141,21 +142,18 @@ public class AccountService {
      * @author: Huayu
      * @time: 2020/12/29 18:27
      */
-    public static String isLoginOut() {
-        Map<String, Integer> resultMap = new HashMap<>();
+    public static boolean isLogin() {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes != null) {
             HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
             String token = request.getHeader("Authorization");
-            token = token.substring(token.indexOf(" ") + 1);
-            if (token != null && !token.isEmpty()) {
+            if (StringUtils.hasLength(token)) {
+                token = token.substring(token.indexOf(" ") + 1);
                 String value = (String) RedisUtil.get("mc:user.token" + token);
-                if (value == null) {
-                    return "0";
-                }
+                return StringUtils.hasLength(value);
             }
         }
-        return "1";
+        return false;
     }
 
     public static String getToken() {

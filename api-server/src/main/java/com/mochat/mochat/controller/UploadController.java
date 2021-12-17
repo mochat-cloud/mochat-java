@@ -52,7 +52,7 @@ public class UploadController {
         jsonObject.put("mimeType", mimeType);
         jsonObject.put("path", key);
         jsonObject.put("fullPath", fileUrl);
-        return ApiRespUtils.getApiRespOfOk(jsonObject);
+        return ApiRespUtils.ok(jsonObject);
     }
 
 }

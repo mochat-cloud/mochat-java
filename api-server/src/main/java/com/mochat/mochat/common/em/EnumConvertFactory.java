@@ -29,7 +29,7 @@ public class EnumConvertFactory implements ConverterFactory<String, IEnum> {
 
         @Override
         public T convert(String source) {
-            if (StringUtils.isEmpty(source)) {
+            if (!StringUtils.hasLength(source)) {
                 return null;
             }
             return (T) EnumConvertFactory.getIEnum(this.targerType, source);

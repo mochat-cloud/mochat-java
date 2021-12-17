@@ -1,28 +1,31 @@
-version: "3"
+version: '3.1'
 services:
-  ## (建议详细阅读1、2、3、4)
-  mochat-java:
-    build:
-      context: ./
-      args:
-        ## 1、项目环境 - 开发环境时改为dev
-        APP_ENV: test
-    container_name: mochat-java
-    ## 2、端口映射 - 开发环境时去掉注释，并修改宿主机相应的端口
-    ports:
-      - "8088:8088"
+  mysql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678
+      TZ: Asia/Shanghai
     volumes:
-      ## 3、项目挂载 - 开发环境时去掉注释
-#      - ./:/opt/www/:rw
-      ## 4、日志挂载 - 开发环境时删除或注释掉
-    - /var/log/docker/mochat-java:/var/www-log/:rw
-    cap_add:
-      - SYS_PTRACE
-    stdin_open: true
-    tty: true
-    networks:
-      - default
-networks:
-  default:
-    external:
-      name: docker-compose_default
+      - ./data/mysql/db:/var/lib/mysql
+      - ./data/mysql/conf:/etc/mysql/conf.d
+      - ./data/mysql/init:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:latest
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./data/redis/redis.conf:/etc/redis.conf
+      - ./data/redis/data:/data/
+
+  mochat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 9501:9501
+    depends_on:
+      - mysql
+      - redis

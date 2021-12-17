@@ -36,3 +36,7 @@ build/
 
 ### Gradle ###
 .gradle
+
+### Mochat ###
+/data/mysql/db
+/data/redis/data

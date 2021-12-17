@@ -81,7 +81,7 @@ public class WorkRoomController {
             e.printStackTrace();
         }
         if (flag) {
-            return ApiRespUtils.getApiRespOfOk("");
+            return ApiRespUtils.ok("");
         }
         throw new CommonException(100013, "该客户群数据错误");
     }
@@ -335,7 +335,7 @@ public class WorkRoomController {
         List<WorkRoomStatisticsIndexResp> newSortList = workRoomStatisticsIndexRespList.stream().sorted(Comparator.comparing(WorkRoomStatisticsIndexResp::getTime))
                 .collect(Collectors.toList());
         workRoomStatisticsResp.setList(newSortList);
-        return ApiRespUtils.getApiRespOfOk(workRoomStatisticsResp);
+        return ApiRespUtils.ok(workRoomStatisticsResp);
     }
 
 
@@ -365,7 +365,7 @@ public class WorkRoomController {
         for (String roomId : roomIdArr) {
             workRoomServiceImpl.updateWorkRoomsByRoomGroupId(Integer.valueOf(roomId), workRoomGroupId);
         }
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     /**
@@ -379,6 +379,6 @@ public class WorkRoomController {
         if (corpId == null) {
             throw new CommonException(100013, "未选择登录企业，不可操作");
         }
-        return ApiRespUtils.getApiRespOfOk(workRoomServiceImpl.getWorkRoomSelectData(corpId, name, roomGroupId));
+        return ApiRespUtils.ok(workRoomServiceImpl.getWorkRoomSelectData(corpId, name, roomGroupId));
     }
 }

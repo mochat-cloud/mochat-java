@@ -50,7 +50,7 @@ public class ContactController {
         if (corpId != null && empId != null) {
             contactPageResponse = contactService.getContactPage(parem, empId, corpId, permission);
         }
-        return ApiRespUtils.getApiRespOfOk(contactPageResponse);
+        return ApiRespUtils.ok(contactPageResponse);
     }
 
     /**
@@ -64,7 +64,7 @@ public class ContactController {
             @NotNull(message = "employeeId 不能为空") Integer employeeId
     ) {
         Integer corpId = AccountService.getCorpId();
-        return ApiRespUtils.getApiRespOfOk(contactService.getContactInfo(contactId, employeeId, corpId));
+        return ApiRespUtils.ok(contactService.getContactInfo(contactId, employeeId, corpId));
     }
 
     /**
@@ -74,7 +74,7 @@ public class ContactController {
      */
     @GetMapping("/workContact/detail")
     public ApiRespVO contactDetail(@NotBlank(message = "客户微信 id 不能为空") String wxExternalUserid) {
-        return ApiRespUtils.getApiRespOfOk(contactService.getContactDetailByWxExternalUserId(wxExternalUserid));
+        return ApiRespUtils.ok(contactService.getContactDetailByWxExternalUserId(wxExternalUserid));
     }
 
     /**
@@ -84,7 +84,7 @@ public class ContactController {
      */
     @GetMapping("/workContact/track")
     public ApiRespVO contactTrack(@NotNull(message = "客户 id 不能为空") Integer contactId) {
-        return ApiRespUtils.getApiRespOfOk(contactService.getContactTrackByContactId(contactId));
+        return ApiRespUtils.ok(contactService.getContactTrackByContactId(contactId));
     }
 
     /**
@@ -99,7 +99,7 @@ public class ContactController {
         Integer corpId = corpIdAndEmpIdMap.get("corpId");
         Integer empId = corpIdAndEmpIdMap.get("empId");
         contactService.updateContact(parem, corpId, empId);
-        return ApiRespUtils.getApiRespOfOk(new ArrayList<>());
+        return ApiRespUtils.ok(new ArrayList<>());
     }
 
     /**
@@ -110,7 +110,7 @@ public class ContactController {
     @PutMapping("/workContact/synContact")
     public ApiRespVO synContact() {
         contactServiceSyncLogic.onSync(AccountService.getCorpId());
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     /**
@@ -127,7 +127,7 @@ public class ContactController {
             json.put("addWayText", addWayEnum.getMsg());
             jsonArray.add(json);
         }
-        return ApiRespUtils.getApiRespOfOk(jsonArray);
+        return ApiRespUtils.ok(jsonArray);
     }
 
     @GetMapping("/workContact/lossContact")
@@ -139,8 +139,8 @@ public class ContactController {
             for (int i = 0; i < empIdArray.length; i++) {
                 empIds.add(Integer.parseInt(empIdArray[i]));
             }
-            return ApiRespUtils.getApiRespOfOk(contactService.getlossContact(corpId, empIds, page, perPage));
+            return ApiRespUtils.ok(contactService.getlossContact(corpId, empIds, page, perPage));
         }
-        return ApiRespUtils.getApiRespOfOk(new ArrayList<>());
+        return ApiRespUtils.ok(new ArrayList<>());
     }
 }

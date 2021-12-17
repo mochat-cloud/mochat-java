@@ -1,8 +1,6 @@
 package com.mochat.mochat.common.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Random;
 
 /**
@@ -74,6 +72,54 @@ public class FileUtils {
             return true;
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean writeByteArrayToFile(File file, byte[] bytes, boolean append) {
+        try {
+            if (file == null) {
+                return false;
+            }
+
+            if (bytes == null || bytes.length == 0) {
+                return false;
+            }
+
+            File dir = file.getParentFile();
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            if (!file.isDirectory() && !file.exists()) {
+                file.createNewFile();
+            }
+            FileOutputStream outputStream = new FileOutputStream(file, append);
+            outputStream.write(bytes);
+            outputStream.close();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static boolean copyInputStreamToFile(InputStream in, File outFile) {
+        try {
+            if (in == null) {
+                return false;
+            }
+
+            OutputStream out = new FileOutputStream(outFile);
+            byte[] buff = new byte[1024];
+            int size = 0;
+            while (-1 != (size = in.read(buff))) {
+                out.write(buff, 0, size);
+            }
+            out.flush();
+            out.close();
+            in.close();
+        } catch (IOException e) {
+            return false;
         }
         return false;
     }

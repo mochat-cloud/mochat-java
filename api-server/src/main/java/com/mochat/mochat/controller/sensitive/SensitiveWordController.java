@@ -49,7 +49,7 @@ public class SensitiveWordController {
     @DeleteMapping("/destroy")
     public ApiRespVO deleteSensitiveWord(@RequestBody Map<String,Object> mapData){
         Integer i = sensitiveWordServiceImpl.deleteSensitiveWord(Integer.valueOf(mapData.get("sensitiveWordId").toString()));
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
 
@@ -69,7 +69,7 @@ public class SensitiveWordController {
         Page<SensitiveWordEntity> page = sensitiveWordServiceImpl.getSensitiveWordList(sensitiveWordIndex, permission);
         //数据处理
         Map<String,Object> mapList = handleData(sensitiveWordIndex.getPerPage(),page);
-        return ApiRespUtils.getApiRespOfOk(mapList);
+        return ApiRespUtils.ok(mapList);
     }
 
     /**
@@ -98,7 +98,7 @@ public class SensitiveWordController {
         if(!flag){
             throw new CommonException(100014,"敏感词创建失败");
         }
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
 
@@ -124,7 +124,7 @@ public class SensitiveWordController {
         if(i < 1){
             throw new CommonException(100014,"敏感词移动失败");
         }
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
 
@@ -144,7 +144,7 @@ public class SensitiveWordController {
         if(i < 1){
             throw new CommonException(100014,"敏感词状态更新失败");
         }
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     private Map<String,Object> handleData(Integer perPage, Page<SensitiveWordEntity> page) {

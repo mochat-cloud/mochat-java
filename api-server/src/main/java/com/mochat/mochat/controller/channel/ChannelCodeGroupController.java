@@ -46,7 +46,7 @@ public class ChannelCodeGroupController {
         List<String> nameList = jsonArray.toJavaList(String.class);
 
         channelCodeGroupService.saveByNames(nameList);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     /**
@@ -67,7 +67,7 @@ public class ChannelCodeGroupController {
         }
 
         channelCodeGroupService.updateNameByGroupId(groupId, name);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     /**
@@ -85,7 +85,7 @@ public class ChannelCodeGroupController {
             map.put("name", e.getName());
             list.add(map);
         }
-        return ApiRespUtils.getApiRespOfOk(list);
+        return ApiRespUtils.ok(list);
     }
 
     /**
@@ -103,7 +103,7 @@ public class ChannelCodeGroupController {
         Map<String, Object> map = new HashMap<>(2);
         map.put("groupId", entity.getId());
         map.put("name", entity.getName());
-        return ApiRespUtils.getApiRespOfOk(map);
+        return ApiRespUtils.ok(map);
     }
 
     /**
@@ -124,7 +124,7 @@ public class ChannelCodeGroupController {
         }
 
         channelCodeService.updateGroupId(channelCodeId,groupId);
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
 }

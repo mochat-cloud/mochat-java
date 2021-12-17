@@ -13,7 +13,6 @@ import com.mochat.mochat.service.emp.IWorkEmployeeDepartmentService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -58,7 +57,7 @@ public class DepartmentController {
         if (corpId == null) {
             throw new CommonException(100013, "未选择登录企业，不可操作");
         }
-        return ApiRespUtils.getApiRespOfOk(deptService.getWorkDepartments(searchKeyWords, corpId));
+        return ApiRespUtils.ok(deptService.getWorkDepartments(searchKeyWords, corpId));
     }
 
     /**
@@ -74,7 +73,7 @@ public class DepartmentController {
         for (int i = 0; i < deptIds.length; i++) {
             deptIdList.add(Integer.parseInt(deptIds[i]));
         }
-        return ApiRespUtils.getApiRespOfOk(deptService.getDeptMemberList(deptIdList, corpId));
+        return ApiRespUtils.ok(deptService.getDeptMemberList(deptIdList, corpId));
     }
 
     /**
@@ -96,7 +95,7 @@ public class DepartmentController {
         String clStr = "id,corp_id";
         List<WorkEmployeeEntity> workEmployeeEntityList = workEmployeeService.getWorkEmployeesByMobile(phone,clStr);
         if(workEmployeeEntityList == null || workEmployeeEntityList.size() == 0){
-            return ApiRespUtils.getApiRespOfOk("");
+            return ApiRespUtils.ok("");
         }
         List<String> employeeIdList = new ArrayList<String>();
         for (WorkEmployeeEntity workEmployeeEntity:
@@ -106,13 +105,13 @@ public class DepartmentController {
             }
         }
         if(employeeIdList == null || employeeIdList.size() == 0){
-            return ApiRespUtils.getApiRespOfOk("");
+            return ApiRespUtils.ok("");
         }
         //查询成员-部门关联表
         clStr = "id,department_id";
         List<WorkEmployeeDepartmentEntity> workEmployeeDepartmentEntityList = workEmployeeDepartmentService.getWorkEmployeeDepartmentsByEmployeeIds(employeeIdList,clStr);
         if(workEmployeeDepartmentEntityList == null || workEmployeeDepartmentEntityList.size() == 0){
-            return ApiRespUtils.getApiRespOfOk("");
+            return ApiRespUtils.ok("");
         }
         StringBuilder sb = new StringBuilder();
         String departmentId = null;
@@ -127,7 +126,7 @@ public class DepartmentController {
         clStr = "id,corp_id,name";
         List<WorkDeptEntity> workDeptEntityList = workDeptService.getWorkDepartmentsById(ids,clStr);
         if(workDeptEntityList == null || workDeptEntityList.size() == 0){
-            return ApiRespUtils.getApiRespOfOk("");
+            return ApiRespUtils.ok("");
         }
         List<Map<String,Object>> mapList = new ArrayList();
         Map<String,Object>  mapData = null;
@@ -139,7 +138,7 @@ public class DepartmentController {
             mapData.put("workDepartmentName",workDeptEntity.getName());
             mapList.add(mapData);
         }
-        return ApiRespUtils.getApiRespOfOk(mapList);
+        return ApiRespUtils.ok(mapList);
     }
 
 
@@ -159,7 +158,7 @@ public class DepartmentController {
         map.put("page",page);
         map.put("perPage",perPage);
         map = workEmployeeDepartmentService.handleShowEmpData(map);
-        return ApiRespUtils.getApiRespOfOk(map);
+        return ApiRespUtils.ok(map);
     }
 
     @GetMapping("/workDepartment/pageIndex")

@@ -33,7 +33,7 @@ public class SubSystemController {
     @GetMapping("/user/index")
     public ApiRespVO index(APIGetSubSystemRequest param, @RequestAttribute ReqPerEnum permission) {
         GetSubSystemPage subSystemPage = subSystem.getSubSystemPageList(param, permission);
-        return ApiRespUtils.getApiRespOfOk(subSystemPage);
+        return ApiRespUtils.ok(subSystemPage);
 
     }
 
@@ -47,7 +47,7 @@ public class SubSystemController {
     @PostMapping("/user/store")
     public ApiRespVO saveSubSystem(@RequestBody AddSubSystemRequest parem) {
         subSystem.saveSubsystem(parem);
-        return ApiRespUtils.getApiRespOfOk(new ArrayList<String>());
+        return ApiRespUtils.ok(new ArrayList<String>());
     }
 
     /**
@@ -62,7 +62,7 @@ public class SubSystemController {
         parem.verifyParam();
         Integer userId = AccountService.getUserId();
         subSystem.updatePassword(parem, userId);
-        return ApiRespUtils.getApiRespOfOk(new ArrayList<String>());
+        return ApiRespUtils.ok(new ArrayList<String>());
     }
 
     /**
@@ -75,7 +75,7 @@ public class SubSystemController {
     @PutMapping("/user/update")
     public ApiRespVO update(@RequestBody UpdateSubSystemRequest parem) {
         boolean result = subSystem.update(parem);
-        return ApiRespUtils.getApiRespOfOk(new ArrayList<String>());
+        return ApiRespUtils.ok(new ArrayList<String>());
     }
 
     /**
@@ -92,7 +92,7 @@ public class SubSystemController {
         Integer empId = corpIdAndEmpIdMap.get("empId");
         //要判断empId在缓存里存不存在
         LoginShowRresponse result = subSystem.getLoginShowInfo(userId, empId);
-        return ApiRespUtils.getApiRespOfOk(result);
+        return ApiRespUtils.ok(result);
     }
 
     /**
@@ -110,7 +110,7 @@ public class SubSystemController {
             String[] userIds = userId.split(",");
             boolean result = subSystem.setStatus(userIds, status);
         }
-        return ApiRespUtils.getApiRespOfOk(new ArrayList<String>());
+        return ApiRespUtils.ok(new ArrayList<String>());
     }
 
     /**
@@ -123,6 +123,6 @@ public class SubSystemController {
     @GetMapping("/user/show")
     public ApiRespVO getUserInfo(int userId) {
         GetSubSystemInfoResponse result = subSystem.getSubSystemInfo(userId);
-        return ApiRespUtils.getApiRespOfOk(result);
+        return ApiRespUtils.ok(result);
     }
 }

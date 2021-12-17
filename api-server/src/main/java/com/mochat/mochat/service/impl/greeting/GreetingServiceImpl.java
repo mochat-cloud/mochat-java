@@ -31,9 +31,9 @@ import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import com.mochat.mochat.service.greeting.IGreetingService;
 import com.mochat.mochat.service.impl.ICorpService;
 import com.mochat.mochat.service.impl.medium.IMediumService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.io.File;

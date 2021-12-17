@@ -15,15 +15,15 @@ import java.util.List;
  */
 public class ApiRespUtils {
 
-    public static ApiRespVO getApiRespOfOk() {
+    public static ApiRespVO ok() {
         return new ApiRespVO(200, "成功", "");
     }
 
-    public static ApiRespVO getApiRespOfOk(Object obj) {
+    public static ApiRespVO ok(Object obj) {
         return new ApiRespVO(200, "成功", obj);
     }
 
-    public static ApiRespVO getApiRespByException(BaseException e) {
+    public static ApiRespVO ex(BaseException e) {
         ApiRespVO apiResp = new ApiRespVO();
         apiResp.setCode(e.getCode());
         apiResp.setMsg(e.getMsg());

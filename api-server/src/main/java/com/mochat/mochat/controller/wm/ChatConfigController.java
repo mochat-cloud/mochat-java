@@ -51,7 +51,7 @@ public class ChatConfigController {
      */
     @GetMapping("/corpShow")
     public ApiRespVO corpShow(@NotNull(message = "corpId 不能为 null") Integer corpId) {
-        return ApiRespUtils.getApiRespOfOk(chatConfigService.getCorpShowInfo(corpId));
+        return ApiRespUtils.ok(chatConfigService.getCorpShowInfo(corpId));
     }
 
     /**
@@ -62,7 +62,7 @@ public class ChatConfigController {
         int id = chatConfigService.setCorpStore(req);
         Map<String, Integer> map = new HashMap<>(1);
         map.put("id", id);
-        return ApiRespUtils.getApiRespOfOk(map);
+        return ApiRespUtils.ok(map);
     }
 
     /**
@@ -70,7 +70,7 @@ public class ChatConfigController {
      */
     @GetMapping("/stepCreate")
     public ApiRespVO stepCreate() {
-        return ApiRespUtils.getApiRespOfOk(chatConfigService.getStepCreateInfo());
+        return ApiRespUtils.ok(chatConfigService.getStepCreateInfo());
     }
 
     /**
@@ -79,7 +79,7 @@ public class ChatConfigController {
     @PutMapping("/stepUpdate")
     public ApiRespVO stepUpdate(@Validated @RequestBody ReqStepUpdateDTO req) {
         chatConfigService.putStepUpdate(req);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
 }

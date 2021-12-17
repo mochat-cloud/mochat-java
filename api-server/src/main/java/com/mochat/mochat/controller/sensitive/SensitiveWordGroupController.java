@@ -44,7 +44,7 @@ public class SensitiveWordGroupController {
         }
         List<SensitiveWordGroupEntity> sensitiveWordGroupEntityList = sensitiveWordGroupServiceImpl.getSensitiveWordGroupsByCorpId(AccountService.getCorpId());
         if(sensitiveWordGroupEntityList == null || sensitiveWordGroupEntityList.size() == 0){
-            return ApiRespUtils.getApiRespOfOk("");
+            return ApiRespUtils.ok("");
         }
         List<RespSensitiveWordGroupIndex> respSensitiveWordGroupIndexList = new ArrayList<RespSensitiveWordGroupIndex>();
         for (SensitiveWordGroupEntity sensitiveWordGroupEntity:
@@ -54,7 +54,7 @@ public class SensitiveWordGroupController {
             respSensitiveWordGroupIndex.setName(sensitiveWordGroupEntity.getName());
             respSensitiveWordGroupIndexList.add(respSensitiveWordGroupIndex);
         }
-        return ApiRespUtils.getApiRespOfOk(respSensitiveWordGroupIndexList);
+        return ApiRespUtils.ok(respSensitiveWordGroupIndexList);
     }
 
     /**
@@ -83,7 +83,7 @@ public class SensitiveWordGroupController {
         if(i < 1){
             throw new ParamException(100013,"分组更新失败");
         }
-        return  ApiRespUtils.getApiRespOfOk("");
+        return  ApiRespUtils.ok("");
     }
 
     /**
@@ -108,7 +108,7 @@ public class SensitiveWordGroupController {
         if(!flag){
             throw new CommonException(100014,"敏感词分组创建失败");
         }
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     private boolean createSensitiveWordGroup(Map<String, Object> mapData) {

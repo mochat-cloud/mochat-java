@@ -23,7 +23,6 @@ import com.mochat.mochat.model.workcontact.LossContact;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.contact.IExternalContactService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
-import com.vdurmont.emoji.EmojiParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -188,7 +187,7 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
         }
         for (WorkContactEmployeeEntity workContactEmployeeEntity :
                 list) {
-            workContactEmployeeEntity.setRemark(EmojiParser.parseToAliases(workContactEmployeeEntity.getRemark()));
+            workContactEmployeeEntity.setRemark(workContactEmployeeEntity.getRemark());
             contactEmployeeList.add(workContactEmployeeEntity);
         }
         for (WorkContactEmployeeEntity workContactEmployeeEntity :

@@ -33,7 +33,7 @@ public class MenuController {
     @PutMapping("/update")
     public ApiRespVO update(@RequestBody MenuUpdateDTO req) {
         menuService.updateMenu(req);
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     /**
@@ -45,7 +45,7 @@ public class MenuController {
     public ApiRespVO store(@RequestBody MenuStoreDTO req) {
         req.checkParam();
         menuService.storeMenu(req);
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     /**
@@ -60,7 +60,7 @@ public class MenuController {
             throw new ParamException("menuId 不能为空");
         }
         menuService.removeById(menuId);
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     /**
@@ -80,7 +80,7 @@ public class MenuController {
      */
     @GetMapping("/show")
     public ApiRespVO show(@NotNull(message = "菜单 id 不能为空") Integer menuId) {
-        return ApiRespUtils.getApiRespOfOk(menuService.showMenu(menuId));
+        return ApiRespUtils.ok(menuService.showMenu(menuId));
     }
 
     /**
@@ -100,7 +100,7 @@ public class MenuController {
             throw new ParamException("status 超出范围");
         }
         menuService.updateMenuStatus(menuId, status);
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     /**
@@ -110,7 +110,7 @@ public class MenuController {
      */
     @GetMapping("/iconIndex")
     public ApiRespVO iconIndex() {
-        return ApiRespUtils.getApiRespOfOk(menuService.menuIconList());
+        return ApiRespUtils.ok(menuService.menuIconList());
     }
 
     /**
@@ -120,7 +120,7 @@ public class MenuController {
      */
     @GetMapping("/select")
     public ApiRespVO select() {
-        return ApiRespUtils.getApiRespOfOk(menuService.menuList());
+        return ApiRespUtils.ok(menuService.menuList());
     }
 
 }

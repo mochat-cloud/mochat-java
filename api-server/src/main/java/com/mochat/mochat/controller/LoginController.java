@@ -2,7 +2,7 @@ package com.mochat.mochat.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.mochat.mochat.common.annotion.LoginToken;
-import com.mochat.mochat.common.util.JwtUtil;
+import com.mochat.mochat.common.util.JwtUtils;
 import com.mochat.mochat.common.util.RedisUtil;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
@@ -53,12 +53,12 @@ public class LoginController {
         if (userEntityList == null) {
             throw new CommonException(100013,"登录失败,用户不存在");
         }
-        String token = JwtUtil.createJWT(36000000, userEntityList);
+        String token = JwtUtils.createToken(36000000, userEntityList);
         RedisUtil.set("mc:user.token"+token, "1");
         logger.info("登录成功，token=>>>>>>>>>>>>>>"+token);
         jsonObject.put("token",token);
         jsonObject.put("expire",36000000);
-        return ApiRespUtils.getApiRespOfOk(jsonObject);
+        return ApiRespUtils.ok(jsonObject);
     }
 
     /**
@@ -72,11 +72,11 @@ public class LoginController {
     @PutMapping("logout")
     public ApiRespVO loginOut(@RequestHeader String Authorization){
         logger.info("删除用户的token"+Authorization);
-        String userId = JwtUtil.parseJWT(Authorization).get("userId").toString();
+        String userId = JwtUtils.parseToken(Authorization).get("userId").toString();
         Authorization = Authorization.substring(Authorization.indexOf(" ") + 1);
         RedisUtil.del("mc:user.token"+Authorization);
         logger.info("用户"+"id为"+userId+">>>>>>>>>>>>>>>>>>>已登出");
-        return  ApiRespUtils.getApiRespOfOk("");
+        return  ApiRespUtils.ok("");
     }
 }
 

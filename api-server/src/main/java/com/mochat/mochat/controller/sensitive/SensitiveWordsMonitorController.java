@@ -46,7 +46,7 @@ public class SensitiveWordsMonitorController {
 //        Integer totalPage = sensitiveWordsMonitorEntityList.size()/pageNum;
 //        mapData.put("page",new PageModel(perPage,sensitiveWordsMonitorEntityList.size(),totalPage));
 //        mapData.put("list",sensitiveWordsMonitorEntityList);
-        return ApiRespUtils.getApiRespOfOk(null);
+        return ApiRespUtils.ok(null);
     }
 
     @GetMapping("/show")
@@ -69,9 +69,9 @@ public class SensitiveWordsMonitorController {
                     mapDataList.add(mapData);
                 }
             }
-            return ApiRespUtils.getApiRespOfOk(mapDataList);
+            return ApiRespUtils.ok(mapDataList);
         }else{
-            return ApiRespUtils.getApiRespOfOk("");
+            return ApiRespUtils.ok("");
         }
     }
 }

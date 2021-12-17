@@ -15,7 +15,7 @@ typedef struct MediaData {
 } MediaData_t;
 */
 
-import org.apache.commons.io.FileUtils;
+import com.mochat.mochat.common.util.FileUtils;
 
 import java.io.File;
 import java.io.InputStream;

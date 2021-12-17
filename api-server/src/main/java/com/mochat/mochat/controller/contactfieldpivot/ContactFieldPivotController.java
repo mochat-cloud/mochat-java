@@ -31,7 +31,7 @@ public class ContactFieldPivotController {
         if (contactId == null) {
             throw new ParamException(RespErrCodeEnum.INVALID_PARAMS.getCode(), RespErrCodeEnum.INVALID_PARAMS.getMsg());
         }
-        return ApiRespUtils.getApiRespOfOk(contactFieldPivotService.getContactFieldPivotList(contactId));
+        return ApiRespUtils.ok(contactFieldPivotService.getContactFieldPivotList(contactId));
     }
 
     /**
@@ -42,6 +42,6 @@ public class ContactFieldPivotController {
     @PutMapping("/update")
     public ApiRespVO updateContactFieldPivot(@RequestBody UpdateContactFieldPivotModel param) {
         contactFieldPivotService.updateContactFieldPivot(param);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 }

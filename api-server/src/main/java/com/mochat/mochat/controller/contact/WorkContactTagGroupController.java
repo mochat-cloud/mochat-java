@@ -32,7 +32,7 @@ public class WorkContactTagGroupController {
      */
     @GetMapping("/index")
     public ApiRespVO getIndex(RequestPage req) {
-        return ApiRespUtils.getApiRespOfOk(workContactTagGroupService.getGroupList(req));
+        return ApiRespUtils.ok(workContactTagGroupService.getGroupList(req));
     }
 
     /**
@@ -40,7 +40,7 @@ public class WorkContactTagGroupController {
      */
     @GetMapping("/detail")
     public ApiRespVO getDetail(@NotNull(message = "标签组 id 不能为 null") Integer groupId) {
-        return ApiRespUtils.getApiRespOfOk(workContactTagGroupService.getGroupDetail(groupId));
+        return ApiRespUtils.ok(workContactTagGroupService.getGroupDetail(groupId));
     }
 
     /**
@@ -53,7 +53,7 @@ public class WorkContactTagGroupController {
             throw new ParamException("标签组 Id 无效");
         }
         workContactTagGroupService.deleteGroup(groupId);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     /**
@@ -66,7 +66,7 @@ public class WorkContactTagGroupController {
             throw new ParamException("标签组名称不能为空");
         }
         workContactTagGroupService.createGroup(groupName);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
     /**
@@ -77,7 +77,7 @@ public class WorkContactTagGroupController {
 
         int isUpdate = paramJson.getIntValue("isUpdate");
         if (isUpdate > 1) {
-            return ApiRespUtils.getApiRespOfOk("");
+            return ApiRespUtils.ok("");
         }
 
         Integer groupId = paramJson.getInteger("groupId");
@@ -91,7 +91,7 @@ public class WorkContactTagGroupController {
         }
 
         workContactTagGroupService.updateGroup(groupId, groupName, isUpdate);
-        return ApiRespUtils.getApiRespOfOk("");
+        return ApiRespUtils.ok("");
     }
 
 }

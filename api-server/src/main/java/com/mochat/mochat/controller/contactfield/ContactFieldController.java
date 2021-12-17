@@ -30,7 +30,7 @@ public class ContactFieldController {
 
     @GetMapping("/portrait")
     public ApiRespVO getPortrait(Integer fieldId, String name) {
-        return ApiRespUtils.getApiRespOfOk(contactFieldService.getPortrait(fieldId, name));
+        return ApiRespUtils.ok(contactFieldService.getPortrait(fieldId, name));
     }
 
     /**
@@ -40,7 +40,7 @@ public class ContactFieldController {
      */
     @GetMapping("/show")
     public ApiRespVO showContactField(Integer id) {
-        return ApiRespUtils.getApiRespOfOk(contactFieldService.getContactFieldInfo(id));
+        return ApiRespUtils.ok(contactFieldService.getContactFieldInfo(id));
     }
 
     /**
@@ -53,7 +53,7 @@ public class ContactFieldController {
         if (status != null && status > 2) {
             throw new ParamException(RespErrCodeEnum.INVALID_PARAMS.getCode(), RespErrCodeEnum.INVALID_PARAMS.getMsg());
         }
-        return ApiRespUtils.getApiRespOfOk(contactFieldService.getContactFieldList(status, page, perPage));
+        return ApiRespUtils.ok(contactFieldService.getContactFieldList(status, page, perPage));
     }
 
     /**
@@ -64,7 +64,7 @@ public class ContactFieldController {
     @PostMapping("/store")
     public ApiRespVO insertContactField(@RequestBody AddContactFieldModel parem) {
         parem.verifyParam();
-        return ApiRespUtils.getApiRespOfOk(contactFieldService.insertContactField(parem));
+        return ApiRespUtils.ok(contactFieldService.insertContactField(parem));
     }
 
     /**
@@ -75,7 +75,7 @@ public class ContactFieldController {
     @PutMapping("/update")
     public ApiRespVO updateContactField(@RequestBody UpdateContactFieldModel parem) {
         parem.verifyParam();
-        return ApiRespUtils.getApiRespOfOk(contactFieldService.updateContactField(parem));
+        return ApiRespUtils.ok(contactFieldService.updateContactField(parem));
     }
 
     /**
@@ -88,7 +88,7 @@ public class ContactFieldController {
         if (map.get("id") == null) {
             throw new ParamException(RespErrCodeEnum.INVALID_PARAMS.getCode(), RespErrCodeEnum.INVALID_PARAMS.getMsg());
         }
-        return ApiRespUtils.getApiRespOfOk(contactFieldService.deleteContactField(map.get("id")));
+        return ApiRespUtils.ok(contactFieldService.deleteContactField(map.get("id")));
     }
 
     /**
@@ -101,7 +101,7 @@ public class ContactFieldController {
         if (parem.getUpdate() == null) {
             throw new ParamException(RespErrCodeEnum.INVALID_PARAMS.getCode(), RespErrCodeEnum.INVALID_PARAMS.getMsg());
         }
-        return ApiRespUtils.getApiRespOfOk(contactFieldService.BatchUpdateContactField(parem));
+        return ApiRespUtils.ok(contactFieldService.BatchUpdateContactField(parem));
     }
 
     /**
@@ -121,6 +121,6 @@ public class ContactFieldController {
             throw new ParamException("status 超出范围");
         }
 
-        return ApiRespUtils.getApiRespOfOk(contactFieldService.updateStatus(id, status));
+        return ApiRespUtils.ok(contactFieldService.updateStatus(id, status));
     }
 }

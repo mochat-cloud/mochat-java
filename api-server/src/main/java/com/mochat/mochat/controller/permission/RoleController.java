@@ -39,7 +39,7 @@ public class RoleController {
      */
     @GetMapping("/select")
     public ApiRespVO select() {
-        return ApiRespUtils.getApiRespOfOk(roleService.roleList());
+        return ApiRespUtils.ok(roleService.roleList());
     }
 
     /**
@@ -50,7 +50,7 @@ public class RoleController {
     @PutMapping("/update")
     public ApiRespVO update(@RequestBody RoleUpdateDTO req) {
         roleService.updateRole(req);
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     /**
@@ -75,7 +75,7 @@ public class RoleController {
             throw new ParamException("roleId 不能为空");
         }
         roleService.removeById(roleId);
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     /**
@@ -86,7 +86,7 @@ public class RoleController {
     @PostMapping("/store")
     public ApiRespVO store(@RequestBody RoleStoreDTO req) {
         roleService.storeRole(req);
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     /**
@@ -107,7 +107,7 @@ public class RoleController {
         }
 
         roleService.updateRoleStatus(roleId, status);
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     /**
@@ -117,7 +117,7 @@ public class RoleController {
      */
     @GetMapping("/show")
     public ApiRespVO show(@NotNull(message = "角色 id 不能为空") Integer roleId) {
-        return ApiRespUtils.getApiRespOfOk(roleService.showRole(roleId));
+        return ApiRespUtils.ok(roleService.showRole(roleId));
     }
 
     /**
@@ -140,7 +140,7 @@ public class RoleController {
         List<Integer> menuIds = req.getJSONArray("menuIds").toJavaList(Integer.class);
 
         roleService.updateRoleMenu(roleId, menuIds);
-        return ApiRespUtils.getApiRespOfOk();
+        return ApiRespUtils.ok();
     }
 
     /**
@@ -150,7 +150,7 @@ public class RoleController {
      */
     @GetMapping("/permissionByUser")
     public ApiRespVO permissionByUser() {
-        return ApiRespUtils.getApiRespOfOk(menuService.menuListByUserId());
+        return ApiRespUtils.ok(menuService.menuListByUserId());
     }
 
     /**
@@ -160,7 +160,7 @@ public class RoleController {
      */
     @GetMapping("/permissionShow")
     public ApiRespVO permissionShow(@NotNull(message = "角色 id 不能为空") Integer roleId) {
-        return ApiRespUtils.getApiRespOfOk(menuService.showRoleMenu(roleId));
+        return ApiRespUtils.ok(menuService.showRoleMenu(roleId));
     }
 
     /**

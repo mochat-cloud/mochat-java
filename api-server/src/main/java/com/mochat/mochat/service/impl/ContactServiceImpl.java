@@ -41,7 +41,6 @@ import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import com.mochat.mochat.service.impl.medium.IMediumService;
 import com.mochat.mochat.service.workroom.IWorkRoomAutoPullService;
 import com.mochat.mochat.service.workroom.IWorkRoomService;
-import com.vdurmont.emoji.EmojiParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -782,7 +781,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
             int result1 = 0;
             for (WorkContactEntity workContactEntity :
                     diffContactList) {
-                workContactEntity.setName(EmojiParser.parseToAliases(workContactEntity.getName()));
+                workContactEntity.setName(workContactEntity.getName());
                 result1 = this.baseMapper.insert(workContactEntity);
             }
             if (result1 > 0) {
@@ -793,7 +792,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
             int result2 = 0;
             for (WorkContactEntity workContactEntity :
                     contacts) {
-                workContactEntity.setName(EmojiParser.parseToAliases(workContactEntity.getName()));
+                workContactEntity.setName(workContactEntity.getName());
                 result2 = this.baseMapper.updateById(workContactEntity);
             }
             if (result2 > 0) {
