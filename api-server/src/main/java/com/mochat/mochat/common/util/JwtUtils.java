@@ -2,10 +2,7 @@ package com.mochat.mochat.common.util;
 
 import com.mochat.mochat.common.constant.Const;
 import com.mochat.mochat.dao.entity.UserEntity;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -27,7 +24,7 @@ public final class JwtUtils {
         // 创建payload的私有声明（根据特定的业务需要添加，如果要拿这个做验证，一般是需要和jwt的接收方提前沟通好验证方式的）
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
-        claims.put(key_prefix, key_prefix);
+        claims.put(key_prefix, key);
         // 生成签名的时候使用的秘钥secret,这个方法本地封装了的，一般可以从本地配置文件中读取，切记这个秘钥不能外露哦。它就是你服务端的私钥，在任何场景都不应该流露出去。一旦客户端得知这个secret, 那就意味着客户端是可以自我签发jwt了。
 
         // 生成签发人
@@ -79,12 +76,15 @@ public final class JwtUtils {
      * 在这里可以使用官方的校验，我这里校验的是token中携带的密码于数据库一致的话就校验通过
      */
     public static Boolean isVerify(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(key)
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.get(key_prefix).equals(key);
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(key)
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.get(key_prefix).equals(key);
+        } catch (JwtException e) {
+            return false;
+        }
     }
 
 }

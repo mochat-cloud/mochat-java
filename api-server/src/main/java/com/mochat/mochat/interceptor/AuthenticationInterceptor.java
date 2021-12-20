@@ -3,8 +3,8 @@ package com.mochat.mochat.interceptor;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.mochat.mochat.common.annotion.LoginToken;
-import com.mochat.mochat.common.annotion.SkipPermission;
+import com.mochat.mochat.common.annotion.SkipVerityToken;
+import com.mochat.mochat.common.annotion.SkipVerityPermission;
 import com.mochat.mochat.common.em.RespErrCodeEnum;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
 import com.mochat.mochat.common.util.JwtUtils;
@@ -21,7 +21,6 @@ import com.mochat.mochat.service.permission.IRbacMenuService;
 import com.mochat.mochat.service.permission.IRbacRoleMenuService;
 import com.mochat.mochat.service.permission.IRbacRoleService;
 import com.mochat.mochat.service.permission.IRbacUserRoleService;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -60,7 +59,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     private IRbacMenuService menuService;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // 如果不是映射到方法直接通过
         if (!(handler instanceof HandlerMethod)) {
             return true;
@@ -68,40 +67,19 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
-        // 检查是否有LoginToken注释，有则跳过认证
-        if (method.isAnnotationPresent(LoginToken.class)) {
-            LoginToken loginToken = method.getAnnotation(LoginToken.class);
-            if (loginToken.required()) {
-                return true;
-            }
+
+        // 检查是否有 LoginToken 注释，有则跳过认证
+        if (method.isAnnotationPresent(SkipVerityToken.class)) {
+            return true;
         }
 
-        // 从 http 请求头中取出 token
-        String token = request.getHeader("Authorization");
-        // 如果token为空的情况下，返回非法token，禁止访问
-        if (!StringUtils.hasLength(token)) {
-            throw new AuthException(RespErrCodeEnum.AUTH_UNAUTHORIZED.getCode(), RespErrCodeEnum.AUTH_UNAUTHORIZED.getMsg());
-        } else {
-            try {
-                if (JwtUtils.isVerify(token)) {
-                    throw new AuthException(RespErrCodeEnum.AUTH_TOKEN_INVALID.getCode(), RespErrCodeEnum.AUTH_TOKEN_INVALID.getMsg());
-                } else {
-                    if (AccountService.isLogin()) {
-                        throw new AuthException(RespErrCodeEnum.TOKEN_INVALID.getCode(), RespErrCodeEnum.TOKEN_INVALID.getMsg());
-                    }
-                }
-            } catch (ExpiredJwtException e) {
-                throw new AuthException(RespErrCodeEnum.AUTH_SESSION_EXPIRED.getCode(), RespErrCodeEnum.AUTH_SESSION_EXPIRED.getMsg());
-            }
-        }
+        // 校验 Token
+        verifyToken(request);
 
         // 检查是否有 SkipPermission 注释，有则跳过权限验证
-        if (method.isAnnotationPresent(SkipPermission.class)) {
-            SkipPermission loginToken = method.getAnnotation(SkipPermission.class);
-            if (loginToken.required()) {
-                request.setAttribute("permission", ReqPerEnum.ALL);
-                return true;
-            }
+        if (method.isAnnotationPresent(SkipVerityPermission.class)) {
+            request.setAttribute("permission", ReqPerEnum.ALL);
+            return true;
         }
 
         String requestUri = request.getRequestURI();
@@ -115,13 +93,29 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-
-    }
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {}
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        //response.setContentType("application/json;charset=utf-8");
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {}
+
+    private void verifyToken(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+
+        if (!StringUtils.hasLength(token)) {
+            // Token 为空
+            throw new AuthException(RespErrCodeEnum.AUTH_UNAUTHORIZED);
+        }
+
+        if (!JwtUtils.isVerify(token)) {
+            // Token 非法
+            throw new AuthException(RespErrCodeEnum.AUTH_TOKEN_INVALID);
+        }
+
+        if (!AccountService.isLogin()) {
+            // Token 失效
+            throw new AuthException(RespErrCodeEnum.AUTH_SESSION_EXPIRED);
+        }
+
     }
 
     /**

@@ -117,20 +117,4 @@ public class RedisConfig {
     public ZSetOperations<String, Object> zSetOperations(RedisTemplate<String, Object> redisTemplate) {
         return redisTemplate.opsForZSet();
     }
-
-
-    //@Autowired
-    private RedisTemplate<String, Object> template;
-    //public void test001() {
-    //   ValueOperations<String, Object> redisString = template.opsForValue();
-    //   // SET key value: 设置指定 key 的值
-    //   redisString.set("strKey1", "hello spring boot redis");
-    //   // GET key: 获取指定 key 的值
-    //   String value = (String) redisString.get("strKey1");
-    //   System.out.println(value);
-    //
-    //   redisString.set("strKey2", new User("ID10086", "theName", 11));
-    //   User user = (User) redisString.get("strKey2");
-    //   System.out.println(user);
-    //}　
 }

@@ -3,10 +3,10 @@ package com.mochat.mochat.controller.sidebar;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.ServiceException;
-import com.mochat.mochat.common.annotion.LoginToken;
+import com.mochat.mochat.common.annotion.SkipVerityToken;
 import com.mochat.mochat.common.util.JwtUtils;
 import com.mochat.mochat.common.util.RSAUtils;
-import com.mochat.mochat.common.util.RedisUtil;
+import com.mochat.mochat.common.util.RedisUtils;
 import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
@@ -66,7 +66,7 @@ public class AgentController {
      */
     @GetMapping("/{filename:.+}")
     @ResponseBody
-    @LoginToken
+    @SkipVerityToken
     public ResponseEntity<String> getContentByVerifyFileName(@PathVariable String filename) {
         String key = filename.replaceAll("WW_verify_", "");
         key = key.replaceAll(".txt", "");
@@ -79,7 +79,7 @@ public class AgentController {
      * @param act          跳转回本页面时带的自定义参数，如客户标识，素材库标识
      */
     @GetMapping("/agent/oauth")
-    @LoginToken
+    @SkipVerityToken
     public ApiRespVO oauth(
             @NotNull(message = "应用 ID 不能为空") Integer agentId,
             @RequestParam(defaultValue = "0") String isJsRedirect,
@@ -121,7 +121,7 @@ public class AgentController {
      * @param code         企业微信回调时返回值
      */
     @GetMapping("/agent/oauth/callback")
-    @LoginToken
+    @SkipVerityToken
     public void oauth(
             @NotNull(message = "应用 ID 不能为空") Integer agentId,
             @RequestParam(defaultValue = "0") String isJsRedirect,
@@ -146,7 +146,7 @@ public class AgentController {
             throw new CommonException(100013, "登录失败,用户不存在");
         }
         String token = JwtUtils.createToken(36000000, userEntityList);
-        RedisUtil.set("mc:user.token" + token, "1");
+        RedisUtils.set("mc:user.token" + token, "1");
         AccountService.updateCorpIdAndEmployeeId(workEmployeeEntity.getLogUserId(), workEmployeeEntity.getCorpId(), workEmployeeEntity.getId());
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("corpId", corpId);
@@ -164,7 +164,7 @@ public class AgentController {
     }
 
     @GetMapping("/wxJsSdk/config")
-    @LoginToken
+    @SkipVerityToken
     public ApiRespVO wxJSConfig(
             @NotNull(message = "企业 ID 无效") Integer corpId,
             @RequestParam(defaultValue = "") String uriPath,

@@ -2,7 +2,7 @@ package com.mochat.mochat.service;
 
 import com.mochat.mochat.common.em.RespErrCodeEnum;
 import com.mochat.mochat.common.util.JwtUtils;
-import com.mochat.mochat.common.util.RedisUtil;
+import com.mochat.mochat.common.util.RedisUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.UserEntity;
@@ -76,7 +76,7 @@ public class AccountService {
      * @description 通过用户 id 获取用户关联企业 id
      */
     public static Integer getCorpIdByUserId(int userId) {
-        Integer corpId = (Integer) RedisUtil.get(String.format(REDIS_PREFIX_CORP, userId));
+        Integer corpId = (Integer) RedisUtils.get(String.format(REDIS_PREFIX_CORP, userId));
         if (corpId == null || corpId < 1) {
             corpId = getNewId(userId, TYPE_CORP_ID);
         }
@@ -103,7 +103,7 @@ public class AccountService {
      */
     public static Integer getEmpId() {
         int userId = getUserId();
-        Integer empId = (Integer) RedisUtil.get(String.format(REDIS_PREFIX_EMP, userId));
+        Integer empId = (Integer) RedisUtils.get(String.format(REDIS_PREFIX_EMP, userId));
         if (empId == null || empId < 1) {
             empId = getNewId(userId, TYPE_EMPLOYEE_ID);
         }
@@ -137,8 +137,8 @@ public class AccountService {
     }
 
     /**
-     * @description: 判断是否登出
-     * @return:
+     * @description: 是否登录
+     * @return: true 已登录, false 未登录
      * @author: Huayu
      * @time: 2020/12/29 18:27
      */
@@ -149,7 +149,7 @@ public class AccountService {
             String token = request.getHeader("Authorization");
             if (StringUtils.hasLength(token)) {
                 token = token.substring(token.indexOf(" ") + 1);
-                String value = (String) RedisUtil.get("mc:user.token" + token);
+                String value = (String) RedisUtils.get("mc:user.token" + token);
                 return StringUtils.hasLength(value);
             }
         }
@@ -176,8 +176,8 @@ public class AccountService {
         }
 
         WorkEmployeeEntity entity = employeeList.get(0);
-        RedisUtil.set(String.format(REDIS_PREFIX_CORP, userId), entity.getCorpId());
-        RedisUtil.set(String.format(REDIS_PREFIX_EMP, userId), entity.getId());
+        RedisUtils.set(String.format(REDIS_PREFIX_CORP, userId), entity.getCorpId());
+        RedisUtils.set(String.format(REDIS_PREFIX_EMP, userId), entity.getId());
         switch (type) {
             case TYPE_CORP_ID:
                 return entity.getCorpId();
@@ -189,12 +189,12 @@ public class AccountService {
     }
 
     public static void updateCorpIdAndEmployeeId(int userId, int copId, int employeeId) {
-        RedisUtil.set(String.format(REDIS_PREFIX_CORP, userId), copId);
-        RedisUtil.set(String.format(REDIS_PREFIX_EMP, userId), employeeId);
+        RedisUtils.set(String.format(REDIS_PREFIX_CORP, userId), copId);
+        RedisUtils.set(String.format(REDIS_PREFIX_EMP, userId), employeeId);
     }
 
     public static void updateCorpId(int copId) {
-        RedisUtil.set(String.format(REDIS_PREFIX_CORP, getUserId()), copId);
+        RedisUtils.set(String.format(REDIS_PREFIX_CORP, getUserId()), copId);
     }
 
     /**
@@ -204,10 +204,10 @@ public class AccountService {
      */
     public static int getTenantId() {
         int userId = getUserId();
-        Integer tenantId = (Integer) RedisUtil.get(String.format(REDIS_PREFIX_TENANT, userId));
+        Integer tenantId = (Integer) RedisUtils.get(String.format(REDIS_PREFIX_TENANT, userId));
         if (tenantId == null || tenantId < 1) {
             tenantId = getNewTenantId(userId);
-            RedisUtil.set(String.format(REDIS_PREFIX_TENANT, userId), tenantId);
+            RedisUtils.set(String.format(REDIS_PREFIX_TENANT, userId), tenantId);
         }
         return tenantId;
     }
@@ -217,7 +217,7 @@ public class AccountService {
         if (Objects.isNull(userEntity)) {
             throw new CommonException("用户不存在");
         }
-        RedisUtil.set(String.format(REDIS_PREFIX_TENANT, userId), userEntity.getTenantId());
+        RedisUtils.set(String.format(REDIS_PREFIX_TENANT, userId), userEntity.getTenantId());
         return userEntity.getTenantId();
     }
 

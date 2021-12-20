@@ -2,7 +2,7 @@ package com.mochat.mochat.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.mochat.mochat.common.annotion.LoginToken;
+import com.mochat.mochat.common.annotion.SkipVerityToken;
 import com.mochat.mochat.common.util.MessageUtil;
 import com.mochat.mochat.dao.entity.CorpEntity;
 import com.mochat.mochat.dao.mapper.corp.CorpMapper;
@@ -74,7 +74,7 @@ public class WechatCalBkController {
      * @time: 2020/11/9 16:52
      */
     @GetMapping(value = "/callback", produces = {"text/html"})
-    @LoginToken
+    @SkipVerityToken
     public String verifyURL(String msg_signature,
                             String timestamp,
                             String nonce,
@@ -120,7 +120,7 @@ public class WechatCalBkController {
      * @return success
      */
     @PostMapping(value = "/callback")
-    @LoginToken
+    @SkipVerityToken
     public String callback(@RequestBody String requestBody, String msg_signature, String timestamp, String nonce, String cid) throws Exception {
 
         log.debug("<<<<<<<<< requestBody: " + requestBody);

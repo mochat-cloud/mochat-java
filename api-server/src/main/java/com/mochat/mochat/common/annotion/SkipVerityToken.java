@@ -15,6 +15,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LoginToken {
+public @interface SkipVerityToken {
     boolean required() default true;
 }

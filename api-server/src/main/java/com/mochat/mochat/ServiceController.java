@@ -9,7 +9,7 @@
 
 package com.mochat.mochat;
 
-import com.mochat.mochat.common.annotion.LoginToken;
+import com.mochat.mochat.common.annotion.SkipVerityToken;
 import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.model.ApiRespVO;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class ServiceController extends RuntimeException {
 
     @RequestMapping("/health")
-    @LoginToken
+    @SkipVerityToken
     public ApiRespVO health() {
         return ApiRespUtils.ok();
     }
 
     @RequestMapping(value = "health1")
-    @LoginToken
+    @SkipVerityToken
     public String health1(@RequestParam(value = "id") Integer id) {
         return null;
     }
