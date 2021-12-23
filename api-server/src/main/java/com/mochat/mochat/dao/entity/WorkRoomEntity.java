@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/2 5:07 下午
  * @description mc_work_room (客户群表)
  */

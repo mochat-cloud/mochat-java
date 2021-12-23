@@ -1,4 +1,4 @@
-package com.mochat.mochat.service.businesslog;
+package com.mochat.mochat.service.business;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class BusinessLogServiceImpl extends ServiceImpl<BusinessLogMapper, BusinessLogEntity> implements IBusinessLogService {
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 10:38 上午
      * @description 业务日志保存
      *
@@ -40,7 +40,7 @@ public class BusinessLogServiceImpl extends ServiceImpl<BusinessLogMapper, Busin
 
     /**
      * @param eventEnumList 业务类型列表
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 10:44 上午
      * @description 获取本人创建或修改的业务 id 列表
      */

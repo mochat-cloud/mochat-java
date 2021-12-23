@@ -1,6 +1,6 @@
 package com.mochat.mochat.model.workroom;
 
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class WorkRoomIndexModel extends RequestPage {
+public class WorkRoomIndexModel extends ReqPageDto {
     private Integer roomGroupId;
     private String workRoomName;
     private String workRoomOwnerId;

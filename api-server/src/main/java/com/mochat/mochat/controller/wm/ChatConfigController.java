@@ -1,9 +1,9 @@
 package com.mochat.mochat.controller.wm;
 
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.model.RequestPage;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ReqPageDto;
+import com.mochat.mochat.common.api.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.model.wm.ReqCorpStoreDTO;
 import com.mochat.mochat.model.wm.ReqStepUpdateDTO;
 import com.mochat.mochat.service.impl.ICorpService;
@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/2 11:05 上午
  * @description 会话内容存档配置
  */
@@ -42,8 +42,8 @@ public class ChatConfigController {
      * @info 因二期权限管理需求, 本人只能查看本公司的信息, 所属其他公司信息查看需要切换公司
      */
     @GetMapping(value = "corpIndex")
-    public ApiRespVO getCorpList(String corpName, RequestPage requestPage, @RequestAttribute ReqPerEnum permission) {
-        return ApiRespUtils.getApiRespByPage(corpService.getCorpPageList(corpName, requestPage, permission));
+    public ApiRespVO getCorpList(String corpName, ReqPageDto reqPageDto, @RequestAttribute ReqPerEnum permission) {
+        return ApiRespUtils.okPage(corpService.getCorpPageList(corpName, reqPageDto, permission));
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.mochat.mochat.common.em.workmessage;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/11/27 9:49 上午
  * @description 会话对象类型
  */

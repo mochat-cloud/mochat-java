@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mochat.mochat.common.em.RespErrCodeEnum;
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import com.mochat.mochat.common.util.DateUtils;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.UserEntity;
@@ -35,7 +35,7 @@ public class RbacMenuServiceImpl extends ServiceImpl<RbacMenuMapper, McRbacMenuE
 
     /**
      * @param req
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/11 10:19 上午
      * @description 菜单管理 - 修改菜单
      */
@@ -84,7 +84,7 @@ public class RbacMenuServiceImpl extends ServiceImpl<RbacMenuMapper, McRbacMenuE
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/11 10:47 上午
      * @description 更新菜单操作人信息
      */
@@ -101,7 +101,7 @@ public class RbacMenuServiceImpl extends ServiceImpl<RbacMenuMapper, McRbacMenuE
     }
 
     @Override
-    public Page<MenuPageItemVO> menuListPage(String name, RequestPage page) {
+    public Page<MenuPageItemVO> menuListPage(String name, ReqPageDto page) {
         Page<McRbacMenuEntity> menuEntityPage = ApiRespUtils.initPage(page);
         LambdaQueryChainWrapper<McRbacMenuEntity> wrapper = lambdaQuery();
         wrapper.select(McRbacMenuEntity::getId);
@@ -397,7 +397,7 @@ public class RbacMenuServiceImpl extends ServiceImpl<RbacMenuMapper, McRbacMenuE
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 4:24 下午
      * @description 角色权限查看
      */

@@ -1,11 +1,11 @@
 package com.mochat.mochat.controller.contact;
 
 import com.alibaba.fastjson.JSONObject;
-import com.mochat.mochat.common.model.RequestPage;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ReqPageDto;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.job.sync.WorkContactTagSyncLogic;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.impl.IWorkContactTagService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotNull;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/14 6:21 下午
  * @description 客户标签管理
  */
@@ -35,8 +35,8 @@ public class WorkContactTagController {
      * 获取标签列表
      */
     @GetMapping("/index")
-    public ApiRespVO getTagList(Integer groupId, RequestPage requestPage) {
-        return ApiRespUtils.ok(workContactTagService.getTagList(groupId, requestPage));
+    public ApiRespVO getTagList(Integer groupId, ReqPageDto reqPageDto) {
+        return ApiRespUtils.ok(workContactTagService.getTagList(groupId, reqPageDto));
     }
 
     /**

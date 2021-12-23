@@ -1,8 +1,8 @@
 package com.mochat.mochat.controller.workroom;
 
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.dao.entity.WorkRoomEntity;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.model.workroom.WorkContactRoomIndexReq;
 import com.mochat.mochat.service.workroom.IWorkRoomService;
 import org.springframework.beans.factory.annotation.Autowired;

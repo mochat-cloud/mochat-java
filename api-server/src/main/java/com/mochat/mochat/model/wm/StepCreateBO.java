@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/11/25 2:19 下午
  * @description 会话内容存档配置 - 微信后台配置-步骤页面
  */

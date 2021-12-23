@@ -17,7 +17,7 @@ import com.mochat.mochat.common.util.FileUtils;
 import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.common.util.ali.AliyunOssUtils;
 import com.mochat.mochat.common.util.emp.DownUploadQueueUtils;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.dao.entity.*;
 import com.mochat.mochat.dao.mapper.WorkEmployeeMapper;
@@ -508,7 +508,7 @@ public class WorkEmployeeServiceImpl extends ServiceImpl<WorkEmployeeMapper, Wor
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 11:19 上午
      * @description 权限管理查询条件配置
      */

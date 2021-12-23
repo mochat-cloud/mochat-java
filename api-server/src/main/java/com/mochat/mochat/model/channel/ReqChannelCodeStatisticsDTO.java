@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/2/23 11:10 上午
  * @description 渠道码 - 统计分页数据参数
  */

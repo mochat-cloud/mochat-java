@@ -168,7 +168,7 @@ public class SubsystemServiceImpl extends ServiceImpl<SubSystemMapper, UserEntit
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 11:19 上午
      * @description 权限管理查询条件配置
      */

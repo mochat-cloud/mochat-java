@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/5/8 9:49 上午
  * @description 客户标签异步服务
  */
@@ -39,7 +39,7 @@ public class WorkContactTagSyncLogic {
     private IContactService contactService;
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/5/10 10:54 上午
      * @description 同步客户标签
      */
@@ -49,7 +49,7 @@ public class WorkContactTagSyncLogic {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/5/12 5:33 下午
      * @description 给客户的企业微信添加标签
      */
@@ -59,7 +59,7 @@ public class WorkContactTagSyncLogic {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/5/12 5:33 下午
      * @description 删除添加给客户企业微信的标签
      */

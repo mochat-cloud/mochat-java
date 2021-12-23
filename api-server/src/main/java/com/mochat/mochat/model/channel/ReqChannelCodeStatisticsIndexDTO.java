@@ -1,7 +1,7 @@
 package com.mochat.mochat.model.channel;
 
 import com.mochat.mochat.common.em.channel.ReqStatisticsIndexEnum;
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import com.mochat.mochat.config.ex.ParamException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,13 +11,13 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/2/23 11:10 上午
  * @description 渠道码 - 统计分页数据参数
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ReqChannelCodeStatisticsIndexDTO extends RequestPage {
+public class ReqChannelCodeStatisticsIndexDTO extends ReqPageDto {
 
     /**
      * 渠道码 ID

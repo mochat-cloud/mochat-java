@@ -2,17 +2,17 @@ package com.mochat.mochat.controller;
 
 import com.mochat.mochat.common.em.RespErrCodeEnum;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import com.mochat.mochat.common.util.DateUtils;
 import com.mochat.mochat.common.util.WxApiUtils;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.dao.entity.CorpDataEntity;
 import com.mochat.mochat.dao.entity.CorpEntity;
 import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
 import com.mochat.mochat.dao.entity.wm.WorkMsgConfigEntity;
 import com.mochat.mochat.job.sync.WorkEmpServiceSyncLogic;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.model.corp.CorpDataVO;
 import com.mochat.mochat.model.properties.ChatToolProperties;
 import com.mochat.mochat.service.AccountService;
@@ -69,8 +69,8 @@ public class CorpController {
      * @info 因二期权限管理需求, 本人只能查看本公司的信息, 所属其他公司信息查看需要切换公司
      */
     @GetMapping(value = "/corp/index")
-    public ApiRespVO getCorpList(String corpName, RequestPage requestPage, @RequestAttribute ReqPerEnum permission) {
-        return ApiRespUtils.getApiRespByPage(corpServiceImpl.getCorpPageList(corpName, requestPage, permission));
+    public ApiRespVO getCorpList(String corpName, ReqPageDto reqPageDto, @RequestAttribute ReqPerEnum permission) {
+        return ApiRespUtils.okPage(corpServiceImpl.getCorpPageList(corpName, reqPageDto, permission));
     }
 
     /**
@@ -208,13 +208,12 @@ public class CorpController {
      */
     @GetMapping(value = "/corp/show")
     public ApiRespVO showCorp(@NotBlank(message = "企业ID不能为空") String corpId) {
-        ApiRespVO apiRespVO = null;
         CorpEntity corpEntity = corpServiceImpl.getById(Integer.valueOf(corpId));
         if (corpEntity == null) {
-            apiRespVO = new ApiRespVO(RespErrCodeEnum.INVALID_PARAMS, null);
-            //return JSONObject.toJSONString(apiRespCodeResp);
+            return ApiRespUtils.ex(RespErrCodeEnum.INVALID_PARAMS);
         }
-        Map<String, String> listMap = new HashMap<String, String>();
+
+        Map<String, String> listMap = new HashMap<>();
         listMap.put("corpId", corpEntity.getCorpId().toString());
         listMap.put("corpName", corpEntity.getCorpName());
         listMap.put("wxCorpId", corpEntity.getWxCorpId());
@@ -224,7 +223,6 @@ public class CorpController {
         listMap.put("token", corpEntity.getToken());
         listMap.put("encodingAesKey", corpEntity.getEncodingAesKey());
         listMap.put("socialCode", corpEntity.getSocialCode());
-        List<Map> listPage = new ArrayList<Map>();
         logger.info("企业微信授权 - 详情<<<<<<<<<" + ApiRespUtils.ok(listMap));
         return ApiRespUtils.ok(listMap);
     }

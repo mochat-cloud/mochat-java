@@ -22,7 +22,7 @@ public interface IWorkContactService extends IService<WorkContactEntity> {
     boolean createAndSyncContact(int corpId, int empId, String wxEmpId, String wxContactId);
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/5/12 5:14 下午
      * @description 增量添加客户标签
      */

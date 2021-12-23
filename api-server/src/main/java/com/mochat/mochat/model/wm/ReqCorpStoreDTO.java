@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.Range;
 import javax.validation.constraints.NotNull;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/1 10:50 上午
  * @description corpStore 接口请求参数
  */

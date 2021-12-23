@@ -1,10 +1,10 @@
 package com.mochat.mochat.controller.workroom;
 
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ReqPageDto;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.workroom.WorkRoomGroupEntity;
-import com.mochat.mochat.model.ApiRespVO;
-import com.mochat.mochat.service.AccountService;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.service.workroom.IWorkRoomGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -33,11 +33,8 @@ public class WorkRoomGroupController {
      * @time: 2020/12/8 17:07
      */
     @GetMapping("index")
-    public ApiRespVO WorkRoomGroupIndex(@RequestParam(value = "page")Integer page, @RequestParam(value = "perPage")Integer perPage){
-        Integer pageNo = (page.equals(""))?0:page-1;
-        Integer pageCount = (perPage.equals(""))?10:perPage;
-        Integer corpIds = AccountService.getCorpId();        //分页数据
-        return ApiRespUtils.ok(workRoomGroupServiceImpl.getWorkRoomGroupList(String.valueOf(corpIds),pageNo,pageCount));
+    public ApiRespVO WorkRoomGroupIndex(ReqPageDto reqPageDto){
+        return ApiRespUtils.okPage(workRoomGroupServiceImpl.getWorkRoomGroupList(reqPageDto));
     }
 
     /**

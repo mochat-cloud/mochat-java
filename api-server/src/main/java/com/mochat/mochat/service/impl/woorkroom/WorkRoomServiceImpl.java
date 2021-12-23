@@ -9,11 +9,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
 import com.mochat.mochat.common.em.workcontactroom.JoinSceneEnum;
 import com.mochat.mochat.common.em.workcontactroom.Status;
-import com.mochat.mochat.common.model.RequestPage;
 import com.mochat.mochat.common.util.DateUtils;
 import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.common.util.ali.AliyunOssUtils;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.dao.entity.*;
 import com.mochat.mochat.dao.entity.workroom.WorkRoomGroupEntity;
 import com.mochat.mochat.dao.mapper.workroom.WorkRoomMapper;
@@ -172,7 +171,7 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 11:19 上午
      * @description 权限管理查询条件配置
      */
@@ -753,17 +752,11 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
                 }
             }
         }
+
         //组装分页数据
-        Page<WorkContactRoomIndex> page = new Page<WorkContactRoomIndex>();
-        Integer pageNum = workContactRoomIndexReq.getPage();
-        pageNum = (pageNum == null || pageNum.equals("")) ? 1 : pageNum;
-        Integer perPage = workContactRoomIndexReq.getPerPage();
-        perPage = (perPage == null || perPage.equals("")) ? 10 : perPage;
-        RequestPage requestPage = new RequestPage(pageNum, perPage);
-        ApiRespUtils.initPage(page, requestPage);
+        Page<WorkContactRoomIndex> page = ApiRespUtils.initPage(workContactRoomIndexReq);
         page = page.setRecords(workContactRoomIndexList);
         workContactRoomIndexResp = workContactRoomIndexResp.getInstance(page, workContactRoomIndexResp);
-        //workContactRoomIndexResp.setRespPageVO(respPageVO);
         return workContactRoomIndexResp;
     }
 

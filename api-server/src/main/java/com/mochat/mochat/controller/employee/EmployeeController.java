@@ -1,9 +1,9 @@
 package com.mochat.mochat.controller.employee;
 
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.job.sync.WorkEmpServiceSyncLogic;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.model.emp.EmpIndexDTO;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/4 2:39 下午
  * @description 企业成员
  */
@@ -40,7 +40,7 @@ public class EmployeeController {
      */
     @GetMapping("/index")
     public ApiRespVO index(EmpIndexDTO req, @RequestAttribute ReqPerEnum permission) {
-        return ApiRespUtils.getApiRespByPage(employeeService.index(req, permission));
+        return ApiRespUtils.okPage(employeeService.index(req, permission));
     }
 
     /**

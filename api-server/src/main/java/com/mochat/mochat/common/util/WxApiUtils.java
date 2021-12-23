@@ -16,7 +16,7 @@ import java.util.*;
 import static com.mochat.mochat.common.constant.WxApiConst.*;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/11 4:29 下午
  * @description 微信 api 调用工具类
  */
@@ -640,7 +640,7 @@ public class WxApiUtils {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/23 4:44 下午
      * @description 获取指定的应用详情
      */

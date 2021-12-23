@@ -1,6 +1,8 @@
 package com.mochat.mochat.config.ex;
 
 import com.mochat.mochat.common.em.RespErrCodeEnum;
+import com.mochat.mochat.common.ex.BaseException;
+import com.mochat.mochat.common.ex.IHttpCode;
 
 /**
  * @description:

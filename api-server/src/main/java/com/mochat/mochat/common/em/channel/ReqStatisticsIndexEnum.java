@@ -8,13 +8,12 @@
 
 package com.mochat.mochat.common.em.channel;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.mochat.mochat.common.em.IEnum;
+import com.baomidou.mybatisplus.core.enums.IEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/2/23 4:40 下午
  * @description 渠道码 - 统计筛选类型枚举
  */
@@ -25,7 +24,6 @@ public enum ReqStatisticsIndexEnum implements IEnum<Integer> {
     WEEK(2),
     MONTH(3);
 
-    @EnumValue
     private Integer value;
 
     @Override
@@ -33,4 +31,14 @@ public enum ReqStatisticsIndexEnum implements IEnum<Integer> {
         return value;
     }
 
+    /**
+     * Fastjson Enum 序列化取值
+     *
+     * @author: Ypw / ypwcode@163.com
+     * @time: 2021/12/23
+     */
+    @Override
+    public String toString() {
+        return value.toString();
+    }
 }

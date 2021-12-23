@@ -1,6 +1,8 @@
 package com.mochat.mochat.model.sensitiveword;
 
+import com.mochat.mochat.common.api.ReqPageDto;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @description:敏感词库列表
@@ -8,9 +10,8 @@ import lombok.Data;
  * @time: 2021/1/27 11:44
  */
 @Data
-public class ReqSensitiveWordIndex {
+@EqualsAndHashCode
+public class ReqSensitiveWordIndex extends ReqPageDto {
     private String keyWords;//关键字
     private Integer groupId;//分组id
-    private Integer page;//页码
-    private Integer perPage;//每页条数
 }

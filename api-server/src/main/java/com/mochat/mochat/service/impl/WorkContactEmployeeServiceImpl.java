@@ -10,7 +10,7 @@ import com.mochat.mochat.common.em.workcontact.AddWayEnum;
 import com.mochat.mochat.common.em.workcontact.EventEnum;
 import com.mochat.mochat.common.em.workcontactemployee.Status;
 import com.mochat.mochat.common.util.DateUtils;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.WorkContactEmployeeEntity;
@@ -251,7 +251,7 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/23 4:08 下午
      * @description 获取渠道码 - 统计分页数据
      */
@@ -407,7 +407,7 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
 
     /**
      * @param req
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/25 11:30 上午
      * @description 渠道码 - 统计折线图
      */

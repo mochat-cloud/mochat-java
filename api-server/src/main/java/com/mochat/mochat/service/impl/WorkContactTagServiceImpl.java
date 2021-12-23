@@ -6,10 +6,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mochat.mochat.common.em.workupdatetime.TypeEnum;
-import com.mochat.mochat.common.model.RequestPage;
-import com.mochat.mochat.common.model.RespPageVO;
+import com.mochat.mochat.common.api.ReqPageDto;
+import com.mochat.mochat.common.api.RespPageDataVO;
 import com.mochat.mochat.common.util.WxApiUtils;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.WorkContactTagEntity;
 import com.mochat.mochat.dao.entity.WorkContactTagGroupEntity;
@@ -181,11 +181,11 @@ public class WorkContactTagServiceImpl extends ServiceImpl<WorkContactTagMapper,
      * 客户标签管理 - 列表
      */
     @Override
-    public Map<String, Object> getTagList(Integer tagGroupId, RequestPage requestPage) {
+    public Map<String, Object> getTagList(Integer tagGroupId, ReqPageDto reqPageDto) {
         int corpId = AccountService.getCorpId();
         tagGroupId = tagGroupId == null ? 0 : tagGroupId;
 
-        Page<WorkContactTagEntity> page = ApiRespUtils.initPage(requestPage);
+        Page<WorkContactTagEntity> page = ApiRespUtils.initPage(reqPageDto);
         lambdaQuery().select(WorkContactTagEntity::getId, WorkContactTagEntity::getName)
                 .eq(WorkContactTagEntity::getCorpId, corpId)
                 .eq(WorkContactTagEntity::getContactTagGroupId, tagGroupId)
@@ -206,9 +206,9 @@ public class WorkContactTagServiceImpl extends ServiceImpl<WorkContactTagMapper,
 
         String syncTagTime = workUpdateTimeService.getLastUpdateTime(TypeEnum.TAG);
 
-        RespPageVO respPageVO = RespPageVO.getInstance(page);
+        RespPageDataVO respPageDataVO = RespPageDataVO.getInstance(page);
         Map<String, Object> map = new HashMap<>(3);
-        map.put("page", respPageVO.getPage());
+        map.put("page", respPageDataVO.getPage());
         map.put("list", voList);
         map.put("syncTagTime", syncTagTime);
 

@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mochat.mochat.common.em.workmessage.MsgTypeEnum;
 import com.mochat.mochat.common.util.DateUtils;
 import com.mochat.mochat.common.util.ali.AliyunOssUtils;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.common.util.wm.WorkMsgHelper;
 import com.mochat.mochat.dao.entity.WorkContactEntity;
 import com.mochat.mochat.dao.entity.WorkContactRoomEntity;
@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/11/25 5:45 下午
  * @description 运营-聊天记录业务实现
  */
@@ -99,8 +99,7 @@ public class ChatServiceImpl implements IChatService {
      */
     @Override
     public Page<ToUserInfoBO> getToUserInfoList(ReqToUsersDTO req) {
-        Page<ToUserInfoBO> page = new Page<>();
-        ApiRespUtils.initPage(page, req);
+        Page<ToUserInfoBO> page = ApiRespUtils.initPage(req);
 
         int toUserType = req.getToUsertype();
         switch (toUserType) {
@@ -140,7 +139,7 @@ public class ChatServiceImpl implements IChatService {
             }
         }
 
-        Page<WorkMsgIndexEntity> pageEntity = ApiRespUtils.transPage(page);
+        Page<WorkMsgIndexEntity> pageEntity = ApiRespUtils.initPage(req);
         pageEntity = workMsgIndexMapper.selectPage(pageEntity, wrapper);
         List<WorkMsgIndexEntity> workMsgIndexEntityList = pageEntity.getRecords();
 
@@ -219,7 +218,7 @@ public class ChatServiceImpl implements IChatService {
             }
         }
 
-        Page<WorkMsgIndexEntity> pageEntity = ApiRespUtils.transPage(page);
+        Page<WorkMsgIndexEntity> pageEntity = ApiRespUtils.initPage(req);
         pageEntity = workMsgIndexMapper.selectPage(pageEntity, wrapper);
         List<WorkMsgIndexEntity> workMsgIndexEntityList = pageEntity.getRecords();
 
@@ -301,7 +300,7 @@ public class ChatServiceImpl implements IChatService {
             wrapper.in("room_id", roomIds);
         }
 
-        Page<WorkContactRoomEntity> pageEntity = ApiRespUtils.transPage(page);
+        Page<WorkContactRoomEntity> pageEntity = ApiRespUtils.initPage(req);
         pageEntity = workContactRoomMapper.selectPage(pageEntity, wrapper);
         List<WorkContactRoomEntity> workContactRoomEntities = pageEntity.getRecords();
 
@@ -389,8 +388,7 @@ public class ChatServiceImpl implements IChatService {
     @Override
     public Page<IndexMsgBO> index(ReqMsgIndexDTO req) {
         int corpId = AccountService.getCorpId();
-        Page<IndexMsgBO> page = new Page<>();
-        ApiRespUtils.initPage(page, req);
+        Page<IndexMsgBO> page = ApiRespUtils.initPage(req);
 
         WorkEmployeeEntity fromEmployee = workEmployeeMapper.selectById(req.getWorkEmployeeId());
 

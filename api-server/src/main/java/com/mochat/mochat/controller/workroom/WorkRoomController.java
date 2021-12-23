@@ -3,13 +3,12 @@ package com.mochat.mochat.controller.workroom;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.model.RequestPage;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.WorkContactRoomEntity;
 import com.mochat.mochat.dao.entity.workroom.WorkRoomGroupEntity;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.model.workroom.WorkRoomIndexModel;
 import com.mochat.mochat.model.workroom.WorkRoomStatisticsIndexReq;
 import com.mochat.mochat.model.workroom.WorkRoomStatisticsIndexResp;
@@ -58,7 +57,7 @@ public class WorkRoomController {
      */
     @GetMapping("/index")
     public ApiRespVO workRoomIndex(WorkRoomIndexModel workRoomIndexModel, @RequestAttribute ReqPerEnum permission) {
-        return ApiRespUtils.getApiRespByPage(workRoomServiceImpl.getWorkRoomList(workRoomIndexModel, permission));
+        return ApiRespUtils.okPage(workRoomServiceImpl.getWorkRoomList(workRoomIndexModel, permission));
     }
 
     /**
@@ -172,17 +171,14 @@ public class WorkRoomController {
             total = 0;
             outTotal = 0;
         }
-        Page<WorkRoomStatisticsIndexResp> page = new Page<>();
-        RequestPage requestPage = new RequestPage();
-        requestPage.setPage(1);
-        requestPage.setPerPage(10);
-        ApiRespUtils.initPage(page, requestPage);
+
+        Page<WorkRoomStatisticsIndexResp> page = ApiRespUtils.initPage(workRoomStatisticsIndex);
         //根据时间排序
         List<WorkRoomStatisticsIndexResp> newSortList = workRoomStatisticsIndexRespList.stream().sorted(Comparator.comparing(WorkRoomStatisticsIndexResp::getTime))
                 .collect(Collectors.toList());
         page.setRecords(newSortList);
         page.setTotal(newSortList.size());
-        return ApiRespUtils.getApiRespByPage(page);
+        return ApiRespUtils.okPage(page);
     }
 
 

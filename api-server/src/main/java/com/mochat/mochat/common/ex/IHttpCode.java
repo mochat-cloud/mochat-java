@@ -1,5 +1,11 @@
-package com.mochat.mochat.config.ex;
+package com.mochat.mochat.common.ex;
 
+/**
+ * http 状态码接口
+ *
+ * @author: Ypw / ypwcode@163.com
+ * @time: 2021/12/21
+ */
 public interface IHttpCode {
 
     /**

@@ -1,7 +1,7 @@
 package com.mochat.mochat.model.wm;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/11/25 2:19 下午
  * @description 会话内容存档配置 - 企业信息查看
  */

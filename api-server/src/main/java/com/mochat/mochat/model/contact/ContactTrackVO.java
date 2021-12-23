@@ -3,7 +3,7 @@ package com.mochat.mochat.model.contact;
 import lombok.Data;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/2/19 4:51 下午
  * @description 客户详情接口 VO
  */

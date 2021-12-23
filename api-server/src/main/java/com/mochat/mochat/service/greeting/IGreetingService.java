@@ -2,7 +2,7 @@ package com.mochat.mochat.service.greeting;
 
 import com.alibaba.fastjson.JSONObject;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import com.mochat.mochat.dao.entity.greeting.GreetingEntity;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.Map;
 public interface IGreetingService {
 
 
-    Map<String, Object> handle(RequestPage page, ReqPerEnum permission);
+    Map<String, Object> handle(ReqPageDto page, ReqPerEnum permission);
 
     Integer createGreeting(GreetingEntity greetingEntity);
 

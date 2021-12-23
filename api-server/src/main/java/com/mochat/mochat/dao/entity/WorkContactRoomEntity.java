@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/2 5:16 下午
  * @description mc_work_contact (客户 - 客户群 关联表)
  */

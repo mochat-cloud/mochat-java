@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/11/13 3:16 下午
  * @description RAS 相关工具
  * @see #encryptByPubKey(String, String) 公钥加密
@@ -26,8 +26,8 @@ public class RSAUtils {
 
     private static final String ALGORITHM = "RSA";
     private static final String CHARSET = "UTF-8";
-    private static final int encryptLimit = 245;
-    private static final int decryptLimit = 256;
+    private static final int encryptLimit = 117;
+    private static final int decryptLimit = 128;
 
     /**
      * 公钥加密
@@ -80,7 +80,7 @@ public class RSAUtils {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2020/11/13 3:16 下午
      * @description 分段解密
      */
@@ -138,7 +138,7 @@ public class RSAUtils {
     /**
      * @param bytes 原 Byte 数组
      * @return Base64 字符串
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2020/11/13 2:55 下午
      * @description 原 byte 数组加密成 Base64 字符串
      */
@@ -149,7 +149,7 @@ public class RSAUtils {
     /**
      * @param str Base64 字符串
      * @return 原 byte 数组
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2020/11/13 2:55 下午
      * @description 解析 Base64 字符串
      */

@@ -1,18 +1,22 @@
 package com.mochat.mochat.common.em;
 
+import com.baomidou.mybatisplus.core.enums.IEnum;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
- * @author: yangpengwei
+ * 参数转换枚举
+ *
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/2/23 5:20 下午
- * @description 参数转换枚举
+ *
+ * 枚举类 需要实现接口 {@link IEnum}
  */
 @Component
 @SuppressWarnings("all")
-public class EnumConvertFactory implements ConverterFactory<String, IEnum> {
+public final class EnumConvertFactory implements ConverterFactory<String, IEnum> {
 
     @Override
     public <T extends IEnum> Converter<String, T> getConverter(Class<T> targetType) {

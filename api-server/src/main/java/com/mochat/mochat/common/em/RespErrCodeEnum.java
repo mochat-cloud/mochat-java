@@ -1,6 +1,6 @@
 package com.mochat.mochat.common.em;
 
-import com.mochat.mochat.config.ex.IHttpCode;
+import com.mochat.mochat.common.ex.IHttpCode;
 
 /**
  * 错误code

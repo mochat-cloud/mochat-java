@@ -17,7 +17,7 @@ import com.mochat.mochat.common.util.DateUtils;
 import com.mochat.mochat.common.util.FileUtils;
 import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.common.util.ali.AliyunOssUtils;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.*;
@@ -135,7 +135,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
     private IWorkRoomService roomService;
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/19 5:33 下午
      * @description 员工与客户的互动轨迹
      */
@@ -357,7 +357,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 11:19 上午
      * @description 权限管理查询条件配置
      */

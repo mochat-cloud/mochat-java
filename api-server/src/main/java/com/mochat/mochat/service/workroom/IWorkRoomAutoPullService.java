@@ -3,7 +3,7 @@ package com.mochat.mochat.service.workroom;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import com.mochat.mochat.dao.entity.WorkRoomAutoPullEntity;
 import com.mochat.mochat.model.workroom.ReqRoomAutoPullCreateDTO;
 import com.mochat.mochat.model.workroom.ReqRoomAutoPullUpdateDTO;
@@ -16,9 +16,9 @@ public interface IWorkRoomAutoPullService extends IService<WorkRoomAutoPullEntit
      * 获取自动拉群管理 - 列表
      *
      * @param qrcodeName  群活码名称[非必填]
-     * @param requestPage 分页参数[非必填]
+     * @param reqPageDto 分页参数[非必填]
      */
-    Page<WorkRoomAutoPullVO> getList(String qrcodeName, RequestPage requestPage, ReqPerEnum permission);
+    Page<WorkRoomAutoPullVO> getList(String qrcodeName, ReqPageDto reqPageDto, ReqPerEnum permission);
 
     /**
      * 自动拉群管理 - 创建提交

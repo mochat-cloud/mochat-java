@@ -11,16 +11,16 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mochat.mochat.common.em.businesslog.EventEnum;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.model.RequestPage;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ReqPageDto;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
 import com.mochat.mochat.dao.entity.greeting.GreetingEntity;
 import com.mochat.mochat.dao.entity.medium.MediumEntity;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.service.AccountService;
-import com.mochat.mochat.service.businesslog.IBusinessLogService;
+import com.mochat.mochat.service.business.IBusinessLogService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import com.mochat.mochat.service.greeting.IGreetingService;
 import com.mochat.mochat.service.impl.medium.IMediumService;
@@ -52,7 +52,7 @@ public class GreetingController {
      * @time: 2021/2/2 15:19
      */
     @GetMapping("/index")
-    public ApiRespVO greetingIndex(RequestPage page, @RequestAttribute ReqPerEnum permission) {
+    public ApiRespVO greetingIndex(ReqPageDto page, @RequestAttribute ReqPerEnum permission) {
         Map<String, Object> mapData = greetingServiceImpl.handle(page, permission);
         return ApiRespUtils.ok(mapData);
     }

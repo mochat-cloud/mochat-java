@@ -71,7 +71,7 @@ public class AccountService {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/5/7 3:27 下午
      * @description 通过用户 id 获取用户关联企业 id
      */
@@ -84,7 +84,7 @@ public class AccountService {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/5/7 3:27 下午
      * @description 通过员工 id 获取员工所属企业 id
      */
@@ -198,7 +198,7 @@ public class AccountService {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 2:52 下午
      * @description 获取用户的租户 id
      */

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/3/15 10:50 上午
  * @description 权限管理枚举 - 用于接口请求判断权限
  */

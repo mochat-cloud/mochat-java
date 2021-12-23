@@ -4,13 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mochat.mochat.common.model.PageModel;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
+import com.mochat.mochat.common.api.ReqPageDto;
+import com.mochat.mochat.common.api.RespPageVO;
 import com.mochat.mochat.dao.entity.WorkDeptEntity;
 import com.mochat.mochat.dao.entity.WorkEmployeeDepartmentEntity;
 import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
-import com.mochat.mochat.dao.entity.permission.McRbacRoleEntity;
-import com.mochat.mochat.dao.entity.permission.McRbacUserRoleEntity;
 import com.mochat.mochat.dao.mapper.WorkEmployeeDepartmentMapper;
 import com.mochat.mochat.model.dept.DeptPageItemVO;
 import com.mochat.mochat.model.dept.ReqDeptPageDTO;
@@ -55,7 +54,7 @@ public class WorkEmployeeDepartmentServiceImpl extends ServiceImpl<WorkEmployeeD
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 10:55 上午
      * @description 获取员工所在部门与子部门所有的成员 id 列表
      */
@@ -106,68 +105,31 @@ public class WorkEmployeeDepartmentServiceImpl extends ServiceImpl<WorkEmployeeD
     }
 
     @Override
-    public Map<String, Object> handleShowEmpData(Map<String, Object> map) {
-        //处理请求参数
-        String page = !map.get("page").equals("") ? map.get("page").toString() : "1";
-        String perPage = !map.get("perPage").equals("") ? map.get("perPage").toString() : "10";
-        List<WorkEmployeeEntity> workEmployeeEntityList = null;
-        //根据部门Id搜索
-        if (!map.get("departmentId").equals("")) {
-            //根据部门获取成员id
-            List<Integer> departmentIdList = new ArrayList();
-            departmentIdList.add(Integer.valueOf(map.get("departmentId").toString()));
-            List<WorkEmployeeDepartmentEntity> workEmployeeDepartmentEntityList = getDeptEmployeeList(departmentIdList);
-            if(workEmployeeDepartmentEntityList != null && workEmployeeDepartmentEntityList.size() > 0){
-                StringBuilder sb = new StringBuilder();
-                String empId = null;
-                for (WorkEmployeeDepartmentEntity workEmployeeDepartmentEntity :
-                        workEmployeeDepartmentEntityList) {
-                    empId = workEmployeeDepartmentEntity.getEmployeeId().toString();
-                    sb.append(empId).append(",");
-                }
-                String empIdArr = sb.substring(0, sb.length() - 1);
-                //查询数据
-                String clStr = "id,log_user_id,name,mobile";
-                workEmployeeEntityList = workEmployeeService.getWorkEmployeeList(page, perPage, clStr, empIdArr);
-            }
-            int totalPageNum = (workEmployeeEntityList == null ? 0 :workEmployeeEntityList.size() + Integer.valueOf(perPage) - 1) / Integer.valueOf(perPage);
-            map.put("page", new PageModel(Integer.valueOf(perPage), workEmployeeEntityList == null ? 0 :workEmployeeEntityList.size(), totalPageNum));
-        } else {
-            String clStr = "id,log_user_id,name,mobile";
-            workEmployeeEntityList = workEmployeeService.getWorkEmployeeList(page, perPage, clStr, null);
-            int totalPageNum = (workEmployeeEntityList == null ? 0 :workEmployeeEntityList.size() + Integer.valueOf(perPage) - 1) / Integer.valueOf(perPage);
-            map.put("page", new PageModel(Integer.valueOf(perPage), workEmployeeEntityList == null ? 0 :workEmployeeEntityList.size(), totalPageNum));
-        }
-        //数据处理
-        List<Map<String, Object>> mapList = null;
-        if(workEmployeeEntityList != null && workEmployeeEntityList.size() > 0){
-            Map<String, Object> mapData = null;
-            mapList = new ArrayList();
-            for (WorkEmployeeEntity workEmployeeEntity :
-                    workEmployeeEntityList) {
-                //根据用户id-获取角色名称
-                Integer userId = workEmployeeEntity.getId();
-                LambdaQueryChainWrapper<McRbacUserRoleEntity> mcRbacUserRoleWrapper = rbacUserRoleService.lambdaQuery();
-                mcRbacUserRoleWrapper.eq(McRbacUserRoleEntity::getUserId,userId);
-                mcRbacUserRoleWrapper.select(McRbacUserRoleEntity::getRoleId);
-                McRbacUserRoleEntity mcRbacUserRoleEntity = mcRbacUserRoleWrapper.one();
-                McRbacRoleEntity mcRbacRoleEntity = null;
-                if(mcRbacUserRoleEntity != null){
-                    LambdaQueryChainWrapper<McRbacRoleEntity> mcRbacRoleWrapper = rbacRoleService.lambdaQuery();
-                    mcRbacRoleWrapper.eq(McRbacRoleEntity::getId,mcRbacUserRoleEntity.getRoleId());
-                    mcRbacRoleEntity = mcRbacRoleWrapper.one();
-                }
-                mapData = new HashMap<String, Object>();
-                mapData.put("employeeId", workEmployeeEntity.getId());
-                mapData.put("employeeName", workEmployeeEntity.getName());
-                mapData.put("phone", workEmployeeEntity.getMobile());
-                mapData.put("roleName", mcRbacRoleEntity != null ? mcRbacRoleEntity.getName() : null);
-                mapList.add(mapData);
-            }
+    public Page<WorkEmployeeEntity> handleShowEmpData(String departmentId, ReqPageDto page) {
+        LambdaQueryChainWrapper<WorkEmployeeEntity> empWrapper = workEmployeeService.lambdaQuery();
+        if (StringUtils.hasLength(departmentId)) {
+            LambdaQueryChainWrapper<WorkEmployeeDepartmentEntity> wrapper = lambdaQuery();
+            wrapper.select(WorkEmployeeDepartmentEntity::getEmployeeId);
+            wrapper.eq(WorkEmployeeDepartmentEntity::getDepartmentId, departmentId);
+            Page<WorkEmployeeDepartmentEntity> page1 = ApiRespUtils.initPage(page);
+            wrapper.page(page1);
+            List<Integer> empIdList = page1.getRecords().stream()
+                    .map(WorkEmployeeDepartmentEntity::getEmployeeId)
+                    .collect(Collectors.toList());
 
+            if (empIdList.isEmpty()) {
+                return ApiRespUtils.initPage(page);
+            } else {
+                empWrapper.in(WorkEmployeeEntity::getId, empIdList);
+                List<WorkEmployeeEntity> employeeEntityList = empWrapper.list();
+                return ApiRespUtils.transPage(page1, employeeEntityList);
+            }
+        } else {
+            Page<WorkEmployeeEntity> page1 = ApiRespUtils.initPage(page);
+            empWrapper.eq(WorkEmployeeEntity::getCorpId, AccountService.getCorpId());
+            empWrapper.page(page1);
+            return page1;
         }
-        map.put("list", mapList);
-        return map;
     }
 
     @Override
@@ -358,7 +320,7 @@ public class WorkEmployeeDepartmentServiceImpl extends ServiceImpl<WorkEmployeeD
     @Override
     public List<WorkEmployeeDepartmentEntity> getDeptIdByEmpId(Integer id) {
         QueryWrapper<WorkEmployeeDepartmentEntity> workEmployeeDepartmentEntityQueryWrapper = new QueryWrapper();
-        workEmployeeDepartmentEntityQueryWrapper.eq("employee_id",id);
+        workEmployeeDepartmentEntityQueryWrapper.eq("employee_id", id);
         return this.baseMapper.selectList(workEmployeeDepartmentEntityQueryWrapper);
     }
 
@@ -396,7 +358,7 @@ public class WorkEmployeeDepartmentServiceImpl extends ServiceImpl<WorkEmployeeD
         Map<String, Object> map = new HashMap();
         if (listWithoutDuplicates.size() == 0) {
             map.put("list", null);
-            map.put("page", new PageModel(10, 0, 0));
+            map.put("page", new RespPageVO());
             return map;
         }
         StringBuilder sb = new StringBuilder();

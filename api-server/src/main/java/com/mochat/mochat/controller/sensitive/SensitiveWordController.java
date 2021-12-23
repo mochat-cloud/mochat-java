@@ -1,22 +1,20 @@
 package com.mochat.mochat.controller.sensitive;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mochat.mochat.common.api.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.model.PageModel;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.sensitive.SensitiveWordEntity;
-import com.mochat.mochat.model.ApiRespVO;
 import com.mochat.mochat.model.sensitiveword.ReqSensitiveWordIndex;
 import com.mochat.mochat.service.AccountService;
-import com.mochat.mochat.service.businesslog.IBusinessLogService;
+import com.mochat.mochat.service.business.IBusinessLogService;
 import com.mochat.mochat.service.sensitiveword.ISensitiveWordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,24 +50,31 @@ public class SensitiveWordController {
         return ApiRespUtils.ok("");
     }
 
-
     /**
-     *
-     *
      * @description:敏感词列表
      * @author: Huayu
      * @time: 2021/1/28 9:07
      */
     @GetMapping("/index")
     public ApiRespVO sensitiveWordIndex(ReqSensitiveWordIndex sensitiveWordIndex, @RequestAttribute ReqPerEnum permission){
-        //判断用户绑定企业信息
-        if(AccountService.getCorpId() == null){
-            throw new ParamException(100013,"未选择登录企业，不可操作");
-        }
         Page<SensitiveWordEntity> page = sensitiveWordServiceImpl.getSensitiveWordList(sensitiveWordIndex, permission);
-        //数据处理
-        Map<String,Object> mapList = handleData(sensitiveWordIndex.getPerPage(),page);
-        return ApiRespUtils.ok(mapList);
+
+        List<SensitiveWordEntity> entityList = page.getRecords();
+        List<Map<String,Object>> voList = new ArrayList<>(entityList.size());
+        Map<String,Object> vo;
+        for (SensitiveWordEntity entity: entityList) {
+            vo = new HashMap<>();
+            vo.put("sensitiveWordId",entity.getId());
+            vo.put("name",entity.getName());
+            vo.put("employeeNum",entity.getEmployeeNum());
+            vo.put("contactNum",entity.getContactNum());
+            vo.put("createdAt", entity.getCreatedAt());
+            vo.put("status",entity.getStatus());
+            voList.add(vo);
+        }
+
+        Page<Map<String, Object>> voPage = ApiRespUtils.transPage(page, voList);
+        return ApiRespUtils.okPage(voPage);
     }
 
     /**
@@ -146,30 +151,6 @@ public class SensitiveWordController {
         }
         return ApiRespUtils.ok("");
     }
-
-    private Map<String,Object> handleData(Integer perPage, Page<SensitiveWordEntity> page) {
-        List<Map<String,Object>> listMapList = new ArrayList<Map<String,Object>>();
-        Map<String,Object> mapData = new HashMap<String,Object>();
-        mapData.put("page",new PageModel(perPage,(int) page.getTotal(),(int) page.getSize()));
-        List<SensitiveWordEntity> sensitiveWordEntityList = page.getRecords();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Map<String,Object> listMap = null;
-        for (SensitiveWordEntity sensitiveWordEntity:
-        sensitiveWordEntityList) {
-            listMap = new HashMap<String,Object>();
-            listMap.put("sensitiveWordId",sensitiveWordEntity.getId());
-            listMap.put("name",sensitiveWordEntity.getName());
-            listMap.put("employeeNum",sensitiveWordEntity.getEmployeeNum());
-            listMap.put("contactNum",sensitiveWordEntity.getContactNum());
-            listMap.put("createdAt",format.format(sensitiveWordEntity.getCreatedAt()));
-            listMap.put("status",sensitiveWordEntity.getStatus());
-            listMapList.add(listMap);
-        }
-        mapData.put("list",listMapList);
-        //分页参数
-        return mapData;
-    }
-
 
     private boolean createSensitiveWord(Map<String, Object> mapData) {
         boolean flag = false;

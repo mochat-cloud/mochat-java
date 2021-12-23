@@ -6,7 +6,7 @@ import com.mochat.mochat.dao.entity.wm.WorkMsgIndexEntity;
 import java.util.List;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/11/17 12:57 下午
  * @description 会话内容存储
  * <p>

@@ -1,9 +1,9 @@
 package com.mochat.mochat.controller.contactfieldpivot;
 
 import com.mochat.mochat.common.em.RespErrCodeEnum;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.ParamException;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.model.contactfieldpivot.UpdateContactFieldPivotModel;
 import com.mochat.mochat.service.impl.IWorkContactFieldPivotService;
 import org.springframework.beans.factory.annotation.Autowired;

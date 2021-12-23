@@ -2,9 +2,9 @@ package com.mochat.mochat.controller.contactfield;
 
 import com.alibaba.fastjson.JSONObject;
 import com.mochat.mochat.common.em.RespErrCodeEnum;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.ParamException;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.model.contactfield.AddContactFieldModel;
 import com.mochat.mochat.model.contactfield.BatchUpdateContactFieldModel;
 import com.mochat.mochat.model.contactfield.UpdateContactFieldModel;

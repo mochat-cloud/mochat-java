@@ -7,7 +7,7 @@ import lombok.*;
 import java.util.Date;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/2/22 4:51 下午
  * @description 渠道码表
  */

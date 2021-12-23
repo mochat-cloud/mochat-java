@@ -1,6 +1,5 @@
 package com.mochat.mochat.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -8,9 +7,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
 import com.mochat.mochat.common.em.workcontactemployee.Status;
 import com.mochat.mochat.common.em.workupdatetime.TypeEnum;
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import com.mochat.mochat.common.util.DateUtils;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.dao.entity.*;
 import com.mochat.mochat.dao.entity.wm.WorkMsgConfigEntity;
 import com.mochat.mochat.dao.mapper.corp.CorpMapper;
@@ -132,14 +131,14 @@ public class CorpServiceImpl extends ServiceImpl<CorpMapper, CorpEntity> impleme
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/22 4:14 下午
      * @description
      * @info 因二期权限管理需求, 本人只能查看本公司的信息, 所属其他公司信息查看需要切换公司
      */
     @Override
-    public Page<CorpPageItemVO> getCorpPageList(String corpName, RequestPage requestPage, ReqPerEnum permission) {
-        Page<CorpEntity> corpPage = ApiRespUtils.initPage(requestPage);
+    public Page<CorpPageItemVO> getCorpPageList(String corpName, ReqPageDto reqPageDto, ReqPerEnum permission) {
+        Page<CorpEntity> corpPage = ApiRespUtils.initPage(reqPageDto);
         LambdaQueryChainWrapper<CorpEntity> wrapper = lambdaQuery()
                 .eq(CorpEntity::getCorpId, AccountService.getCorpId());
         if (Objects.nonNull(corpName) && !corpName.isEmpty()) {

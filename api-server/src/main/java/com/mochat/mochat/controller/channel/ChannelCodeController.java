@@ -1,9 +1,9 @@
 package com.mochat.mochat.controller.channel;
 
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.model.RequestPage;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ReqPageDto;
+import com.mochat.mochat.common.api.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.model.channel.ReqChannelCodeDTO;
 import com.mochat.mochat.model.channel.ReqChannelCodeListDTO;
 import com.mochat.mochat.model.channel.ReqChannelCodeStatisticsDTO;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotNull;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/2/22 2:47 下午
  * @description 渠道活码
  */
@@ -31,7 +31,7 @@ public class ChannelCodeController {
     private IWorkContactEmployeeService contactEmployeeService;
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/22 3:53 下午
      * @description 新建渠道码
      */
@@ -42,7 +42,7 @@ public class ChannelCodeController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/22 3:53 下午
      * @description 编辑渠道码
      */
@@ -53,7 +53,7 @@ public class ChannelCodeController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/22 3:53 下午
      * @description 编辑渠道码
      */
@@ -63,38 +63,38 @@ public class ChannelCodeController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/22 3:53 下午
      * @description 编辑渠道码
      */
     @GetMapping("/index")
-    public ApiRespVO codeList(ReqChannelCodeListDTO req, RequestPage page, @RequestAttribute ReqPerEnum permission) {
-        return ApiRespUtils.getApiRespByPage(channelCodeService.getChannelCodePageByReq(req, page, permission));
+    public ApiRespVO codeList(ReqChannelCodeListDTO req, ReqPageDto page, @RequestAttribute ReqPerEnum permission) {
+        return ApiRespUtils.okPage(channelCodeService.getChannelCodePageByReq(req, page, permission));
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/22 3:53 下午
      * @description 渠道码客户
      */
     @GetMapping("/contact")
-    public ApiRespVO codeContactList(@NotNull(message = "渠道码 id 不能为空") Integer channelCodeId, RequestPage page) {
-        return ApiRespUtils.getApiRespByPage(channelCodeService.getChannelCodeContactByReq(channelCodeId, page));
+    public ApiRespVO codeContactList(@NotNull(message = "渠道码 id 不能为空") Integer channelCodeId, ReqPageDto page) {
+        return ApiRespUtils.okPage(channelCodeService.getChannelCodeContactByReq(channelCodeId, page));
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/22 3:53 下午
      * @description 统计分页数据
      */
     @GetMapping("/statisticsIndex")
     public ApiRespVO getStatisticsOfPage(ReqChannelCodeStatisticsIndexDTO req) {
         req.checkParam();
-        return ApiRespUtils.getApiRespByPage(contactEmployeeService.getStatisticsOfPage(req));
+        return ApiRespUtils.okPage(contactEmployeeService.getStatisticsOfPage(req));
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/22 3:53 下午
      * @description 统计折线图
      */

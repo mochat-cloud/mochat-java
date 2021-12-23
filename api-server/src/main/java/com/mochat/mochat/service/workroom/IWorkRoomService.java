@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/3/17 3:58 下午
  * @description 客户群服务
  */
@@ -26,7 +26,7 @@ public interface IWorkRoomService extends IService<WorkRoomEntity> {
     Integer updateWorkRoomsByRoomGroupId(Integer workRoomGroupId, int i);
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 3:59 下午
      * @description 获取客户群列表
      */

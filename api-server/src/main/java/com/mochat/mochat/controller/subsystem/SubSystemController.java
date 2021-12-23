@@ -1,8 +1,8 @@
 package com.mochat.mochat.controller.subsystem;
 
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.impl.ISubSystemService;
 import com.mochat.mochat.model.subsystem.*;

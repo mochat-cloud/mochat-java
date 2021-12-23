@@ -1,7 +1,7 @@
 package com.mochat.mochat.controller.wm;
 
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.model.wm.ReqMsgIndexDTO;
 import com.mochat.mochat.model.wm.ReqToUsersDTO;
 import com.mochat.mochat.service.wm.IChatService;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/2 11:05 上午
  * @description 会话内容存档
  */
@@ -38,7 +38,7 @@ public class ChatServiceController {
      */
     @GetMapping("/toUsers")
     public ApiRespVO toUsers(ReqToUsersDTO req) {
-        return ApiRespUtils.getApiRespByPage(chatService.getToUserInfoList(req));
+        return ApiRespUtils.okPage(chatService.getToUserInfoList(req));
     }
 
     /**
@@ -46,7 +46,7 @@ public class ChatServiceController {
      */
     @GetMapping("/index")
     public ApiRespVO chatList(ReqMsgIndexDTO req) {
-        return ApiRespUtils.getApiRespByPage(chatService.index(req));
+        return ApiRespUtils.okPage(chatService.index(req));
     }
 
 }

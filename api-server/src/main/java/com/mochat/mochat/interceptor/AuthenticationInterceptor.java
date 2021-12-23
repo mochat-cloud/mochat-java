@@ -119,7 +119,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/5/21 11:21 上午
      * @description 验证用户是否拥有当前接口访问权限
      */

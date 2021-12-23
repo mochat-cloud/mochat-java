@@ -10,8 +10,8 @@
 package com.mochat.mochat;
 
 import com.mochat.mochat.common.annotion.SkipVerityToken;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespVO;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

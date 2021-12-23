@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mochat.mochat.common.em.RespErrCodeEnum;
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import com.mochat.mochat.common.util.DateUtils;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.UserEntity;
@@ -57,7 +57,7 @@ public class RbacRoleServiceImpl extends ServiceImpl<RbacRoleMapper, McRbacRoleE
     private IWorkDeptService deptService;
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/11 6:07 下午
      * @description 角色下拉列表
      */
@@ -80,7 +80,7 @@ public class RbacRoleServiceImpl extends ServiceImpl<RbacRoleMapper, McRbacRoleE
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/11 6:24 下午
      * @description 角色修改
      */
@@ -112,7 +112,7 @@ public class RbacRoleServiceImpl extends ServiceImpl<RbacRoleMapper, McRbacRoleE
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 3:28 下午
      * @description 创建角色
      */
@@ -150,7 +150,7 @@ public class RbacRoleServiceImpl extends ServiceImpl<RbacRoleMapper, McRbacRoleE
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 3:29 下午
      * @description 修改角色启用状态
      */
@@ -166,7 +166,7 @@ public class RbacRoleServiceImpl extends ServiceImpl<RbacRoleMapper, McRbacRoleE
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 3:33 下午
      * @description 角色详情
      */
@@ -198,7 +198,7 @@ public class RbacRoleServiceImpl extends ServiceImpl<RbacRoleMapper, McRbacRoleE
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/11 10:47 上午
      * @description 更新角色操作人信息
      */
@@ -216,12 +216,12 @@ public class RbacRoleServiceImpl extends ServiceImpl<RbacRoleMapper, McRbacRoleE
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 9:40 上午
      * @description 角色列表
      */
     @Override
-    public Page<RolePageItemVO> roleListPage(String name, RequestPage page) {
+    public Page<RolePageItemVO> roleListPage(String name, ReqPageDto page) {
         int userId = AccountService.getUserId();
         UserEntity userEntity = subSystemService.getById(userId);
 
@@ -269,7 +269,7 @@ public class RbacRoleServiceImpl extends ServiceImpl<RbacRoleMapper, McRbacRoleE
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 10:56 上午
      * @description 角色权限保存
      */
@@ -307,12 +307,12 @@ public class RbacRoleServiceImpl extends ServiceImpl<RbacRoleMapper, McRbacRoleE
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 5:08 下午
      * @description 角色查看人员
      */
     @Override
-    public Page<RoleEmpShowVO> showRoleEmp(Integer roleId, RequestPage page) {
+    public Page<RoleEmpShowVO> showRoleEmp(Integer roleId, ReqPageDto page) {
         Page<WorkEmployeeEntity> employeeEntityPage = ApiRespUtils.initPage(page);
 
         List<Integer> userIdList = userRoleService.lambdaQuery()

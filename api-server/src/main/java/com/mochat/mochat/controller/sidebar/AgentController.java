@@ -8,12 +8,12 @@ import com.mochat.mochat.common.util.JwtUtils;
 import com.mochat.mochat.common.util.RSAUtils;
 import com.mochat.mochat.common.util.RedisUtils;
 import com.mochat.mochat.common.util.WxApiUtils;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.UserEntity;
 import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.model.properties.ChatToolProperties;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/1/27 2:16 下午
  * @description 企业微信侧边栏应用域名校验
  */
@@ -60,7 +60,7 @@ public class AgentController {
     private ISubSystemService subSystemService;
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/5/19 3:55 下午
      * @description 企业微信应用域名校验文件验证
      */

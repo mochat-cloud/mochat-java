@@ -3,56 +3,56 @@ package com.mochat.mochat.service.channel;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import com.mochat.mochat.dao.entity.channel.ChannelCodeEntity;
 import com.mochat.mochat.model.channel.*;
 
 import java.util.Map;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/2/22 4:59 下午
  * @description 渠道码服务
  */
 public interface IChannelCodeService extends IService<ChannelCodeEntity> {
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/1 3:02 下午
      * @description 创建渠道码
      */
     void storeOrUpdateCode(ReqChannelCodeDTO req);
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/2 2:39 下午
      * @description 获取渠道码详情
      */
     RespChannelCodeVO getChannelCodeDetail(Integer codeId);
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/1 3:02 下午
      * @description 编辑渠道码所在分组
      */
     void updateGroupId(Integer codeId, Integer codeGroupId);
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/1 3:00 下午
      * @description 获取渠道码 - 客户列表
      */
-    Page<RespChannelCodeContactVO> getChannelCodeContactByReq(Integer channelCodeId, RequestPage page);
+    Page<RespChannelCodeContactVO> getChannelCodeContactByReq(Integer channelCodeId, ReqPageDto page);
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/1 3:00 下午
      * @description 获取渠道码列表
      */
-    Page<RespChannelCodeListVO> getChannelCodePageByReq(ReqChannelCodeListDTO req, RequestPage page, ReqPerEnum permission);
+    Page<RespChannelCodeListVO> getChannelCodePageByReq(ReqChannelCodeListDTO req, ReqPageDto page, ReqPerEnum permission);
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/3 2:26 下午
      * @description 获取渠道码中的欢迎语 map
      * map["welcomeContent"] = 文本内容
@@ -61,7 +61,7 @@ public interface IChannelCodeService extends IService<ChannelCodeEntity> {
     Map<String, String> getWelcomeMessageMap(ChannelCodeEntity entity);
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/3 3:17 下午
      * @description 更新渠道码二维码所属成员信息
      */

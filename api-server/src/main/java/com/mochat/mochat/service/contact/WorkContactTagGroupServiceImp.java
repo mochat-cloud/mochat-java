@@ -3,7 +3,7 @@ package com.mochat.mochat.service.contact;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mochat.mochat.common.em.RespContactErrCodeEnum;
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/14 5:32 下午
  * @description 客户标签组 service
  */
@@ -34,7 +34,7 @@ public class WorkContactTagGroupServiceImp extends ServiceImpl<WorkContactTagGro
     private IWorkContactTagService workContactTagService;
 
     @Override
-    public List<ContactTagGroupIndexVO> getGroupList(RequestPage req) {
+    public List<ContactTagGroupIndexVO> getGroupList(ReqPageDto req) {
         int corpId = AccountService.getCorpId();
 
         List<WorkContactTagGroupEntity> groupEntities = baseMapper.selectList(

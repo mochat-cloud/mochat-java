@@ -1,4 +1,4 @@
-package com.mochat.mochat.config.handler;
+package com.mochat.mochat.config.mybatisplus;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;

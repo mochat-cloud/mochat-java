@@ -23,14 +23,14 @@ public interface IWorkContactEmployeeService extends IService<WorkContactEmploye
     boolean deleteContactEmployee(Integer corpId,Integer empId,Integer contactId);
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/23 4:08 下午
      * @description 获取渠道码 - 统计分页数据
      */
     Page<RespChannelCodeStatisticsItemVO> getStatisticsOfPage(ReqChannelCodeStatisticsIndexDTO req);
     
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/25 11:30 上午
      * @description 渠道码 - 统计折线图
      */

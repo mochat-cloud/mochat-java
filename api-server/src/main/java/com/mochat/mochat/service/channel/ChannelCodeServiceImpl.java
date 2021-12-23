@@ -10,10 +10,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mochat.mochat.common.em.businesslog.EventEnum;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import com.mochat.mochat.common.util.DateUtils;
 import com.mochat.mochat.common.util.ali.AliyunOssUtils;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.*;
@@ -24,7 +24,7 @@ import com.mochat.mochat.dao.mapper.channel.ChannelCodeMapper;
 import com.mochat.mochat.job.sync.WorkChannelCodeSyncLogic;
 import com.mochat.mochat.model.channel.*;
 import com.mochat.mochat.service.AccountService;
-import com.mochat.mochat.service.businesslog.IBusinessLogService;
+import com.mochat.mochat.service.business.IBusinessLogService;
 import com.mochat.mochat.service.contact.IWorkContactTagGroupService;
 import com.mochat.mochat.service.emp.IWorkDeptService;
 import com.mochat.mochat.service.emp.IWorkEmployeeDepartmentService;
@@ -43,7 +43,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/2/22 5:06 下午
  * @description 渠道码服务实现类
  */
@@ -402,7 +402,7 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
 
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/1 3:02 下午
      * @description 编辑渠道码所在分组
      */
@@ -435,12 +435,12 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/1 3:00 下午
      * @description 获取渠道码 - 客户列表
      */
     @Override
-    public Page<RespChannelCodeContactVO> getChannelCodeContactByReq(Integer channelCodeId, RequestPage page) {
+    public Page<RespChannelCodeContactVO> getChannelCodeContactByReq(Integer channelCodeId, ReqPageDto page) {
         QueryWrapper<WorkContactEmployeeEntity> queryContactEmployeeWrapper = Wrappers.query();
         queryContactEmployeeWrapper.select("contact_id c_id", "GROUP_CONCAT(employee_id) e_ids");
         queryContactEmployeeWrapper.eq("state", "channelCode-" + channelCodeId);
@@ -485,12 +485,12 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/1 3:00 下午
      * @description 获取渠道码列表
      */
     @Override
-    public Page<RespChannelCodeListVO> getChannelCodePageByReq(ReqChannelCodeListDTO req, RequestPage page, ReqPerEnum permission) {
+    public Page<RespChannelCodeListVO> getChannelCodePageByReq(ReqChannelCodeListDTO req, ReqPageDto page, ReqPerEnum permission) {
 
         Page<ChannelCodeEntity> codeEntityPage = ApiRespUtils.initPage(page);
         LambdaQueryChainWrapper<ChannelCodeEntity> lambdaQueryWrapper = lambdaQuery();
@@ -561,7 +561,7 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 11:19 上午
      * @description 权限管理查询条件配置
      */

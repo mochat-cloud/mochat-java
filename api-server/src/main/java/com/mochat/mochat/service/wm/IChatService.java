@@ -6,7 +6,7 @@ import com.mochat.mochat.model.wm.*;
 import java.util.List;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/11/25 5:45 下午
  * @description 运营-聊天记录业务实现
  */

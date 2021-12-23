@@ -15,7 +15,7 @@ import java.util.List;
 public interface ISubSystemService extends IService<UserEntity> {
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 3:18 下午
      * @description 获取子账户列表
      */

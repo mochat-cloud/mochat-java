@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/11 12:45 下午
  * @description 阿里云配置生成工具类
  * @see #ossProperties - 获取阿里云 OSS 配置

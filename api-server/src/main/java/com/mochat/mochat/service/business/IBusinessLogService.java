@@ -1,4 +1,4 @@
-package com.mochat.mochat.service.businesslog;
+package com.mochat.mochat.service.business;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mochat.mochat.common.em.businesslog.EventEnum;
@@ -7,14 +7,14 @@ import com.mochat.mochat.dao.entity.BusinessLogEntity;
 import java.util.List;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/3/17 10:00 上午
  * @description 业务日志服务
  */
 public interface IBusinessLogService extends IService<BusinessLogEntity> {
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 10:38 上午
      * @description 业务日志保存
      *
@@ -25,7 +25,7 @@ public interface IBusinessLogService extends IService<BusinessLogEntity> {
     boolean createBusinessLog(Integer businessId, Object param, EventEnum eventEnum);
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 10:44 上午
      * @description 获取本人创建或修改的业务 id 列表
      *

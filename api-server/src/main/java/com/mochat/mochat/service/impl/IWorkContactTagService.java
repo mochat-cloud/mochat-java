@@ -1,7 +1,7 @@
 package com.mochat.mochat.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import com.mochat.mochat.dao.entity.WorkContactTagEntity;
 import com.mochat.mochat.model.workcontact.ContactTagDetailVO;
 import com.mochat.mochat.model.workcontact.ContactTagVO;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/3/2 3:15 下午
  * @description 客户标签服务
  */
@@ -35,7 +35,7 @@ public interface IWorkContactTagService extends IService<WorkContactTagEntity> {
     /**
      * 获取标签列表
      */
-    Map<String, Object> getTagList(Integer tagGroupId, RequestPage requestPage);
+    Map<String, Object> getTagList(Integer tagGroupId, ReqPageDto reqPageDto);
 
     /**
      * 同步标签

@@ -8,16 +8,16 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mochat.mochat.common.api.ApiRespUtils;
+import com.mochat.mochat.common.api.ReqPageDto;
+import com.mochat.mochat.common.api.RespPageVO;
 import com.mochat.mochat.common.em.businesslog.EventEnum;
 import com.mochat.mochat.common.em.greeting.RangeTypeEnum;
 import com.mochat.mochat.common.em.medium.TypeEnum;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.model.PageModel;
-import com.mochat.mochat.common.model.RequestPage;
 import com.mochat.mochat.common.util.DateUtils;
 import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.common.util.ali.AliyunOssUtils;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
 import com.mochat.mochat.dao.entity.BusinessLogEntity;
 import com.mochat.mochat.dao.entity.WorkEmployeeEntity;
 import com.mochat.mochat.dao.entity.greeting.GreetingEntity;
@@ -25,7 +25,7 @@ import com.mochat.mochat.dao.entity.medium.MediumEntity;
 import com.mochat.mochat.dao.mapper.greeting.GreetingMapper;
 import com.mochat.mochat.dao.mapper.medium.MediumMapper;
 import com.mochat.mochat.service.AccountService;
-import com.mochat.mochat.service.businesslog.IBusinessLogService;
+import com.mochat.mochat.service.business.IBusinessLogService;
 import com.mochat.mochat.service.emp.IWorkEmployeeDepartmentService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
 import com.mochat.mochat.service.greeting.IGreetingService;
@@ -200,13 +200,13 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
     }
 
     @Override
-    public Map<String, Object> handle(RequestPage page, ReqPerEnum permission) {
+    public Map<String, Object> handle(ReqPageDto page, ReqPerEnum permission) {
         //处理请求参数
         return handleParams(page, permission);
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 11:19 上午
      * @description 权限管理查询条件配置
      */
@@ -331,7 +331,7 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
         return this.baseMapper.selectList(greetingEntityQueryWrapper);
     }
 
-    private Map<String, Object> handleParams(RequestPage req, ReqPerEnum permission) {
+    private Map<String, Object> handleParams(ReqPageDto req, ReqPerEnum permission) {
         // 列表查询条件
         Integer corpId = AccountService.getCorpId();
         // 查询数据
@@ -345,7 +345,7 @@ public class GreetingServiceImpl extends ServiceImpl<GreetingMapper, GreetingEnt
 
         List<Map<String, Object>> listMapList = new ArrayList<Map<String, Object>>();
         Map<String, Object> mapData = new HashMap<String, Object>();
-        mapData.put("page", new PageModel(req.getPerPage(), (int) page.getTotal(), (int) page.getSize()));
+        mapData.put("page", new RespPageVO((long)req.getPerPage(), page.getTotal(), page.getSize()));
         //查询已存在的数据
         mapData = hadGreetings(page.getRecords(), mapData);
         //欢迎语素材handle

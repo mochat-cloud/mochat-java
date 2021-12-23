@@ -1,6 +1,8 @@
 package com.mochat.mochat.model.workroom;
 
+import com.mochat.mochat.common.api.ReqPageDto;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotNull;
 
@@ -10,7 +12,8 @@ import javax.validation.constraints.NotNull;
  * @time: 2020/12/16 8:51
  */
 @Data
-public class WorkContactRoomIndexReq {
+@EqualsAndHashCode(callSuper = false)
+public class WorkContactRoomIndexReq extends ReqPageDto {
 
     /**
      * 客户群ID

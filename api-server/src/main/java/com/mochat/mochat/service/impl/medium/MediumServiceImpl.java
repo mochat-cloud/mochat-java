@@ -2,10 +2,15 @@ package com.mochat.mochat.service.impl.medium;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.common.util.ali.AliyunOssUtils;
 import com.mochat.mochat.dao.entity.medium.MediumEntity;
 import com.mochat.mochat.dao.mapper.medium.MediumMapper;
+import com.mochat.mochat.model.medium.MediumIndexDto;
+import lombok.var;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,19 +99,17 @@ public class MediumServiceImpl extends ServiceImpl<MediumMapper, MediumEntity> i
     }
 
     @Override
-    public List<MediumEntity> getMediumList(String mediumGroupId, String searchStr, Integer type, Integer page, Integer pageNo){
-        Map<String,Object> map = new HashMap<String, Object>();
-        map.put("mediumGroupId",mediumGroupId);
-        map.put("page",page);
-        map.put("pageNo",pageNo);
-        List<MediumEntity> mediumList = null;
-        if(type.equals(0)){
-            mediumList = this.baseMapper.getAllMediumList(map);
-        }else{
-            map.put("type",type);
-            mediumList = this.baseMapper.getMediumList(map);
+    public Page<MediumEntity> getMediumList(MediumIndexDto dto){
+        LambdaQueryChainWrapper<MediumEntity> wrapper = lambdaQuery();
+        wrapper.eq(MediumEntity::getMediumGroupId, dto.getMediumGroupId());
+        wrapper.like(MediumEntity::getContent, dto.getSearchStr());
+        if (dto.getType() > 0) {
+            wrapper.eq(MediumEntity::getType, dto.getType());
         }
-        return mediumList;
+
+        Page<MediumEntity> page = ApiRespUtils.initPage(dto);
+        wrapper.page(page);
+        return page;
     }
 
     /**

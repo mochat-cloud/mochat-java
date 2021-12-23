@@ -1,6 +1,6 @@
 package com.mochat.mochat.model.wm;
 
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import com.mochat.mochat.common.util.DateUtils;
 import com.mochat.mochat.config.ex.ParamException;
 import lombok.Data;
@@ -10,13 +10,13 @@ import org.hibernate.validator.constraints.Range;
 import javax.validation.constraints.NotNull;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/1 10:50 上午
  * @description index (聊天信息) 接口的请求参数
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ReqMsgIndexDTO extends RequestPage {
+public class ReqMsgIndexDTO extends ReqPageDto {
 
     @NotNull(message = "员工 id 不能为 null")
     private Integer workEmployeeId;

@@ -11,7 +11,7 @@ package com.mochat.mochat.common.util;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/11/24 9:47 上午
  * @description cmd 工具类, 用于执行 cmd 命令行
  */
@@ -38,13 +38,13 @@ public class CommandUtil {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2020/11/24 5:56 下午
      * @description 辅助类
      */
     private static class Helper {
         /**
-         * @author: yangpengwei
+         * @author: Ypw / ypwcode@163.com
          * @time: 2020/11/24 5:56 下午
          * @description 辅助生成 ffmpeg 的 amr 转 mp3 命令
          */

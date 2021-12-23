@@ -1,4 +1,4 @@
-package com.mochat.mochat.config.datasourse;
+package com.mochat.mochat.config.mybatisplus;
 
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @MapperScan(basePackages = {"com.mochat.mochat.dao.mapper"})
-public class SingleDataSourceConfig {
+public class MyBatisPlusConfig {
 
     /**
      * mybatis-plus分页插件

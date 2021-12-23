@@ -1,10 +1,10 @@
 package com.mochat.mochat.controller.permission;
 
 import com.alibaba.fastjson.JSONObject;
-import com.mochat.mochat.common.model.RequestPage;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ReqPageDto;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.ParamException;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.model.permission.RoleStoreDTO;
 import com.mochat.mochat.model.permission.RoleUpdateDTO;
 import com.mochat.mochat.service.permission.IRbacMenuService;
@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/3/11 9:39 上午
  * @description 角色管理 Controller
  */
@@ -33,7 +33,7 @@ public class RoleController {
     private IRbacMenuService menuService;
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 10:32 上午
      * @description 角色下拉列表
      */
@@ -43,7 +43,7 @@ public class RoleController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 10:35 上午
      * @description 角色修改
      */
@@ -54,17 +54,17 @@ public class RoleController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 10:32 上午
      * @description 角色下拉列表
      */
     @GetMapping("/index")
-    public ApiRespVO index(String name, RequestPage page) {
-        return ApiRespUtils.getApiRespByPage(roleService.roleListPage(name, page));
+    public ApiRespVO index(String name, ReqPageDto page) {
+        return ApiRespUtils.okPage(roleService.roleListPage(name, page));
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 10:36 上午
      * @description 角色删除
      */
@@ -79,7 +79,7 @@ public class RoleController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 11:28 上午
      * @description 角色添加
      */
@@ -90,7 +90,7 @@ public class RoleController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 11:28 上午
      * @description 角色状态修改
      */
@@ -111,7 +111,7 @@ public class RoleController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 11:28 上午
      * @description 角色详情
      */
@@ -121,7 +121,7 @@ public class RoleController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 10:38 上午
      * @description 角色权限保存
      */
@@ -144,7 +144,7 @@ public class RoleController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 10:59 上午
      * @description 角色权限列表
      */
@@ -154,7 +154,7 @@ public class RoleController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 10:59 上午
      * @description 角色权限列表
      */
@@ -164,12 +164,12 @@ public class RoleController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/12 10:59 上午
      * @description 角色查看人员
      */
     @GetMapping("/showEmployee")
-    public ApiRespVO showEmployee(Integer roleId, RequestPage page) {
-        return ApiRespUtils.getApiRespByPage(roleService.showRoleEmp(roleId, page));
+    public ApiRespVO showEmployee(Integer roleId, ReqPageDto page) {
+        return ApiRespUtils.okPage(roleService.showRoleEmp(roleId, page));
     }
 }

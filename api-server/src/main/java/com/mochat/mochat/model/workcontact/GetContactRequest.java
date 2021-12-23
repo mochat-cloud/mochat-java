@@ -1,7 +1,7 @@
 package com.mochat.mochat.model.workcontact;
 
 import com.mochat.mochat.common.em.RespErrCodeEnum;
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import com.mochat.mochat.config.ex.ParamException;
 import lombok.EqualsAndHashCode;
 
@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
  **/
 
 @EqualsAndHashCode(callSuper = false)
-public class GetContactRequest extends RequestPage {
+public class GetContactRequest extends ReqPageDto {
     /**
      * 关键词（可选）（客户姓名、昵称）
      */

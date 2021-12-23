@@ -2,10 +2,10 @@ package com.mochat.mochat.controller.channel;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.channel.ChannelCodeGroupEntity;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.channel.IChannelCodeGroupService;
 import com.mochat.mochat.service.channel.IChannelCodeService;
@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 import java.util.*;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/2/22 2:47 下午
  * @description 渠道码 - 分组
  */
@@ -32,7 +32,7 @@ public class ChannelCodeGroupController {
     private IChannelCodeService channelCodeService;
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/22 3:53 下午
      * @description 新建渠道码分组
      */
@@ -50,7 +50,7 @@ public class ChannelCodeGroupController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/22 3:53 下午
      * @description 编辑渠道码分组
      */
@@ -71,7 +71,7 @@ public class ChannelCodeGroupController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/22 3:53 下午
      * @description 编辑渠道码分组
      */
@@ -89,7 +89,7 @@ public class ChannelCodeGroupController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/22 3:53 下午
      * @description 编辑渠道码分组
      */
@@ -107,7 +107,7 @@ public class ChannelCodeGroupController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/23 9:39 上午
      * @description
      */

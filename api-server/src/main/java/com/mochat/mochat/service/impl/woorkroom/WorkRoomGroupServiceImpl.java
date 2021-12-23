@@ -1,20 +1,21 @@
 package com.mochat.mochat.service.impl.woorkroom;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mochat.mochat.common.model.PageModel;
-import com.mochat.mochat.common.model.RequestPage;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ReqPageDto;
+import com.mochat.mochat.common.util.DateUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.dao.entity.workroom.WorkRoomGroupEntity;
 import com.mochat.mochat.dao.mapper.WorkRoomGroupMapper;
+import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.workroom.IWorkRoomGroupService;
 import com.mochat.mochat.service.workroom.IWorkRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,31 +39,28 @@ public class WorkRoomGroupServiceImpl extends ServiceImpl<WorkRoomGroupMapper, W
      * @time: 2020/12/8 16:07
      */
     @Override
-    public Map<String, Object> getWorkRoomGroupList(String corpIds, Integer pageNo, Integer pageCount) {
-        QueryWrapper<WorkRoomGroupEntity> workRoomGroupWrapper = new QueryWrapper<WorkRoomGroupEntity>();
-        Page<WorkRoomGroupEntity> page = new Page<>();
-        RequestPage requestPage = new RequestPage(pageNo, pageCount);
-        ApiRespUtils.initPage(page, requestPage);
-        List<Map<String, Object>> listMapList = new ArrayList<Map<String, Object>>();
-        Map<String, Object> mapList = new HashMap<String, Object>();
-        Map<String, Object> listMap = null;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        workRoomGroupWrapper.select("id,name,corp_id,created_at");
-        workRoomGroupWrapper.eq("corp_id", corpIds);
-        List<WorkRoomGroupEntity> workRoomGroupEntityList = this.baseMapper.selectList(workRoomGroupWrapper);
-        int totalPageNum = (workRoomGroupEntityList.size() + pageCount - 1) / pageCount;
-        mapList.put("page", new PageModel(pageCount, workRoomGroupEntityList.size(), totalPageNum));
-        for (WorkRoomGroupEntity workRoomGroupEntity :
-                workRoomGroupEntityList) {
-            listMap = new HashMap<String, Object>();
+    public Page<Map<String, Object>> getWorkRoomGroupList(ReqPageDto reqPageDto) {
+        Integer corpId = AccountService.getCorpId();
+        Page<WorkRoomGroupEntity> page = ApiRespUtils.initPage(reqPageDto);
+        LambdaQueryChainWrapper<WorkRoomGroupEntity> wrapper = lambdaQuery();
+        wrapper.select(WorkRoomGroupEntity::getId, WorkRoomGroupEntity::getName, WorkRoomGroupEntity::getCorpId,
+                WorkRoomGroupEntity::getCreatedAt);
+        wrapper.eq(WorkRoomGroupEntity::getCorpId, corpId);
+        wrapper.page(page);
+
+        List<WorkRoomGroupEntity> workRoomGroupEntityList = page.getRecords();
+
+        List<Map<String, Object>> listMapList = new ArrayList<>();
+        Map<String, Object> listMap;
+        for (WorkRoomGroupEntity workRoomGroupEntity : workRoomGroupEntityList) {
+            listMap = new HashMap<>(4);
             listMap.put("workRoomGroupId", workRoomGroupEntity.getId());
             listMap.put("corpId", workRoomGroupEntity.getCorpId());
             listMap.put("workRoomGroupName", workRoomGroupEntity.getName());
-            listMap.put("createdAt", format.format(workRoomGroupEntity.getCreatedAt()));
+            listMap.put("createdAt", DateUtils.formatS3(workRoomGroupEntity.getCreatedAt().getTime()));
             listMapList.add(listMap);
         }
-        mapList.put("list", listMapList);
-        return mapList;
+        return ApiRespUtils.transPage(page, listMapList);
     }
 
     /**

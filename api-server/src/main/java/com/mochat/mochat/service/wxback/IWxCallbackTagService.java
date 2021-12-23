@@ -1,7 +1,7 @@
 package com.mochat.mochat.service.wxback;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/28 11:25 上午
  * @description 企业微信客户标签回调服务
  */

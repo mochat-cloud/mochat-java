@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mochat.mochat.common.em.contactfield.AddWayEnum;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.job.sync.WorkContactServiceSyncLogic;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.model.workcontact.GetContactPageResponse;
 import com.mochat.mochat.model.workcontact.GetContactRequest;
 import com.mochat.mochat.model.workcontact.UpdateContactResponse;
@@ -68,7 +68,7 @@ public class ContactController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/19 4:53 下午
      * @description 客户详情接口
      */
@@ -78,7 +78,7 @@ public class ContactController {
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/19 4:53 下午
      * @description 客户互动轨迹
      */

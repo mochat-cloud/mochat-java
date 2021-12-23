@@ -6,14 +6,14 @@ import com.mochat.mochat.dao.entity.channel.ChannelCodeGroupEntity;
 import java.util.List;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/2/22 4:59 下午
  * @description 渠道码服务
  */
 public interface IChannelCodeGroupService extends IService<ChannelCodeGroupEntity> {
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/22 5:19 下午
      * @description 创建渠道码分组，通过 names
      *
@@ -22,7 +22,7 @@ public interface IChannelCodeGroupService extends IService<ChannelCodeGroupEntit
     void saveByNames(List<String> nameList);
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/22 5:39 下午
      * @description 更新渠道码分组名，通过渠道码分组 id
      *
@@ -32,7 +32,7 @@ public interface IChannelCodeGroupService extends IService<ChannelCodeGroupEntit
     void updateNameByGroupId(Integer groupId, String name);
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/2/22 5:56 下午
      * @description 获取渠道码分组列表，通过企业 id
      *

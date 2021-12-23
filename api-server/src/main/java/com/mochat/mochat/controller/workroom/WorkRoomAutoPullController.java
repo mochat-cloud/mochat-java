@@ -2,9 +2,9 @@ package com.mochat.mochat.controller.workroom;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.model.RequestPage;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ReqPageDto;
+import com.mochat.mochat.common.api.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.model.workroom.ReqRoomAutoPullCreateDTO;
 import com.mochat.mochat.model.workroom.ReqRoomAutoPullUpdateDTO;
 import com.mochat.mochat.model.workroom.WorkRoomAutoPullVO;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotNull;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/16 4:16 下午
  * @description 自动拉群管理
  */
@@ -33,11 +33,11 @@ public class WorkRoomAutoPullController {
     @GetMapping("/index")
     public ApiRespVO getList(
             @RequestParam(defaultValue = "") String qrcodeName,
-            RequestPage requestPage,
+            ReqPageDto reqPageDto,
             @RequestAttribute ReqPerEnum permission
     ) {
-        Page<WorkRoomAutoPullVO> page = workRoomAutoPullService.getList(qrcodeName, requestPage, permission);
-        return ApiRespUtils.getApiRespByPage(page);
+        Page<WorkRoomAutoPullVO> page = workRoomAutoPullService.getList(qrcodeName, reqPageDto, permission);
+        return ApiRespUtils.okPage(page);
     }
 
     @PostMapping("/store")

@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/5/8 9:49 上午
  * @description 客户异步服务
  */
@@ -19,7 +19,7 @@ public class WorkContactServiceSyncLogic {
     private IWorkContactService contactService;
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/5/10 10:53 上午
      * @description 同步客户
      */

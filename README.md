@@ -54,8 +54,6 @@ MoChat 是开源的企业微信应用开发框架&引擎，是一套通用的企
 
 ```
 Java >= 1.8 (推荐1.8版本)
-MySQL >= 5.7
-Redis >= 3.0
 Node.js >= 10
 ```
 
@@ -63,12 +61,7 @@ Node.js >= 10
 
 后端运行
 
-
-##### 后端运行
-
-* 导入 IDEA 中
-* 创建数据库 `mochat` 并导入数据脚本 `api-server/install/mochat.sql`
-* 打开运行 `com.mochat.mochat.MoChatApplication.java`
+##### 下载项目
 
 假设你的安装目录为 /data/www/
 
@@ -77,7 +70,7 @@ Node.js >= 10
 cd /data/www/
 
 # 克隆项目文件
-git clone https://github.com/mochat-cloud/mochat-java。git
+git clone https://github.com/mochat-cloud/mochat-java.git
 
 # 更新子模块文件
 git submodule update --init --recursive
@@ -109,6 +102,23 @@ cd /data/www/mochat-java/api-server
 
 - 初始管理员账号为 18888888888 密码123456
 
+##### 运行方式
+
+###### docker 方式自动化运行
+
+- 直接运行 `api-server/start.sh` 文件自动化部署
+
+###### 手动运行
+
+```
+MySQL >= 5.7
+Redis >= 3.0
+```
+
+- 安装上述软件
+- 创建数据库 `mochat` 并导入数据脚本 `api-server/data/mysql/init/` 下的 sql 文件
+- 导入项目到 IDEA 中
+- 打开运行 `com.mochat.mochat.MoChatApplication.java`
 
 ##### 前端运行
 
@@ -160,7 +170,7 @@ yarn run build
 ##### 后端结构
 
 ```
-.
+api-server
 ├── com.mochat.mochat
 │  ├── controller------------------------------------------- 控制器
 │  ├── config----------------------------------------------- 应用配置
@@ -169,16 +179,11 @@ yarn run build
 │  ├── interceptor------------------------------------------ 拦截器
 │  ├── job-------------------------------------------------- 定时任务
 │  ├── model------------------------------------------------ 模型层
-│  ├── service----------------------------------- ---------- 逻辑层
+│  ├── service---------------------------------------------- 逻辑层
 │  ├── weixin.mp-------------------------------------------- 微信相关配置
-│  ├── Service---------------------------------------------- 服务层
-
-├── resourse
 ├── docker-compose.yml
-├── docker-entrypoint.sh
 ├── Dockerfile
 ├── pom.xml
-
 ```
 
 ##### 前端结构

@@ -29,8 +29,9 @@ logging:
 
 mybatis-plus:
   # 实体扫描，多个package用逗号或者分号分隔
-  typeAliasesPackage: com.mochat.mochat.dao.entity
-  mapperLocations: classpath:mapper/*.xml
+  type-aliases-package: com.mochat.mochat.dao.entity
+  mapper-locations: classpath:mapper/*.xml
+  type-enums-package: com.mochat.mochat.common.em
   configuration:
     call-setters-on-nulls: true
   global-config:

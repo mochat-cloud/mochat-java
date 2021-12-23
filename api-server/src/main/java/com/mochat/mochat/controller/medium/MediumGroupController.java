@@ -1,10 +1,10 @@
 package com.mochat.mochat.controller.medium;
 
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.entity.medium.MediumGroupEntity;
-import com.mochat.mochat.model.ApiRespVO;
+import com.mochat.mochat.common.api.ApiRespVO;
 import com.mochat.mochat.service.AccountService;
 import com.mochat.mochat.service.impl.medium.IMediumGroupService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2021/3/3 3:07 下午
  * @description 定时任务更新渠道码二维码绑定成员
  */
@@ -29,7 +29,7 @@ public class UpdateChannelCodeTask {
     private static int count = 60;
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/3 3:10 下午
      * @description 刷新间隔 1 分钟
      */

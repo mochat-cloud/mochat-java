@@ -10,7 +10,7 @@ import java.util.Map;
 public interface IWorkAgentService extends IService<WorkAgentEntity> {
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/5/19 4:35 下午
      * @description 根据应用 id 获取企业 id
      */

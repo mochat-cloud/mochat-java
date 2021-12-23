@@ -9,7 +9,7 @@
 package com.mochat.mochat.common.constant;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/12 4:54 下午
  * @description 企业微信 api
  * <p>

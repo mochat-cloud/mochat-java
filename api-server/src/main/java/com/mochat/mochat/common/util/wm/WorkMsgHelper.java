@@ -1,7 +1,7 @@
 package com.mochat.mochat.common.util.wm;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/11/19 6:04 下午
  * @description 会话内容存档辅助类
  */

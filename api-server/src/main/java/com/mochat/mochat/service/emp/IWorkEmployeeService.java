@@ -16,7 +16,7 @@ import java.util.Map;
 public interface IWorkEmployeeService extends IService<WorkEmployeeEntity> {
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/5/20 4:45 下午
      * @description 通过员工企业微信 id 获取员工数据
      */
@@ -90,7 +90,7 @@ public interface IWorkEmployeeService extends IService<WorkEmployeeEntity> {
     List<WorkEmployeeEntity> countWorkEmployeesByCorpId(Integer corpId);
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/5/21 10:52 上午
      * @description 根据登录用户 id 获取用户所属企业 id 列表
      */

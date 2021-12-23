@@ -2,6 +2,7 @@ package com.mochat.mochat.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.mochat.mochat.common.em.channel.ReqStatisticsIndexEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/11/25 2:19 下午
  * @description 员工信息
  *

@@ -13,7 +13,7 @@ import com.mochat.mochat.dao.entity.sensitive.SensitiveWordEntity;
 import com.mochat.mochat.dao.mapper.sensitiveword.SensitiveWordMapper;
 import com.mochat.mochat.model.sensitiveword.ReqSensitiveWordIndex;
 import com.mochat.mochat.service.AccountService;
-import com.mochat.mochat.service.businesslog.IBusinessLogService;
+import com.mochat.mochat.service.business.IBusinessLogService;
 import com.mochat.mochat.service.emp.IWorkEmployeeDepartmentService;
 import com.mochat.mochat.service.sensitiveword.ISensitiveWordService;
 import lombok.extern.slf4j.Slf4j;
@@ -87,7 +87,7 @@ public class SensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMapper, S
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 11:19 上午
      * @description 权限管理查询条件配置
      */

@@ -8,11 +8,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mochat.mochat.common.em.businesslog.EventEnum;
 import com.mochat.mochat.common.em.permission.ReqPerEnum;
-import com.mochat.mochat.common.model.RequestPage;
+import com.mochat.mochat.common.api.ReqPageDto;
 import com.mochat.mochat.common.util.DateUtils;
 import com.mochat.mochat.common.util.WxApiUtils;
 import com.mochat.mochat.common.util.ali.AliyunOssUtils;
-import com.mochat.mochat.common.util.wm.ApiRespUtils;
+import com.mochat.mochat.common.api.ApiRespUtils;
 import com.mochat.mochat.config.ex.CommonException;
 import com.mochat.mochat.config.ex.ParamException;
 import com.mochat.mochat.dao.mapper.WorkRoomAutoPullMapper;
@@ -22,7 +22,7 @@ import com.mochat.mochat.model.workroom.ReqRoomAutoPullUpdateDTO;
 import com.mochat.mochat.model.workroom.WorkRoomAutoPullDetailVO;
 import com.mochat.mochat.model.workroom.WorkRoomAutoPullVO;
 import com.mochat.mochat.service.AccountService;
-import com.mochat.mochat.service.businesslog.IBusinessLogService;
+import com.mochat.mochat.service.business.IBusinessLogService;
 import com.mochat.mochat.service.contact.IWorkContactTagGroupService;
 import com.mochat.mochat.service.emp.IWorkEmployeeDepartmentService;
 import com.mochat.mochat.service.emp.IWorkEmployeeService;
@@ -41,7 +41,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * @author: yangpengwei
+ * @author: Ypw / ypwcode@163.com
  * @time: 2020/12/15 4:39 下午
  * @description 自动拉群管理
  */
@@ -78,10 +78,10 @@ public class WorkRoomAutoPullServiceImp extends ServiceImpl<WorkRoomAutoPullMapp
      * 获取自动拉群管理 - 列表
      *
      * @param qrcodeName  群活码名称[非必填]
-     * @param requestPage 分页参数[非必填]
+     * @param reqPageDto 分页参数[非必填]
      */
     @Override
-    public Page<WorkRoomAutoPullVO> getList(String qrcodeName, RequestPage requestPage, ReqPerEnum permission) {
+    public Page<WorkRoomAutoPullVO> getList(String qrcodeName, ReqPageDto reqPageDto, ReqPerEnum permission) {
         int corpId = AccountService.getCorpId();
 
         LambdaQueryChainWrapper<WorkRoomAutoPullEntity> wrapper = lambdaQuery()
@@ -92,7 +92,7 @@ public class WorkRoomAutoPullServiceImp extends ServiceImpl<WorkRoomAutoPullMapp
             wrapper.like(WorkRoomAutoPullEntity::getQrcodeName, qrcodeName);
         }
 
-        Page<WorkRoomAutoPullEntity> pageEntity = ApiRespUtils.initPage(requestPage);
+        Page<WorkRoomAutoPullEntity> pageEntity = ApiRespUtils.initPage(reqPageDto);
         wrapper.page(pageEntity);
 
         List<WorkRoomAutoPullEntity> autoPullEntityList = pageEntity.getRecords();
@@ -179,7 +179,7 @@ public class WorkRoomAutoPullServiceImp extends ServiceImpl<WorkRoomAutoPullMapp
     }
 
     /**
-     * @author: yangpengwei
+     * @author: Ypw / ypwcode@163.com
      * @time: 2021/3/17 11:19 上午
      * @description 权限管理查询条件配置
      */
