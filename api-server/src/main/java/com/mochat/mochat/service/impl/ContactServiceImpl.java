@@ -1124,9 +1124,9 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, WorkContactEn
                 int maxNum = roomJsonObj.getIntValue("maxNum");
                 WorkRoomEntity roomEntity = roomService.getById(roomId);
                 int roomMax = roomEntity.getRoomMax();
-                int count = contactRoomService.lambdaQuery()
+                int count = Math.toIntExact(contactRoomService.lambdaQuery()
                         .eq(WorkContactRoomEntity::getRoomId, roomEntity.getId())
-                        .count();
+                        .count());
                 if (count < roomMax && count < maxNum) {
                     // 拉人中 发送此群二维码
                     File roomQrcodeFile = AliyunOssUtils.getFile(roomJsonObj.getString("roomQrcodeUrl"));

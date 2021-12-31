@@ -10,6 +10,8 @@ services:
       - ./data/mysql/db:/var/lib/mysql
       - ./data/mysql/conf:/etc/mysql/conf.d
       - ./data/mysql/init:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
 
   redis:
     image: redis:latest
@@ -19,6 +21,8 @@ services:
     volumes:
       - ./data/redis/redis.conf:/etc/redis.conf
       - ./data/redis/data:/data/
+    ports:
+      - 6379:6379
 
   mochat:
     build:

@@ -146,20 +146,20 @@ public class WorkContactRoomServiceImpl extends ServiceImpl<WorkContactRoomMappe
 
     @Override
     public Integer countAddWorkContactRoomsByRoomIdTime(String roomIds, String startTime, String endTime) {
-        return lambdaQuery()
+        return Math.toIntExact(lambdaQuery()
                 .in(WorkContactRoomEntity::getRoomId, roomIds)
                 .ge(WorkContactRoomEntity::getJoinTime, startTime)
                 .le(WorkContactRoomEntity::getJoinTime, endTime)
-                .count();
+                .count());
     }
 
     @Override
     public Integer countQuitWorkContactRoomsByRoomIdTime(String roomIds, String startTime, String endTime) {
-        return lambdaQuery()
+        return Math.toIntExact(lambdaQuery()
                 .in(WorkContactRoomEntity::getRoomId, roomIds)
                 .ge(WorkContactRoomEntity::getOutTime, startTime)
                 .le(WorkContactRoomEntity::getOutTime, endTime)
-                .count();
+                .count());
     }
 
     @Override

@@ -212,7 +212,7 @@ public class SubsystemServiceImpl extends ServiceImpl<SubSystemMapper, UserEntit
         // region 验证手机号唯一
         QueryWrapper<UserEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("phone", parem.getPhone());
-        int cnt = this.baseMapper.selectCount(wrapper);
+        int cnt = Math.toIntExact(this.baseMapper.selectCount(wrapper));
         if (cnt > 0) {
             throw new ParamException("手机号已存在");
         }
@@ -324,7 +324,7 @@ public class SubsystemServiceImpl extends ServiceImpl<SubSystemMapper, UserEntit
         if (!userEntity.getPhone().equals(parem.getPhone())) {
             QueryWrapper<UserEntity> wrapper = new QueryWrapper<>();
             wrapper.eq("phone", parem.getPhone());
-            int cnt = this.baseMapper.selectCount(wrapper);
+            int cnt = Math.toIntExact(this.baseMapper.selectCount(wrapper));
             if (cnt > 0) {
                 throw new ParamException("手机号已存在");
             }

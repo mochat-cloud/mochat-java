@@ -824,11 +824,11 @@ public class WorkRoomServiceImpl extends ServiceImpl<WorkRoomMapper, WorkRoomEnt
 
     @Override
     public Integer getCountOfRoomByCorpIdStartTimeEndTime(Integer corpId, String startTime, String endTime) {
-        return lambdaQuery()
+        return Math.toIntExact(lambdaQuery()
                 .eq(WorkRoomEntity::getCorpId, corpId)
                 .ge(WorkRoomEntity::getCreateTime, startTime)
                 .le(WorkRoomEntity::getCreateTime, endTime)
-                .count();
+                .count());
     }
 }
 

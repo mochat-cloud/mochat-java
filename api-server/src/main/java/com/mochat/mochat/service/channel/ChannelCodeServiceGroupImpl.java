@@ -31,10 +31,10 @@ public class ChannelCodeServiceGroupImpl extends ServiceImpl<ChannelCodeGroupMap
         }
 
         int corpId = AccountService.getCorpId();
-        int count = lambdaQuery()
+        int count = Math.toIntExact(lambdaQuery()
                 .eq(ChannelCodeGroupEntity::getCorpId, corpId)
                 .in(ChannelCodeGroupEntity::getName, nameList)
-                .count();
+                .count());
         if (count > 0) {
             throw new ParamException("分组名已存在");
         }
@@ -50,7 +50,7 @@ public class ChannelCodeServiceGroupImpl extends ServiceImpl<ChannelCodeGroupMap
     public void updateNameByGroupId(Integer groupId, String name) {
         QueryWrapper<ChannelCodeGroupEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("name",name);
-        int count = count(queryWrapper);
+        int count = (int) count(queryWrapper);
         if (count > 0) {
             throw new ParamException("分组名已存在");
         }

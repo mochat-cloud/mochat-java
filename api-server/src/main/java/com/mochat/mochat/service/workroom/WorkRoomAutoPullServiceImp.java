@@ -147,11 +147,11 @@ public class WorkRoomAutoPullServiceImp extends ServiceImpl<WorkRoomAutoPullMapp
                 int maxNum = roomJsonObj.getIntValue("maxNum");
                 int roomMax = roomEntity.getRoomMax();
 
-                int count = contactRoomService.lambdaQuery()
+                int count = Math.toIntExact(contactRoomService.lambdaQuery()
                         .eq(WorkContactRoomEntity::getRoomId, roomEntity.getId())
                         .eq(WorkContactRoomEntity::getType, "2")
                         .eq(WorkContactRoomEntity::getStatus, "1")
-                        .count();
+                        .count());
 
                 contactNum += count;
 
@@ -360,9 +360,9 @@ public class WorkRoomAutoPullServiceImp extends ServiceImpl<WorkRoomAutoPullMapp
 
             roomDTO.setMaxNum(roomJsonObj.getIntValue("maxNum"));
 
-            int count = contactRoomService.lambdaQuery()
+            int count = Math.toIntExact(contactRoomService.lambdaQuery()
                     .eq(WorkContactRoomEntity::getRoomId, roomEntity.getId())
-                    .count();
+                    .count());
 
             roomDTO.setNum(count);
 

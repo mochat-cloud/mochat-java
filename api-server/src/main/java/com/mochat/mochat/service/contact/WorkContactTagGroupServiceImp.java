@@ -122,10 +122,10 @@ public class WorkContactTagGroupServiceImp extends ServiceImpl<WorkContactTagGro
     @Override
     public void updateGroup(Integer groupTagId, String groupTagName, Integer isUpdate) {
         if (isUpdate == 1) {
-            int count = baseMapper.selectCount(
+            int count = Math.toIntExact(baseMapper.selectCount(
                     new QueryWrapper<WorkContactTagGroupEntity>()
                             .eq("group_name", groupTagName)
-            );
+            ));
             if (count > 0) {
                 throw new CommonException(groupTagName + "标签组已存在");
             }

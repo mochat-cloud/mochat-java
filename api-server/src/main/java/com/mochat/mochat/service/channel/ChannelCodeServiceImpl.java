@@ -96,10 +96,10 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
         if (tagIdList.isEmpty()) {
             throw new ParamException("请添加客户标签");
         }
-        int tagCount = workContactTagService.lambdaQuery()
+        int tagCount = Math.toIntExact(workContactTagService.lambdaQuery()
                 .eq(WorkContactTagEntity::getCorpId, AccountService.getCorpId())
                 .in(WorkContactTagEntity::getId, tagIdList)
-                .count();
+                .count());
         if (tagCount < tagIdList.size()) {
             throw new ParamException("客户标签失效, 请刷新页面");
         }
@@ -411,7 +411,7 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
         QueryWrapper<ChannelCodeEntity> codeQueryWrapper = new QueryWrapper<>();
         codeQueryWrapper.eq("corp_id", AccountService.getCorpId());
         codeQueryWrapper.eq("id", codeId);
-        int codeCount = count(codeQueryWrapper);
+        int codeCount = (int) count(codeQueryWrapper);
         if (codeCount < 1) {
             throw new ParamException("渠道码 id 不存在");
         }
@@ -420,7 +420,7 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
             QueryWrapper<ChannelCodeGroupEntity> codeGroupQueryWrapper = new QueryWrapper<>();
             codeGroupQueryWrapper.eq("corp_id", AccountService.getCorpId());
             codeGroupQueryWrapper.eq("id", codeGroupId);
-            int codeGroupCount = channelCodeGroupService.count(codeGroupQueryWrapper);
+            int codeGroupCount = (int) channelCodeGroupService.count(codeGroupQueryWrapper);
             if (codeGroupCount < 1) {
                 throw new ParamException("渠道码分组 id 不存在");
             }
@@ -539,10 +539,10 @@ public class ChannelCodeServiceImpl extends ServiceImpl<ChannelCodeMapper, Chann
                 vo.setGroupName(groupEntity.getName());
             }
 
-            int countNum = contactEmployeeService.lambdaQuery()
+            int countNum = Math.toIntExact(contactEmployeeService.lambdaQuery()
                     .eq(WorkContactEmployeeEntity::getCorpId, AccountService.getCorpId())
                     .eq(WorkContactEmployeeEntity::getState, "channelCode-" + e.getId())
-                    .count();
+                    .count());
             vo.setContactNum(countNum);
 
             List<String> tagNames = new ArrayList<>();

@@ -545,19 +545,19 @@ public class WorkContactEmployeeServiceImpl extends ServiceImpl<WorkContactEmplo
 
     @Override
     public Integer getCountOfContactByCorpIdStartTimeEndTime(Integer corpId, String startTime, String endTime) {
-        return lambdaQuery().eq(WorkContactEmployeeEntity::getCorpId, corpId)
+        return Math.toIntExact(lambdaQuery().eq(WorkContactEmployeeEntity::getCorpId, corpId)
                 .ge(WorkContactEmployeeEntity::getCreateTime, startTime)
                 .le(WorkContactEmployeeEntity::getCreateTime, endTime)
-                .count();
+                .count());
     }
 
     @Override
     public Integer getCountOfLossContactByCorpIdStartTimeEndTime(Integer corpId, String startTime, String endTime) {
-        return lambdaQuery().eq(WorkContactEmployeeEntity::getCorpId, corpId)
+        return Math.toIntExact(lambdaQuery().eq(WorkContactEmployeeEntity::getCorpId, corpId)
                 .ge(WorkContactEmployeeEntity::getCreateTime, startTime)
                 .le(WorkContactEmployeeEntity::getCreateTime, endTime)
                 .gt(WorkContactEmployeeEntity::getStatus, 1)
-                .count();
+                .count());
     }
 
     private void setCurrentStatistics(RespChannelCodeStatisticsVO voResult, ReqChannelCodeStatisticsDTO req) {

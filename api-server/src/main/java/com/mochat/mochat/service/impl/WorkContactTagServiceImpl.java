@@ -197,9 +197,9 @@ public class WorkContactTagServiceImpl extends ServiceImpl<WorkContactTagMapper,
             ContactTagIndexVO vo = new ContactTagIndexVO();
             vo.setId(entity.getId());
             vo.setName(entity.getName());
-            Integer count = contactTagPivotService.lambdaQuery()
+            Integer count = Math.toIntExact(contactTagPivotService.lambdaQuery()
                     .eq(WorkContactTagPivotEntity::getContactTagId, entity.getId())
-                    .count();
+                    .count());
             vo.setContactNum(count == null ? 0 : count);
             voList.add(vo);
         }
@@ -445,10 +445,10 @@ public class WorkContactTagServiceImpl extends ServiceImpl<WorkContactTagMapper,
         List<String> tagNameList = tags.toJavaList(String.class);
 
         // 判断标签是否存在
-        int count = lambdaQuery().eq(WorkContactTagEntity::getCorpId, corpId)
+        int count = Math.toIntExact(lambdaQuery().eq(WorkContactTagEntity::getCorpId, corpId)
                 .eq(WorkContactTagEntity::getContactTagGroupId, groupEntity.getId())
                 .in(WorkContactTagEntity::getName, tagNameList)
-                .count();
+                .count());
         if (count > 0) {
             throw new ParamException("标签添加重复");
         }

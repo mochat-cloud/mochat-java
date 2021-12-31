@@ -104,7 +104,7 @@ cd /data/www/mochat-java/api-server
 
 ##### 运行方式
 
-###### docker 方式自动化运行
+###### docker 方式自动化运行, 初次运行建议使用此方式, 无需执行 **"手动运行"** 配置
 
 - 直接运行 `api-server/start.sh` 文件自动化部署
 
@@ -116,7 +116,7 @@ Redis >= 3.0
 ```
 
 - 安装上述软件
-- 创建数据库 `mochat` 并导入数据脚本 `api-server/data/mysql/init/` 下的 sql 文件
+- 创建数据库 mochat 并导入数据脚本 api-server/install/mochat.sql
 - 导入项目到 IDEA 中
 - 打开运行 `com.mochat.mochat.MoChatApplication.java`
 

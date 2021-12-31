@@ -259,10 +259,10 @@ public class RbacRoleServiceImpl extends ServiceImpl<RbacRoleMapper, McRbacRoleE
                 .eq(McRbacUserRoleEntity::getRoleId, entity.getId())
                 .list();
         for (McRbacUserRoleEntity userRoleEntity : userRoleEntityList) {
-            int count = employeeService.lambdaQuery()
+            int count = Math.toIntExact(employeeService.lambdaQuery()
                     .eq(WorkEmployeeEntity::getLogUserId, userRoleEntity.getUserId())
                     .eq(WorkEmployeeEntity::getCorpId, corpId)
-                    .count();
+                    .count());
             sum += count;
         }
         vo.setEmployeeNum(sum);
@@ -275,14 +275,14 @@ public class RbacRoleServiceImpl extends ServiceImpl<RbacRoleMapper, McRbacRoleE
      */
     @Override
     public void updateRoleMenu(Integer roleId, List<Integer> menuIds) {
-        int count = lambdaQuery().eq(McRbacRoleEntity::getId, roleId).count();
+        int count = Math.toIntExact(lambdaQuery().eq(McRbacRoleEntity::getId, roleId).count());
         if (count <= 0) {
             throw new ParamException("角色不存在");
         }
 
-        int menuCount = menuService.lambdaQuery()
+        int menuCount = Math.toIntExact(menuService.lambdaQuery()
                 .in(McRbacMenuEntity::getId, menuIds)
-                .count();
+                .count());
         if (menuIds.size() != menuCount) {
             throw new ParamException("菜单 id 数组有误");
         }
