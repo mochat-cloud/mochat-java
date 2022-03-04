@@ -1,0 +1,53 @@
+server:
+  port: 9501
+  servlet:
+    session:
+      timeout: 10000
+
+spring:
+  profiles:
+    active: dev
+  session:
+    redis:
+      flush-mode: on_save
+      namespace: spring:session
+    store-type: redis
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+
+  servlet:
+    multipart:
+      max-request-size: 100MB # 上传文件总的最大值
+      max-file-size: 100MB    # 单个文件的最大值
+
+logging:
+  level:
+    root: info
+    com.mochat: debug
+    org.springframework.security: warn
+
+mybatis-plus:
+  # 实体扫描，多个package用逗号或者分号分隔
+  type-aliases-package: com.mochat.mochat.dao.entity
+  mapper-locations: classpath:mapper/*.xml
+  type-enums-package: com.mochat.mochat.common.em
+  configuration:
+    call-setters-on-nulls: true
+  global-config:
+    # 逻辑删除配置
+    db-config:
+      logic-delete-value: now()
+      logic-not-delete-value: 'null'
+
+#客服url可以不填写
+mochat:
+  serviceUrl: http://xxx.com
+
+chat-tools:
+  #API地址
+  apiUrl: http://xxx.com
+  #web后台地址
+  webUrl: http://xxx.com
+
+

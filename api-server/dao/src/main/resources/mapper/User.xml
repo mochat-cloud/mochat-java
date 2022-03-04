@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mochat.mochat.dao.mapper.SubSystemMapper">
+
+    <select id="getSubSystemList" resultType="com.mochat.mochat.dao.entity.UserEntity" parameterType="com.mochat.mochat.model.subsystem.GetSubSystemList">
+     select id,phone,password,name,gender,department,position,login_time,status,created_at,updated_at,deleted_at from mc_user
+        <where>
+            <if test="phone != null">
+                phone = #{phone}
+            </if>
+            <if test="status != null">
+                AND status like #{status}
+            </if>
+            <if test="userName != null">
+                AND userName like #{userName}
+            </if>
+        </where>
+    </select>
+    <select id="getUserByPhone" resultType="com.mochat.mochat.dao.entity.UserEntity">
+        select phone,password,id from mc_user where phone = #{phone} and password = #{password}
+    </select>
+</mapper>

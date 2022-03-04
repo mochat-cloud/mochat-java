@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 文件输出格式 -->
+    <property name="PATTERN" value="%-12(%d{yyyy-MM-dd HH:mm:ss}) |-%-5level [%thread] %c [%L] -| %msg%n" />
+    <!-- pro文件路径 -->
+    <property name="PRO_FILE_PATH" value="/var/www-log/" />
+
+    <!-- 开发环境 -->
+    <springProfile name="dev,ypw">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${PATTERN}</pattern>
+            </encoder>
+        </appender>
+        <logger name="com.light.springboot" level="debug" />
+        <root level="info">
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+
+
+    <!-- 生产环境 -->
+    <springProfile name="pro">
+        <appender name="PROD_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${PRO_FILE_PATH}</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${PRO_FILE_PATH}/warn.%d{yyyy-MM-dd}.log</fileNamePattern>
+                <MaxHistory>100</MaxHistory>
+            </rollingPolicy>
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${PATTERN}</pattern>
+            </layout>
+        </appender>
+        <root level="warn">
+            <appender-ref ref="PROD_FILE" />
+        </root>
+    </springProfile>
+</configuration>

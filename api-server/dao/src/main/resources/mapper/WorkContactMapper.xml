@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mochat.mochat.dao.mapper.WorkContactMapper">
+
+
+    <update id="updateWorkContactRoomByIds" parameterType="String">
+        update CT_SYS_DUTYREAL
+        <set >
+            <if test="dutyrealUid != null" >
+                DUTYREAL_UID = #{dutyrealUid,jdbcType=DECIMAL},
+            </if>
+            <if test="dutyruleId != null" >
+                DUTYRULE_ID = #{dutyruleId,jdbcType=DECIMAL},
+            </if>
+            <if test="dutyrealSt != null" >
+                DUTYREAL_ST = #{dutyrealSt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="dutyrealEt != null" >
+                DUTYREAL_ET = #{dutyrealEt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="dutyrealSelf != null" >
+                DUTYREAL_SELF = #{dutyrealSelf,jdbcType=DECIMAL},
+            </if>
+            <if test="dutyrealState != null" >
+                DUTYREAL_STATE = #{dutyrealState,jdbcType=DECIMAL},
+            </if>
+            <if test="dutyrealRuid != null" >
+                DUTYREAL_RUID = #{dutyrealRuid,jdbcType=VARCHAR},
+            </if>
+            <if test="dutyrealDate != null" >
+                DUTYREAL_DATE = #{dutyrealDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where DUTYREAL_ID = #{dutyrealId,jdbcType=DECIMAL}
+    </update>
+</mapper>

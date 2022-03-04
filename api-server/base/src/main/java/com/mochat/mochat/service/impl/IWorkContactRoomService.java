@@ -1,0 +1,41 @@
+package com.mochat.mochat.service.impl;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.mochat.mochat.dao.entity.WorkContactRoomEntity;
+import com.mochat.mochat.dao.mapper.WorkContactRoomMapper;
+import com.mochat.mochat.dao.vo.GetContactRoomVo;
+import com.mochat.mochat.model.workroom.WorkContactRoomIndexReq;
+
+import java.util.List;
+import java.util.Map;
+
+public interface IWorkContactRoomService extends IService<WorkContactRoomEntity> {
+    List<GetContactRoomVo> GetContactRoomArray(List<String> roomIds, List<Integer> contactIds);
+    Map<Integer, Long> getContactRoomSum(List<Integer> roomIds);
+    List<WorkContactRoomEntity> getWorkContactRoomsByRoomId(Integer id);
+
+    List<WorkContactRoomEntity> getWorkContactRoomIndex(WorkContactRoomIndexReq workContactRoomIndexReq, String workEmployeeIds, String workContactIds);
+
+    List<WorkContactRoomEntity> getWorkContactRoomsByWxUserId(String wxUserId, String room_id);
+
+    List<WorkContactRoomEntity> getIdByRoomIdAndWxUserId(Integer id, String wxUserId);
+
+    Integer createWorkContactRoom(WorkContactRoomEntity workContactRoomEntity);
+
+    boolean batchUpdateByIds(List<WorkContactRoomEntity> workContactRoomEntityUpdateList);
+
+    Integer updateWorkContactRoomByIds(String deleteContactRoomIdArr, long time, Integer status);
+
+    List<WorkContactRoomEntity> getWorkContactRoomsInfoByRoomId(Integer id);
+
+    @Override
+    WorkContactRoomMapper getBaseMapper();
+
+    List<WorkContactRoomEntity> countWorkEmployeesByRoomIds(String roomIds);
+
+    Long countAddWorkContactRoomsByRoomIdTime(String roomIds, String startTime, String endTime);
+
+    Long countQuitWorkContactRoomsByRoomIdTime(String roomIds, String startTime, String endTime);
+
+    boolean createWorkContactRooms(List<WorkContactRoomEntity> workContactRoomEntityCreateList);
+}

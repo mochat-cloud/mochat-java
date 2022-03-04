@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mochat.mochat.dao.mapper.WorkEmployeeMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mochat.mochat.dao.entity.WorkEmployeeEntity">
+        <id column="id" property="id" />
+        <result column="wx_user_Id" property="wxUserId" />
+        <result column="corp_Id" property="corpId" />
+        <result column="name" property="name" />
+        <result column="mobile" property="mobile" />
+        <result column="position" property="position" />
+        <result column="gender" property="gender" />
+        <result column="email" property="email" />
+        <result column="avatar" property="avatar" />
+        <result column="thumb_avatar" property="thumbAvatar" />
+        <result column="telephone" property="telephone" />
+        <result column="alias" property="alias" />
+        <result column="extattr" property="extattr" />
+        <result column="qrCode" property="qrCode" />
+        <result column="external_profile" property="externalProfile" />
+        <result column="external_position" property="externalPosition" />
+        <result column="address" property="address" />
+        <result column="openUserId" property="openUserId" />
+        <result column="wx_main_department_id" property="wxMainDepartmentId" />
+        <result column="main_department_id" property="mainDepartmentId" />
+        <result column="log_user_id" property="logUserId" />
+        <result column="contact_auth" property="contactAuth" />
+        <result column="createdAt" property="createdAt" />
+        <result column="updatedAt" property="updatedAt" />
+        <result column="deletedAt" property="deletedAt" />
+    </resultMap>
+
+    <select id="getWorkEmployeeByUserId" resultType="com.mochat.mochat.dao.entity.WorkEmployeeEntity">
+        select corp_id  from mc_work_employee where  log_user_id = #{logUserId}
+    </select>
+
+
+</mapper>

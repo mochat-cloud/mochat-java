@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mochat.mochat.dao.mapper.medium.MediumMapper">
+    <resultMap id="BaseResultMap" type="com.mochat.mochat.dao.entity.medium.MediumEntity">
+        <id column="id" property="id" />
+        <result column="type" property="type" />
+        <result column="corp_id" property="corpId" />
+        <result column="medium_group_id" property="mediumGroupId" />
+        <result column="user_id" property="userId" />
+        <result column="user_name" property="userName" />
+        <result column="created_at" property="createdAt" />
+    </resultMap>
+
+    <select id="getMediumList" resultType="com.mochat.mochat.dao.entity.medium.MediumEntity" parameterType="map">
+        select id,type,corp_id,medium_group_id,user_id,user_name,content,created_at  from mc_medium where 1=1
+        <if test="mediumGroupId != null and mediumGroupId != ''">
+            and   medium_group_id = #{mediumGroupId}
+        </if>
+            and type = #{type}
+        <if test="searchStr != null and searchStr != ''">
+            and content like concat('%',#{searchStr},'%')
+        </if>
+        limit #{page},#{pageNo}
+    </select>
+
+    <select id="getAllMediumList" resultType="com.mochat.mochat.dao.entity.medium.MediumEntity" parameterType="map">
+        select id,type,corp_id,medium_group_id,user_id,user_name,content,created_at  from mc_medium where 1=1
+        <if test="mediumGroupId != null and mediumGroupId != ''">
+            and   medium_group_id = #{mediumGroupId}
+        </if>
+            and   type in ('1','2','3','4','5','6','7')
+        <if test="searchStr != null and searchStr != ''">
+            and content like concat('%',#{searchStr},'%')
+        </if>
+        and deleted_at IS NULL
+        limit #{page},#{pageNo}
+    </select>
+
+
+    <update id="updateMediaByGroupId" parameterType="Map">
+        update mc_medium
+        <set>
+            <if test="mediumGroupId != null">medium_group_id=#{mediumGroupId}</if>
+        </set>
+        where id=#{id}
+    </update>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mochat.mochat.dao.mapper.wm.WorkMsgConfigMapper">
+
+    <!-- 查询所有配置了会话内容存档的企业信息 -->
+    <select id="selectAll" resultType="com.mochat.mochat.dao.entity.wm.WorkMsgConfigEntity">
+        SELECT mc_corp.wx_corpid,
+               mc_work_message_config.*
+        FROM mc_corp,
+             mc_work_message_config
+        WHERE mc_work_message_config.chat_apply_status = 4
+          AND mc_work_message_config.chat_status = 1
+          AND mc_work_message_config.corp_id = mc_corp.id
+    </select>
+
+    <!-- 查询单个企业信息 -->
+    <select id="selectByCorpId" resultType="com.mochat.mochat.dao.entity.wm.WorkMsgConfigEntity">
+        SELECT mc_work_message_config.*,
+               mc_corp.wx_corpid
+        FROM mc_work_message_config,
+             mc_corp
+        WHERE mc_corp.id = #{corpId}
+          AND mc_work_message_config.corp_id = mc_corp.id
+    </select>
+
+    <!-- 查询企业配置状态信息 -->
+    <select id="getWorkMsgConfigByCorpId" resultType="com.mochat.mochat.dao.entity.wm.WorkMsgConfigEntity">
+        SELECT chat_apply_status,
+               chat_status,
+               created_at
+        FROM mc_work_message_config
+        WHERE corp_id = #{corpId}
+    </select>
+
+</mapper>

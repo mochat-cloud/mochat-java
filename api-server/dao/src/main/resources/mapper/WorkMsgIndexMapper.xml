@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mochat.mochat.dao.mapper.wm.WorkMsgIndexMapper">
+
+    <!-- 更新聊天记录索引 -->
+    <insert id="insertMsgIndex" parameterType="list">
+        insert into
+        mc_work_message_index (
+        `corp_id`,
+        `to_id`,
+        `to_type`,
+        `from_id`,
+        `flag`
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.corpId},
+            #{item.toId},
+            #{item.toType},
+            #{item.fromId},
+            #{item.flag}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 查询聊天记录索引 -->
+    <select id="selectMsgIndex" resultType="com.mochat.mochat.dao.entity.wm.WorkMsgIndexEntity">
+        SELECT mc_work_message_index.corp_id,
+               mc_work_message_index.to_id,
+               mc_work_message_index.from_id,
+               mc_work_message_index.flag
+        FROM mc_work_message_index
+        WHERE mc_work_message_index.corp_id = #{corpId}
+          AND mc_work_message_index.to_type = #{toType}
+          AND (
+                mc_work_message_index.from_id = #{eId}
+                OR mc_work_message_index.to_id = #{eId}
+            )
+    </select>
+
+    <!-- 查询 会话对象列表 - 员工 -->
+    <select id="selectEmployeeInfoOfPage" resultType="_int">
+        select mc_work_employee.id,
+               mc_work_employee.name,
+               mc_work_employee.alias,
+               mc_work_employee.avatar
+        from mc_work_message_index,
+             mc_work_employee
+        where mc_work_message_index.corp_id = #{corpId}
+          and mc_work_message_index.from_id = #{eId}
+          and mc_work_message_index.to_type = 0
+          and mc_work_message_index.to_id = mc_work_employee.id
+    </select>
+
+    <!-- 查询 会话对象列表 - 外部联系人 (客户) -->
+    <select id="selectContactInfoOfPage" resultType="_int">
+        select mc_work_contact.id,
+               mc_work_contact.name,
+               mc_work_contact.avatar
+        from mc_work_message_index,
+             mc_work_contact
+        where mc_work_message_index.corp_id = #{corpId}
+          and mc_work_message_index.from_id = #{eId}
+          and mc_work_message_index.to_type = 0
+          and mc_work_message_index.to_id = mc_work_contact.id
+    </select>
+
+    <!-- 查询 会话对象列表 - 群 -->
+    <select id="selectRoomInfoOfPage" resultType="_int">
+        select mc_work_room.id,
+               mc_work_room.name
+        from mc_work_room, mc_work_contact_room
+        where mc_work_room.corp_id = #{corpId}
+          and mc_work_room.from_id = #{eId}
+          and mc_work_message_index.to_type = 0
+          and mc_work_message_index.to_id = mc_work_room.id
+    </select>
+
+    <!-- 查询员工 ID -->
+    <select id="selectEmployeeId" resultType="_int">
+        SELECT mc_work_employee.id
+        FROM mc_work_employee
+        WHERE mc_work_employee.corp_id = #{corpId}
+          AND mc_work_employee.wx_user_id = #{eId}
+    </select>
+
+    <!-- 查询外部联系人 (客户) ID -->
+    <select id="selectContactId" resultType="_int">
+        SELECT mc_work_contact.id
+        FROM mc_work_contact
+        WHERE mc_work_contact.corp_id = #{corpId}
+          AND mc_work_contact.wx_external_userid = #{cId}
+    </select>
+
+    <!-- 查询群 ID -->
+    <select id="selectRoomId" resultType="_int">
+        SELECT mc_work_room.id
+        FROM mc_work_room
+        WHERE mc_work_room.corp_id = #{corpId}
+          AND mc_work_room.wx_chat_id = #{rId}
+    </select>
+
+</mapper>
